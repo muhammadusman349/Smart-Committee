@@ -1,0 +1,45 @@
+{% extends 'committee/committee_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="p-8">
+    <div class="max-w-2xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">{{ title }}</h1>
+                <p class="text-gray-600 mt-1">Submit your contribution for {{ committee.name }}</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="p-6">
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                    <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                        <div class="flex">
+                            <div class="flex-shrink-0">
+                                <i class="fas fa-exclamation-triangle text-red-400"></i>
+                            </div>
+                            <div class="ml-3">
+                                {% for error in form.non_field_errors %}
+                                <p class="text-sm text-red-700">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {{ form.as_p }}
+
+                    <div class="flex justify-end pt-4">
+                        <a href="{% url 'committee:member_committee_detail' pk=committee.pk %}" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition duration-300 mr-4">Cancel</a>
+                        <button type="submit" class="bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">Submit Contribution</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
