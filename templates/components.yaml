@@ -1,0 +1,4 @@
+button:
+  path: components/Button.vue
+card:
+  path: components/Card.vue
