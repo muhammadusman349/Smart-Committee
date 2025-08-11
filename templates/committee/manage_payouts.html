@@ -1,0 +1,242 @@
+{% extends 'committee/committee_base.html' %}
+{% load static %}
+
+{% block title %}Manage Payouts - Committee Management{% endblock %}
+
+{% block committee_content %}
+
+<div class="p-8">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900">Payout Management</h1>
+            <p class="mt-1 text-sm text-gray-600">View and manage all payouts across your committees</p>
+        </div>
+        <div class="flex space-x-3">
+            <a href="{% url 'committee:organizer_dashboard' %}" class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
+            </a>
+            <div class="relative" x-data="{ open: false }">
+                <button @click="open = !open" type="button" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <i class="fas fa-plus-circle mr-2"></i> New Payout
+                    <i class="fas fa-chevron-down ml-2 -mr-1 text-xs" :class="{ 'transform rotate-180': open }"></i>
+                </button>
+                <div x-show="open" @click.away="open = false" 
+                     x-transition:enter="transition ease-out duration-100"
+                     x-transition:enter-start="transform opacity-0 scale-95"
+                     x-transition:enter-end="transform opacity-100 scale-100"
+                     x-transition:leave="transition ease-in duration-75"
+                     x-transition:leave-start="transform opacity-100 scale-100"
+                     x-transition:leave-end="transform opacity-0 scale-95"
+                     class="origin-top-right absolute right-0 mt-2 w-72 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                    <div class="py-1" role="menu" aria-orientation="vertical">
+                        <div class="px-4 py-2 text-sm text-gray-700 border-b border-gray-100 font-medium">
+                            Select a member
+                        </div>
+                        <div class="max-h-60 overflow-y-auto">
+                            {% for membership in memberships %}
+                            <a href="{% url 'committee:payout_create' membership_pk=membership.pk %}" 
+                               class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                               role="menuitem">
+                                <div class="font-medium">{{ membership.member.full_name|default:membership.member.first_name }}</div>
+                                <div class="text-xs text-gray-500">{{ membership.committee.name }}</div>
+                            </a>
+                            {% empty %}
+                            <div class="px-4 py-3 text-sm text-gray-500 bg-yellow-50">
+                                <i class="fas fa-info-circle mr-1"></i> No active members found
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payouts Table -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Member</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Committee</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for payout in payouts %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <i class="fas fa-user text-blue-600"></i>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="text-sm font-medium text-gray-900">
+                                        {{ payout.membership.member.full_name|default:payout.membership.member.first_name }}
+                                    </div>
+                                    <div class="text-sm text-gray-500">
+                                        Received by: {{ payout.received_by.full_name|default:payout.received_by.first_name }}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm text-gray-900">{{ payout.membership.committee.name }}</div>
+                            <div class="text-xs text-gray-500">#{{ payout.membership.committee.id }}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-gray-900">${{ payout.total_amount|floatformat:2 }}</div>
+                            <div class="text-xs text-gray-500">
+                                <i class="fas fa-{{ payout.received_in_cash|yesno:'money-bill-wave,exchange-alt' }}"></i>
+                                {{ payout.received_in_cash|yesno:"Cash,Transfer" }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="payout-status {% if payout.is_confirmed %}confirmed{% else %}pending{% endif %}">
+                                <i class="fas {% if payout.is_confirmed %}fa-check-circle{% else %}fa-clock{% endif %} mr-1"></i>
+                                {{ payout.is_confirmed|yesno:"Confirmed,Pending" }}
+                            </span>
+                            {% if payout.confirmed_at %}
+                            <div class="text-xs text-gray-500 mt-1">
+                                {{ payout.confirmed_at|date:"M d, Y H:i" }}
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {{ payout.date|date:"M d, Y" }}
+                            {% if payout.confirmed_at %}
+                            <div class="text-xs text-gray-400">
+                                Confirmed: {{ payout.confirmed_at|date:"M d, Y H:i" }}
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex justify-end space-x-3">
+                                <a href="{% url 'committee:payout_update' pk=payout.pk %}" 
+                                   class="text-blue-600 hover:text-blue-900"
+                                   title="Edit payout">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" 
+                                        data-payout-id="{{ payout.pk }}"
+                                        data-member-name="{{ payout.membership.member.full_name|default:payout.membership.member.first_name }}"
+                                        class="delete-btn text-red-600 hover:text-red-900"
+                                        title="Delete payout">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center">
+                            <div class="text-gray-400 mb-2">
+                                <i class="fas fa-receipt text-4xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900">No payouts yet</h3>
+                            <p class="mt-1 text-sm text-gray-500">Get started by creating a new payout.</p>
+                            <div class="mt-6">
+                                <a href="#" @click="open = true" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    <i class="fas fa-plus-circle mr-2"></i> New Payout
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="deleteModal" class="fixed z-50 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <i class="fas fa-exclamation text-red-600"></i>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                            Delete Payout
+                        </h3>
+                        <div class="mt-2">
+                            <p class="text-sm text-gray-500">
+                                Are you sure you want to delete the payout of $<span id="payoutAmount"></span> to <span id="memberName" class="font-medium"></span>? This action cannot be undone.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                <form id="deleteForm" method="post" class="inline-flex">
+                    {% csrf_token %}
+                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Delete
+                    </button>
+                </form>
+                <button type="button" onclick="closeModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add event listeners for delete buttons
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const payoutId = this.getAttribute('data-payout-id');
+                const memberName = this.getAttribute('data-member-name');
+                confirmDelete(payoutId, memberName);
+            });
+        });
+    });
+    
+    function confirmDelete(payoutId, memberName) {
+        const modal = document.getElementById('deleteModal');
+        const form = document.getElementById('deleteForm');
+        const memberNameElement = document.getElementById('memberName');
+        
+        if (memberNameElement) {
+            memberNameElement.textContent = memberName;
+        }
+        
+        if (form) {
+            form.action = `/committee/payouts/${payoutId}/delete/`;
+        }
+        
+        if (modal) {
+            modal.classList.remove('hidden');
+        }
+    }
+    
+    function closeModal() {
+        const modal = document.getElementById('deleteModal');
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+    
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('deleteModal');
+        if (modal && event.target === modal) {
+            closeModal();
+        }
+    }
+    </script>
+
+
+{% endblock %}

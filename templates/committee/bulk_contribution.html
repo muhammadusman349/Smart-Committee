@@ -1,0 +1,265 @@
+{% extends 'committee/committee_base.html' %}
+{% load static %}
+{% load committee_extras %}
+
+{% block title %}Set Monthly Contributions - {{ current_month }}{% endblock %}
+
+{% block breadcrumb_extra %}
+    <li><i class="fas fa-chevron-right text-xs"></i></li>
+    <li class="text-gray-500">Set Monthly Contributions</li>
+{% endblock %}
+
+{% block committee_content %}
+<div class="p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">
+                Set Monthly Contributions
+            </h1>
+            <p class="text-gray-600">
+                Record contributions for all active members for <span class="font-semibold">{{ current_month }}</span>
+            </p>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-6">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex items-center">
+                    <i class="fas fa-users text-blue-600 text-xl mr-3"></i>
+                    <div>
+                        <p class="text-sm text-blue-600 font-medium">Active Members</p>
+                        <p class="text-2xl font-bold text-blue-900">{{ active_memberships.count }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-600 text-xl mr-3"></i>
+                    <div>
+                        <p class="text-sm text-green-600 font-medium">Paid</p>
+                        <p class="text-2xl font-bold text-green-900">{{ paid_count }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div class="flex items-center">
+                    <i class="fas fa-clock text-yellow-600 text-xl mr-3"></i>
+                    <div>
+                        <p class="text-sm text-yellow-600 font-medium">Pending</p>
+                        <p class="text-2xl font-bold text-yellow-900">{{ pending_count }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div class="flex items-center">
+                    <i class="fas fa-exclamation-triangle text-red-600 text-xl mr-3"></i>
+                    <div>
+                        <p class="text-sm text-red-600 font-medium">Late</p>
+                        <p class="text-2xl font-bold text-red-900">{{ late_count }}</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div class="flex items-center">
+                    <i class="fas fa-minus text-gray-600 text-xl mr-3"></i>
+                    <div>
+                        <p class="text-sm text-gray-600 font-medium">Not Recorded</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ not_recorded_count }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if active_memberships %}
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            <!-- Select All Checkbox -->
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <label class="flex items-center">
+                    <input type="checkbox" 
+                           id="select-all" 
+                           class="mr-3 h-4 w-4 text-blue-600 rounded"
+                           {% if not_recorded_count == 0 %}disabled{% endif %}>
+                    <span class="font-medium text-gray-900">Select All Members</span>
+                </label>
+            </div>
+
+            <!-- Members List -->
+            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left">
+                                    <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Select</span>
+                                </th>
+                                <th class="px-6 py-3 text-left">
+                                    <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Member</span>
+                                </th>
+                                <th class="px-6 py-3 text-left">
+                                    <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Committee</span>
+                                </th>
+                                <th class="px-6 py-3 text-left">
+                                    <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Monthly Amount</span>
+                                </th>
+                                <th class="px-6 py-3 text-left">
+                                    <span class="text-xs font-medium text-gray-500 uppercase tracking-wider">Status</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for membership in active_memberships %}
+                            {% with contribution=contributions_dict|get_item:membership.pk %}
+                            <tr class="{% if contribution %}{% if contribution.payment_status == 'PAID' %}bg-green-50{% elif contribution.payment_status == 'LATE' %}bg-red-50{% else %}bg-yellow-50{% endif %}{% endif %}">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if not contribution %}
+                                    <input type="checkbox" 
+                                           name="membership_{{ membership.pk }}" 
+                                           class="member-checkbox h-4 w-4 text-blue-600 rounded">
+                                    {% else %}
+                                    <i class="fas fa-check text-gray-400"></i>
+                                    {% endif %}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                                            <i class="fas fa-user text-gray-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="text-sm font-medium text-gray-900">{{ membership.member.full_name }}</div>
+                                            <div class="text-sm text-gray-500">{{ membership.member.email }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm text-gray-900">{{ membership.committee.name }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm font-medium text-gray-900">₹{{ membership.committee.monthly_amount }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    {% if contribution %}
+                                        {% if contribution.payment_status == 'PAID' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                            <i class="fas fa-check-circle mr-1"></i>
+                                            Paid
+                                        </span>
+                                        {% elif contribution.payment_status == 'LATE' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                                            Late
+                                        </span>
+                                        {% elif contribution.payment_status == 'PENDING' %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                            <i class="fas fa-clock mr-1"></i>
+                                            Pending
+                                        </span>
+                                        {% endif %}
+                                    {% else %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        <i class="fas fa-minus mr-1"></i>
+                                        Not Recorded
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endwith %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end space-x-4">
+                <a href="{% url 'committee:organizer_dashboard' %}" 
+                   class="px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>
+                    Back to Dashboard
+                </a>
+                <button type="submit" 
+                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        id="submit-btn"
+                        {% if not active_memberships.exists %}disabled{% endif %}>
+                    <i class="fas fa-save mr-2"></i>
+                    Record Selected Contributions
+                </button>
+            </div>
+        </form>
+        {% elif not_recorded_count == 0 %}
+        <div class="text-center py-12">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check-circle text-green-500 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">All Contributions Recorded</h3>
+            <p class="text-gray-500 mb-4">All active members already have contributions recorded for {{ current_month }}.</p>
+            <a href="{% url 'committee:organizer_dashboard' %}" 
+               class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Back to Dashboard
+            </a>
+        </div>
+        {% else %}
+        <div class="text-center py-12">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-users-slash text-gray-400 text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mb-2">No Active Members Found</h3>
+            <p class="text-gray-500 mb-4">You don't have any active members in your committees.</p>
+            <a href="{% url 'committee:committee_list' %}" 
+               class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                <i class="fas fa-plus mr-2"></i>
+                Create Committee
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectAllCheckbox = document.getElementById('select-all');
+    const memberCheckboxes = document.querySelectorAll('.member-checkbox');
+    const submitBtn = document.getElementById('submit-btn');
+
+    // Don't initialize if select-all is disabled (no pending members)
+    if (selectAllCheckbox.disabled) {
+        return;
+    }
+
+    // Select/Deselect all checkboxes
+    selectAllCheckbox.addEventListener('change', function() {
+        memberCheckboxes.forEach(checkbox => {
+            if (!checkbox.disabled) {
+                checkbox.checked = selectAllCheckbox.checked;
+            }
+        });
+        updateSubmitButton();
+    });
+
+    // Update select all checkbox state when individual checkboxes change
+    memberCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const checkedBoxes = document.querySelectorAll('.member-checkbox:checked');
+            const enabledBoxes = document.querySelectorAll('.member-checkbox:not(:disabled)');
+            selectAllCheckbox.checked = checkedBoxes.length === enabledBoxes.length && enabledBoxes.length > 0;
+            updateSubmitButton();
+        });
+    });
+
+    function updateSubmitButton() {
+        const checkedBoxes = document.querySelectorAll('.member-checkbox:checked');
+        submitBtn.disabled = checkedBoxes.length === 0;
+    }
+
+    // Initial state
+    updateSubmitButton();
+});
+</script>
+{% endblock %}
