@@ -1,0 +1,185 @@
+{% extends 'committee/committee_base.html' %}
+{% load static %}
+
+{% block committee_content %}
+<div class="p-8">
+    <div class="max-w-2xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <div>
+                {% if title == 'Record Contribution' %}
+                <h1 class="text-3xl font-bold text-gray-900">Record Contribution</h1>
+                <p class="text-gray-600 mt-1">Submit a new contribution for the selected member.</p>
+                {% else %}
+                <h1 class="text-3xl font-bold text-gray-900">Update Contribution</h1>
+                <p class="text-gray-600 mt-1">Edit contribution details</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 h-12 w-12 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 text-white flex items-center justify-center font-bold shadow-md">
+                        {{ membership.member.first_name|first }}{{ membership.member.last_name|first }}
+                    </div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-semibold text-gray-900">{{ membership.member.full_name }}</h3>
+                        <p class="text-sm text-gray-600">{{ membership.member.email }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6">
+                {% if is_readonly %}
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-lock text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">Contribution Locked</h3>
+                            <p class="mt-1 text-sm text-red-700">This contribution has been marked as <strong>PAID</strong> and cannot be edited.</p>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-info-circle text-blue-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-blue-800">Contribution Details</h3>
+                            <p class="mt-1 text-sm text-blue-700">
+                                Recording contribution for <strong>{{ membership.member.full_name }}</strong> in <strong>{{ membership.committee.name }}</strong>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if form.non_field_errors %}
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            {% for error in form.non_field_errors %}
+                            <p class="text-sm text-red-700">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-building mr-1"></i> Committee
+                            </label>
+                            <div class="bg-gray-50 px-4 py-3 rounded-lg border">
+                                <span class="text-gray-900 font-medium">{{ membership.committee.name }}</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-user mr-1"></i> Member
+                            </label>
+                            <div class="bg-gray-50 px-4 py-3 rounded-lg border">
+                                <span class="text-gray-900 font-medium">{{ membership.member.full_name }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-dollar-sign mr-1"></i> Required Monthly Amount
+                            </label>
+                            <div class="bg-gray-50 px-4 py-3 rounded-lg border">
+                                <span class="text-gray-900 font-medium">${{ membership.committee.monthly_amount|floatformat:2 }}</span>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label for="{{ form.amount_paid.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-coins mr-1"></i> Amount Paid
+                                {% if form.amount_paid.field.required %}<span class="text-red-500">*</span>{% endif %}
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <span class="text-gray-500">$</span>
+                                </div>
+                                {{ form.amount_paid }}
+                            </div>
+                            {% for error in form.amount_paid.errors %}
+                            <div class="text-red-600 text-sm mt-1">{{ error }}</div>
+                            {% endfor %}
+                            {% if form.amount_paid.help_text %}
+                            <p class="mt-1 text-sm text-gray-500">{{ form.amount_paid.help_text }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="{{ form.for_month.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-calendar-alt mr-1"></i> For Month
+                            {% if form.for_month.field.required %}<span class="text-red-500">*</span>{% endif %}
+                        </label>
+                        {{ form.for_month }}
+                        {% if is_readonly %}
+                        <input type="hidden" name="for_month" value="{{ contribution.for_month|date:'Y-m-d' }}">
+                        {% endif %}
+                        {% for error in form.for_month.errors %}
+                        <div class="text-red-600 text-sm mt-1">{{ error }}</div>
+                        {% endfor %}
+                        {% if form.for_month.help_text %}
+                        <p class="mt-1 text-sm text-gray-500">{{ form.for_month.help_text }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-4">
+                        {% if title == 'Record Contribution' %}
+                        <a href="{% url 'committee:membership_list' membership.committee.pk %}" 
+                           class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                            <i class="fas fa-arrow-left mr-2"></i> Back to Members
+                        </a>
+                        {% else %}
+                        <a href="{% url 'committee:manage_contributions' %}" 
+                           class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                            <i class="fas fa-arrow-left mr-2"></i> Back to Contributions
+                        </a>
+                        {% endif %}
+                        {% if not is_readonly %}
+                        <button type="submit" 
+                                class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                            <i class="fas fa-save mr-2"></i> 
+                            {% if title == 'Record Contribution' %}Save Contribution{% else %}Update Contribution{% endif %}
+                        </button>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if is_readonly %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Disable all form inputs for paid contributions
+    const formInputs = document.querySelectorAll('input, select, textarea');
+    formInputs.forEach(input => {
+        if (input.type !== 'hidden') {
+            input.disabled = true;
+        }
+    });
+});
+</script>
+{% endif %}
+{% endblock %}
