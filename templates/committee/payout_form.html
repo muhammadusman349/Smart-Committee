@@ -1,0 +1,84 @@
+{% extends 'committee/committee_base.html' %}
+{% load static %}
+
+{% block committee_content %}
+<div class="p-8">
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">{{ title }}</h1>
+        <p class="text-gray-600 mt-1">
+            {% if form.instance.pk %}
+                Update payout details for {{ form.instance.membership.member.full_name|default:form.instance.membership.member.first_name }}
+            {% else %}
+                Create a new payout for {{ membership.member.full_name|default:membership.member.first_name }}
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-6">
+        <form method="post" class="space-y-6">
+            {% csrf_token %}
+            
+            {% if form.non_field_errors %}
+                <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-red-700">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for field in form %}
+                    {% if field.name != 'is_confirmed' or user == membership.committee.organizer %}
+                    <div class="{% if field.field.required %}required{% endif %}">
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                            {{ field.label }}
+                            {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                        </label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200 mt-8">
+                <a href="{% if form.instance.pk %}{% url 'committee:manage_payouts' %}{% else %}{% url 'committee:manage_payouts' %}{% endif %}" 
+                   class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Cancel
+                </a>
+                <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <i class="fas fa-save mr-2"></i>
+                    {% if form.instance.pk %}Update{% else %}Create{% endif %} Payout
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize any date pickers or other JS functionality
+    const dateFields = document.querySelectorAll('input[type="date"]');
+    dateFields.forEach(field => {
+        if (!field.value) {
+            const today = new Date().toISOString().split('T')[0];
+            field.value = today;
+        }
+    });
+});
+</script>
+{% endblock %}
