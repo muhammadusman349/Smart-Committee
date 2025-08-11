@@ -1,0 +1,318 @@
+{% extends 'committee/committee_base.html' %}
+{% load static %}
+
+{% comment %} {% if not is_organizer %}
+    <script>
+        window.location.href = "{% url 'committee:committee_list' %}";
+    </script>
+{% endif %} {% endcomment %}
+
+{% block page_title %}Committee Details{% endblock %}
+{% block page_subtitle %}View detailed information about the committee{% endblock %}
+
+{% block committee_content %}
+<div class="p-8">
+    <div class="flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">{{ committee.name }}</h1>
+            <p class="text-gray-600 mt-1">{{ committee.description }}</p>
+        </div>
+        {% if is_organizer %}
+        <div class="flex space-x-4">
+            <a href="{% url 'committee:committee_update' committee.pk %}" class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition duration-200">
+                <i class="fas fa-edit mr-2"></i> Edit
+            </a>
+
+            {% if committee.status != 'COMPLETED' %}
+            <form method="post" action="{% url 'committee:toggle_status' committee.id %}">
+                {% csrf_token %}
+                <button type="submit" class="inline-flex items-center px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-lg transition duration-200">
+                    <i class="fas fa-power-off mr-2"></i>
+                    {% if committee.status == 'ACTIVE' %}
+                        Deactivate Committee
+                    {% elif committee.status == 'DEACTIVATED' %}
+                        Reactivate Committee
+                    {% endif %}
+                </button>
+            </form>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4 border-b">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium 
+                        {% if committee.status == 'ACTIVE' %}bg-green-100 text-green-800
+                        {% elif committee.status == 'DEACTIVATED' %}bg-yellow-100 text-yellow-800
+                        {% else %}bg-gray-100 text-gray-800{% endif %}">
+                        <i class="fas fa-circle text-xs mr-1"></i> {{ committee.status }}
+                    </span>
+                </div>
+            </div>
+            <div class="p-6">
+                <ul class="space-y-3">
+                    <li class="flex justify-between text-sm">
+                        <span class="text-gray-500">Organizer</span>
+                        <span class="font-medium text-gray-900">{{ committee.organizer.full_name }}</span>
+                    </li>
+                    <li class="flex justify-between text-sm">
+                        <span class="text-gray-500">Monthly Amount</span>
+                        <span class="font-medium text-green-600">${{ committee.monthly_amount }}</span>
+                    </li>
+                    <li class="flex justify-between text-sm">
+                        <span class="text-gray-500">Duration</span>
+                        <span class="font-medium text-gray-900">{{ committee.duration_months }} months</span>
+                    </li>
+                    <li class="flex justify-between text-sm">
+                        <span class="text-gray-500">Start Date</span>
+                        <span class="font-medium text-gray-900">{{ committee.start_date }}</span>
+                    </li>
+                    <li class="flex justify-between text-sm">
+                        <span class="text-gray-500">End Date</span>
+                        <span class="font-medium text-gray-900">{{ committee.end_date }}</span>
+                    </li>
+                    <li class="flex justify-between text-sm">
+                        <span class="text-gray-500">Total Collected</span>
+                        <span class="font-medium text-gray-900">${{ committee.total_collected|default:"0.00" }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4 border-b">
+                <div class="flex items-center justify-between">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        <i class="fas fa-users mr-1"></i> Members ({{ committee.memberships.count }})
+                    </span>
+                </div>
+            </div>
+            <div class="p-6">
+                <ul class="divide-y divide-gray-200">
+                    {% for membership in committee.memberships.all|slice:":3" %}
+                    <li class="flex justify-between items-center py-4 hover:bg-gray-50 px-2 -mx-2 rounded-lg transition-colors duration-200">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <div class="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white flex items-center justify-center font-bold text-sm shadow-md">
+                                    {{ membership.member.first_name|first }}{{ membership.member.last_name|first }}
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-semibold text-gray-900">{{ membership.member.get_full_name }}</div>
+                                <div class="text-sm text-gray-500">
+                                    <i class="fas fa-envelope mr-1"></i> {{ membership.member.email }}
+                                </div>
+                                <div class="text-xs text-gray-500 mt-1">
+                                    <i class="fas fa-calendar-plus mr-1"></i> Joined {{ membership.joined_at|date:"M d, Y" }}
+                                    {% if membership.left_at %}
+                                    <span class="text-red-600">
+                                        <i class="fas fa-calendar-times ml-2 mr-1"></i> Left {{ membership.left_at|date:"M d, Y" }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="text-right">
+                                <div class="text-sm font-semibold text-green-600">
+                                    <i class="fas fa-dollar-sign mr-1"></i>
+                                    ${{ membership.total_contributed|default:"0.00" }}
+                                </div>
+                                <div class="text-xs text-gray-500">Total Contributed</div>
+                            </div>
+                            <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full {% if membership.status == 'ACTIVE' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %} shadow-sm">
+                                <i class="fas fa-circle text-xs mr-1"></i> {{ membership.status }}
+                            </span>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <li class="text-center py-8">
+                        <div class="flex flex-col items-center">
+                            <i class="fas fa-users text-gray-300 text-5xl mb-4"></i>
+                            <p class="text-gray-500 text-lg mb-4">No members found in this committee</p>
+                            {% if is_organizer %}
+                            <button type="button" onclick="document.getElementById('addMembersModal').classList.remove('hidden')" 
+                                    class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-200 shadow-md hover:shadow-lg">
+                                <i class="fas fa-user-plus mr-2"></i> Add First Member
+                            </button>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% endfor %}
+                </ul>
+                
+                {% if committee.memberships.count >= 1 %}
+                <div class="mt-4 text-center">
+                    <a href="{% url 'committee:membership_list' committee.pk %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium inline-flex items-center">
+                        View all {{ committee.memberships.count }} members <i class="fas fa-arrow-right ml-1"></i>
+                    </a>
+                </div>
+                {% endif %}
+                
+                {% if is_organizer and committee.memberships.count > 0 %}
+                <div class="mt-6 text-center">
+                    <button type="button" onclick="document.getElementById('addMembersModal').classList.remove('hidden')" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <i class="fas fa-user-plus mr-2"></i> Add More Members
+                    </button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="flex justify-end mt-8">
+        <a href="{% url 'committee:committee_list' %}" class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition duration-200">
+            <i class="fas fa-arrow-left mr-2"></i> Back to Committees
+        </a>
+    </div>
+</div>
+
+<!-- Add Members Modal -->
+<div id="addMembersModal" class="fixed z-50 inset-0 overflow-y-auto hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
+        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-2xl sm:w-full">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div class="sm:flex sm:items-start">
+                    <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <i class="fas fa-users text-blue-600"></i>
+                    </div>
+                    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Add Members to {{ committee.name }}</h3>
+                        <div class="mt-4">
+                            <form method="post" action="{% url 'committee:membership_create' committee.pk %}" id="addMembersForm">
+                                {% csrf_token %}
+                                <div class="mb-4">
+                                    <label for="memberSearch" class="block text-sm font-medium text-gray-700 mb-2">Search Members</label>
+                                    <div class="relative">
+                                        <input type="text" id="memberSearch" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" placeholder="Type to search members...">
+                                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <i class="fas fa-search text-gray-400"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="border rounded-md overflow-hidden max-h-96 overflow-y-auto">
+                                    <table class="min-w-full divide-y divide-gray-200">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Select</th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="bg-white divide-y divide-gray-200" id="memberList">
+                                            {% for user in available_users %}
+                                            <tr class="member-row">
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <input type="checkbox" name="user_ids" value="{{ user.id }}" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap">
+                                                    <div class="flex items-center">
+                                                        <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
+                                                            {{ user.first_name|first }}{{ user.last_name|first }}
+                                                        </div>
+                                                        <div class="ml-4">
+                                                            <div class="text-sm font-medium text-gray-900">{{ user.get_full_name }}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                    {{ user.email }}
+                                                </td>
+                                            </tr>
+                                            {% empty %}
+                                            <tr>
+                                                <td colspan="3" class="px-6 py-4 text-center text-sm text-gray-500">
+                                                    No available members to add. All users are already in this committee.
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                                        Add Selected Members
+                                    </button>
+                                    <button type="button" onclick="document.getElementById('addMembersModal').classList.add('hidden')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:w-auto sm:text-sm">
+                                        Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Search functionality for members
+const memberSearch = document.getElementById('memberSearch');
+const memberRows = document.querySelectorAll('.member-row');
+
+if (memberSearch) {
+    memberSearch.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        
+        memberRows.forEach(row => {
+            const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+            const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+            
+            if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+}
+
+// Close modal when clicking outside
+const modal = document.getElementById('addMembersModal');
+if (modal) {
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+        }
+    });
+}
+
+// Close modal on escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        modal.classList.add('hidden');
+    }
+});
+</script>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="fixed bottom-4 right-4 z-50">
+            <div class="{% if message.tags == 'error' %}bg-red-500{% else %}bg-green-500{% endif %} text-white px-6 py-3 rounded-lg shadow-lg">
+                {{ message }}
+            </div>
+        </div>
+        <script>
+            // Auto-hide message after 5 seconds
+            setTimeout(function() {
+                document.querySelector('.fixed.bottom-4').style.display = 'none';
+            }, 5000);
+        </script>
+    {% endfor %}
+{% endif %}
+
+<script>
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('addMembersModal');
+        if (event.target === modal) {
+            modal.classList.add('hidden');
+        }
+    }
+</script>
+{% endblock %}

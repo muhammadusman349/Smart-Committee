@@ -1,0 +1,148 @@
+{% extends 'committee/committee_base.html' %}
+{% load static %}
+
+{% block committee_content %}
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Back Button -->
+    <div class="mb-6">
+        <a href="{% if committee %}{% url 'committee:committee_detail' committee.pk %}{% else %}{% url 'committee:committee_list' %}{% endif %}" 
+           class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-200">
+            <i class="fas fa-arrow-left mr-2"></i> Back to {% if committee %}{{ committee.name }}{% else %}Committees{% endif %}
+        </a>
+    </div>
+    
+    <div class="bg-white shadow-xl rounded-lg overflow-hidden">
+        <!-- Form Header -->
+        <div class="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-4">
+            <h2 class="text-2xl font-bold text-white">{{ title }}</h2>
+            {% if committee %}
+            <p class="text-blue-100 text-sm mt-1">Update committee details</p>
+            {% endif %}
+        </div>
+        
+        <!-- Form Content -->
+        <div class="p-6 md:p-8">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                {% if form.non_field_errors %}
+                <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-red-700">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {% for field in form %}
+                    <div class="space-y-2 {% if field.field.widget.input_type == 'checkbox' %}flex items-center{% endif %}" 
+                         {% if field.field.widget.input_type == 'select' or field.field.widget.input_type == 'select' %}data-controller="select"{% endif %}>
+                        {% if field.field.widget.input_type != 'checkbox' %}
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                            {{ field.label }}
+                            {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                        </label>
+                        {% endif %}
+                        
+                        {% if field.field.widget.input_type == 'select' %}
+                            <div class="mt-1 relative">
+                                <select id="{{ field.id_for_label }}" name="{{ field.name }}" 
+                                    class="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                                    {% for value, label in field.field.choices %}
+                                        <option value="{{ value }}" {% if field.value == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                    <i class="fas fa-chevron-down text-gray-400"></i>
+                                </div>
+                            </div>
+                        {% elif field.field.widget.input_type == 'checkbox' %}
+                            <div class="flex items-center h-5">
+                                <input id="{{ field.id_for_label }}" name="{{ field.name }}" type="checkbox" 
+                                       class="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
+                                       {% if field.value %}checked{% endif %}>
+                            </div>
+                            <label for="{{ field.id_for_label }}" class="ml-3 text-sm font-medium text-gray-700">
+                                {{ field.label }}
+                                {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                            </label>
+                        {% elif field.field.widget.input_type == 'date' %}
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <input type="date" id="{{ field.id_for_label }}" name="{{ field.name }}" 
+                                       value="{{ field.value|date:'Y-m-d' }}" 
+                                       class="block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                       {% if field.field.required %}required{% endif %}>
+                            </div>
+                        {% elif field.field.widget.input_type == 'number' %}
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <input type="number" id="{{ field.id_for_label }}" name="{{ field.name }}" 
+                                       value="{{ field.value|default:'' }}" 
+                                       class="block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                       step="0.01"
+                                       {% if field.field.required %}required{% endif %}>
+                            </div>
+                        {% else %}
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <input type="{{ field.field.widget.input_type }}" id="{{ field.id_for_label }}" name="{{ field.name }}" 
+                                       value="{{ field.value|default:'' }}" 
+                                       class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                                       {% if field.field.required %}required{% endif %}>
+                            </div>
+                        {% endif %}
+                        
+                        {% if field.help_text %}
+                            <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                        {% endif %}
+                        
+                        {% if field.errors %}
+                            <p class="mt-1 text-sm text-red-600">{{ field.errors|join:", " }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="pt-6 border-t border-gray-200 mt-8">
+                    <div class="flex justify-end space-x-3">
+                        <a href="{% if committee %}{% url 'committee:committee_detail' committee.pk %}{% else %}{% url 'committee:committee_list' %}{% endif %}" 
+                           class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <i class="fas fa-times mr-2"></i> Cancel
+                        </a>
+                        <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <i class="fas fa-save mr-2"></i> {{ submit_button|default:'Save Changes' }}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Add date picker functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize any select2 dropdowns if needed
+        const selectElements = document.querySelectorAll('select');
+        selectElements.forEach(select => {
+            select.classList.add('w-full', 'rounded-md');
+        });
+        
+        // Format date inputs for better UX
+        const dateInputs = document.querySelectorAll('input[type="date"]');
+        dateInputs.forEach(input => {
+            // Set min date to today for future dates if needed
+            // input.min = new Date().toISOString().split('T')[0];
+        });
+    });
+</script>
+{% endblock %}
