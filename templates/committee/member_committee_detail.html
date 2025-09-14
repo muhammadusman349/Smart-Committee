@@ -57,7 +57,15 @@
                             {% for membership in all_memberships %}
                                 <li class="flex items-center justify-between p-4 hover:bg-gray-50">
                                     <div class="flex items-center">
-                                        <img src="{% if membership.member.profile.image %}{{ membership.member.profile.image.url }}{% else %}{% static 'images/default-avatar.png' %}{% endif %}" alt="{{ membership.member.full_name }}" class="w-12 h-12 rounded-full mr-4 object-cover">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            {% if membership.member.user_profile.profile_picture %}
+                                                <img src="{{ membership.member.user_profile.profile_picture.url }}" alt="{{ membership.member.get_full_name }}" class="h-10 w-10 rounded-full object-cover">
+                                            {% else %}
+                                                <div class="h-10 w-10 rounded-full bg-blue-500 text-white flex items-center justify-center">
+                                                    {{ membership.member.first_name|first|upper }}{{ membership.member.last_name|first|upper }}
+                                                </div>
+                                            {% endif %}
+                                        </div>
                                         <div>
                                             <p class="font-semibold text-gray-800">{{ membership.member.full_name }}</p>
                                             <p class="text-sm text-gray-500">Joined: {{ membership.joined_at|date:"d M Y" }}</p>

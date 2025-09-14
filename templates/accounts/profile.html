@@ -2,35 +2,235 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
-  <div class="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8 md:p-12">
-    <div class="mb-8 text-center">
-      <h2 class="text-3xl font-bold text-blue-700">User Profile</h2>
-      <p class="text-gray-500 mt-2">Update your personal and profile information</p>
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
+  <div class="max-w-5xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-10">
+      <h1 class="text-4xl font-bold text-gray-800">Profile Settings</h1>
+      <p class="text-gray-600 mt-2">Manage your personal information and privacy settings</p>
     </div>
-    <form method="post" enctype="multipart/form-data" class="space-y-8">
-      {% csrf_token %}
-      <div>
-        <h3 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Personal Information</h3>
-        <div class="space-y-4">
-          {{ user_form|crispy }}
+
+    <div class="flex flex-col md:flex-row gap-8">
+      <!-- Left Column - Profile Card -->
+      <div class="w-full md:w-1/3">
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="bg-gradient-to-r from-blue-500 to-indigo-600 h-24"></div>
+          <div class="px-6 pb-6 -mt-12 text-center">
+            <div class="relative mx-auto w-28 h-28 rounded-full border-4 border-white shadow-lg overflow-hidden">
+              {% if user.user_profile.profile_picture %}
+                <img id="profile-preview" src="{{ user.user_profile.profile_picture.url }}" 
+                     alt="{{ user.full_name }}" class="w-full h-full object-cover">
+              {% else %}
+                <div id="initials-preview" class="w-full h-full flex items-center justify-center bg-gradient-to-r from-blue-600 to-indigo-700 text-white text-4xl font-bold">
+                  {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+                </div>
+              {% endif %}
+              <label for="id_profile_picture" class="absolute bottom-0 right-0 bg-white rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-100 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <input type="file" name="profile_picture" id="id_profile_picture" accept="image/*" class="hidden" onchange="previewImage(this)">
+              </label>
+            </div>
+            <h2 class="mt-4 text-xl font-semibold text-gray-800">{{ user.full_name|default:user.first_name }}</h2>
+            <p class="text-gray-500">{{ user.email }}</p>
+            <div class="mt-4">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                {% if user.is_organizer %}
+                  <svg class="h-4 w-4 mr-1.5 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                  </svg>
+                  Organizer
+                {% else %}
+                  <svg class="h-4 w-4 mr-1.5 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                  </svg>
+                  Member
+                {% endif %}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Actions -->
+        <div class="mt-6 bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="p-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Account Security</h3>
+            <div class="space-y-3">
+              <a href="{% url 'account_change_password' %}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                <svg class="h-5 w-5 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+                Change Password
+              </a>
+              <a href="{% url 'account_email' %}" class="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
+                <svg class="h-5 w-5 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Manage Email Addresses
+              </a>
+              <a href="{% url 'account_reset_password' %}" class="flex items-center px-4 py-3 text-sm text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                <svg class="h-5 w-5 text-blue-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+                Forgot Password?
+              </a>
+            </div>
+          </div>
         </div>
       </div>
-      <div>
-        <h3 class="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">Profile Information</h3>
-        <div class="space-y-4">
-          {{ profile_form|crispy }}
+
+      <!-- Right Column - Profile Form -->
+      <div class="w-full md:w-2/3">
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="p-6">
+            <form method="post" enctype="multipart/form-data" class="space-y-8">
+              {% csrf_token %}
+              
+              <!-- Personal Information Section -->
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-lg font-medium text-gray-900">Personal Information</h3>
+                  <span class="text-sm text-blue-600">Required</span>
+                </div>
+                <div class="space-y-4">
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                      {{ user_form.first_name|as_crispy_field }}
+                    </div>
+                    <div class="form-group">
+                      {{ user_form.last_name|as_crispy_field }}
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    {{ user_form.email|as_crispy_field }}
+                  </div>
+                  <div class="form-group">
+                    {{ user_form.phone|as_crispy_field }}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Profile Information Section -->
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <h3 class="text-lg font-medium text-gray-900">Profile Information</h3>
+                  <span class="text-sm text-gray-500">Optional</span>
+                </div>
+                <div class="space-y-4">
+                  <div class="form-group">
+                    {{ profile_form.bio|as_crispy_field }}
+                  </div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                      {{ profile_form.location|as_crispy_field }}
+                    </div>
+                    <div class="form-group">
+                      {{ profile_form.birth_date|as_crispy_field }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Form Actions -->
+              <div class="pt-4 flex justify-end space-x-3">
+                <a href="{% url 'home' %}" class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                  Cancel
+                </a>
+                <button type="submit" class="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
+                  <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
-      <div class="pt-4">
-        <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-semibold py-3 px-4 rounded-lg shadow-md transition-all duration-300 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-          Save Changes
-        </button>
-      </div>
-    </form>
-    <div class="mt-6 text-center">
-      <a href="{% url 'account_reset_password' %}" class="inline-block text-blue-600 hover:text-blue-800 font-medium transition">Change Password</a>
     </div>
   </div>
 </div>
+
+<script>
+  function previewImage(input) {
+    const preview = document.getElementById('profile-preview');
+    const initials = document.getElementById('initials-preview');
+    const file = input.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(e) {
+      if (!preview) {
+        // Create image preview if it doesn't exist
+        const newPreview = document.createElement('img');
+        newPreview.id = 'profile-preview';
+        newPreview.className = 'w-full h-full object-cover';
+        newPreview.alt = 'Profile preview';
+        input.parentNode.parentNode.insertBefore(newPreview, input.parentNode);
+        document.getElementById('initials-preview').style.display = 'none';
+        newPreview.src = e.target.result;
+      } else {
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        if (initials) initials.style.display = 'none';
+      }
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    }
+  }
+
+  // Initialize tooltips
+  document.addEventListener('DOMContentLoaded', function() {
+    const tooltipTriggers = document.querySelectorAll('[data-tooltip]');
+    tooltipTriggers.forEach(trigger => {
+      trigger.addEventListener('mouseenter', showTooltip);
+      trigger.addEventListener('mouseleave', hideTooltip);
+    });
+  });
+
+  function showTooltip(e) {
+    const tooltip = document.createElement('div');
+    tooltip.className = 'absolute z-10 p-2 text-xs text-white bg-gray-900 rounded shadow-lg';
+    tooltip.textContent = this.getAttribute('data-tooltip');
+    document.body.appendChild(tooltip);
+    
+    const rect = this.getBoundingClientRect();
+    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 5}px`;
+    tooltip.style.left = `${rect.left + (this.offsetWidth / 2) - (tooltip.offsetWidth / 2)}px`;
+    
+    this._tooltip = tooltip;
+  }
+
+  function hideTooltip() {
+    if (this._tooltip) {
+      document.body.removeChild(this._tooltip);
+      this._tooltip = null;
+    }
+  }
+</script>
+
+<style>
+  .form-group label {
+    @apply block text-sm font-medium text-gray-700 mb-1;
+  }
+  
+  .form-control {
+    @apply mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm;
+  }
+  
+  .form-text {
+    @apply mt-1 text-sm text-gray-500;
+  }
+  
+  .is-invalid {
+    @apply border-red-500 focus:ring-red-500 focus:border-red-500;
+  }
+  
+  .invalid-feedback {
+    @apply mt-1 text-sm text-red-600;
+  }
+</style>
 {% endblock %}

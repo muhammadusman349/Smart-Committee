@@ -42,8 +42,14 @@
                     <!-- Profile Dropdown -->
                     <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                                <span class="text-blue-600 font-semibold">{{ user.first_name|first|upper }}{{ user.last_name|first|upper|default:'' }}</span>
+                            <div class="w-10 h-10 rounded-full overflow-hidden">
+                                {% if user.user_profile.profile_picture %}
+                                    <img src="{{ user.user_profile.profile_picture.url }}" alt="{{ user.get_full_name }}" class="w-full h-full object-cover">
+                                {% else %}
+                                    <div class="w-full h-full bg-blue-500 flex items-center justify-center">
+                                        <span class="text-white font-semibold">{{ user.first_name|first|upper }}{{ user.last_name|first|upper|default:'' }}</span>
+                                    </div>
+                                {% endif %}
                             </div>
                             <span class="text-gray-700">{{ user.full_name|default:user.first_name }}</span>
                             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" :class="{ 'transform rotate-180': open }">
@@ -83,8 +89,14 @@
             <hr/>
             {% if user.is_authenticated %}
                 <a href="{% url 'profile' %}" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-100">
-                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                        <span class="text-blue-600 text-sm font-semibold">{{ user.first_name|first|upper }}{{ user.last_name|first|upper|default:'' }}</span>
+                    <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+                        {% if user.user_profile.profile_picture %}
+                            <img src="{{ user.user_profile.profile_picture.url }}" alt="{{ user.get_full_name }}" class="w-full h-full object-cover">
+                        {% else %}
+                            <div class="w-full h-full bg-blue-500 flex items-center justify-center">
+                                <span class="text-white text-sm font-semibold">{{ user.first_name|first|upper }}{{ user.last_name|first|upper|default:'' }}</span>
+                            </div>
+                        {% endif %}
                     </div>
                     <span class="text-gray-800">My Profile</span>
                 </a>
