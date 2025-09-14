@@ -13,7 +13,7 @@
 <div class="p-8">
     <!-- Dashboard Header -->
     <div class="mb-8">
-        <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome back, {{ user.first_name|default:user.email }}!</h2>
+        <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome back, {{ user.full_name|default:user.get_username|default:'User' }}!</h2>
         <p class="text-gray-600">Comprehensive overview of your committee management activities</p>
     </div>
     

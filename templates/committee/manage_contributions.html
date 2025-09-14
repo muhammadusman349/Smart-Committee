@@ -49,42 +49,67 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">₹{{ contribution.amount_paid|floatformat:2 }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ contribution.for_month|date:"M Y" }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                            {% if contribution.payment_status == 'PAID' %}bg-green-100 text-green-800
-                            {% elif contribution.payment_status == 'LATE' %}bg-yellow-100 text-yellow-800
-                            {% else %}bg-gray-100 text-gray-800{% endif %}">
-                            {{ contribution.payment_status }}
-                        </span>
+                        <div class="flex flex-col space-y-1">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                {% if contribution.payment_status == 'PAID' %}bg-green-100 text-green-800
+                                {% elif contribution.payment_status == 'LATE' %}bg-yellow-100 text-yellow-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                {{ contribution.payment_status }}
+                            </span>
+                            {% if contribution.payment_status in 'PAID,LATE' %}
+                                {% if contribution.verified_by_organizer %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                        <i class="fas fa-check-circle mr-1"></i> Verified
+                                    </span>
+                                {% else %}
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        <i class="fas fa-clock mr-1"></i> Pending Verification
+                                    </span>
+                                {% endif %}
+                            {% endif %}
+                        </div>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div class="flex space-x-2">
+                        <div class="flex items-center justify-end space-x-2">
                             {% if contribution.payment_status != 'PAID' %}
                                 <a href="{% url 'committee:contribution_update' contribution.pk %}" 
-                                   class="text-indigo-600 hover:text-indigo-900"
+                                   class="text-indigo-600 hover:text-indigo-900 p-1 rounded hover:bg-indigo-50"
                                    title="Edit Contribution">
                                     <i class="fas fa-edit"></i>
                                 </a>
                             {% else %}
-                                <span class="text-gray-400 cursor-not-allowed" title="Cannot edit paid contribution">
-                                    <a href="{% url 'committee:contribution_update' pk=contribution.pk %}" class="btn btn-sm btn-outline-primary me-2">Edit</a>
-                                    <a href="{% url 'committee:contribution_delete' pk=contribution.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
-                                    {% if not contribution.verified_by_organizer and contribution.payment_status == 'PAID' %}
-                                        <form action="{% url 'committee:contribution_verify' pk=contribution.pk %}" method="post" class="d-inline">
-                                            {% csrf_token %}
-                                            <button type="submit" class="btn btn-sm btn-outline-success">Verify</button>
-                                        </form>
-                                    {% endif %}
-                                </span>
+                                <a href="{% url 'committee:contribution_update' pk=contribution.pk %}" 
+                                   class="text-gray-400 hover:text-gray-600 p-1 rounded hover:bg-gray-100"
+                                   title="View Contribution">
+                                    <i class="fas fa-eye"></i>
+                                </a>
                             {% endif %}
-                            <form action="{% url 'committee:contribution_delete' contribution.pk %}" method="post" class="inline" id="delete-form-{{ contribution.pk }}">
+                            
+                            {% if not contribution.verified_by_organizer and contribution.payment_status in 'PAID,LATE' %}
+                                <form action="{% url 'committee:contribution_verify' pk=contribution.pk %}" method="post" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" 
+                                            class="text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50"
+                                            title="Verify Contribution">
+                                        <i class="fas fa-check-circle"></i>
+                                    </button>
+                                </form>
+                            {% endif %}
+                            
+                            <button type="button" 
+                                    class="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50 delete-btn"
+                                    data-contribution-id="{{ contribution.pk }}"
+                                    data-member-name="{{ contribution.membership.member.full_name }}"
+                                    data-month="{{ contribution.for_month|date:'M Y' }}"
+                                    title="Delete Contribution">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            
+                            <form action="{% url 'committee:contribution_delete' contribution.pk %}" 
+                                  method="post" 
+                                  class="hidden" 
+                                  id="delete-form-{{ contribution.pk }}">
                                 {% csrf_token %}
-                                <button type="button" 
-                                        class="text-red-600 hover:text-red-900 delete-btn"
-                                        data-contribution-id="{{ contribution.pk }}"
-                                        data-member-name="{{ contribution.membership.member.full_name }}"
-                                        data-month="{{ contribution.for_month|date:'M Y' }}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
                             </form>
                         </div>
                     </td>
