@@ -616,7 +616,10 @@ def organizer_dashboard(request):
 @login_required
 def see_all_members(request):
     user = request.user
-    members = Membership.objects.filter(committee__organizer=user, status='ACTIVE').order_by('-joined_at')
+    members = Membership.objects.filter(
+        committee__organizer=user, 
+        status='ACTIVE'
+    ).select_related('member').prefetch_related('member__user_profile').order_by('-joined_at')
 
     paginator = Paginator(members, 5)
     page_number = request.GET.get('page')
@@ -640,8 +643,11 @@ def manage_contributions(request):
         messages.error(request, "Only organizers can access this page")
         return redirect('committee:committee_list')
 
-    # Fetch contributions for the organizer's committees
-    contributions = Contribution.objects.filter(
+    # Fetch contributions for the organizer's committees with related data
+    contributions = Contribution.objects.select_related(
+        'membership__member__user_profile',
+        'membership__committee'
+    ).filter(
         membership__committee__organizer=request.user
     ).order_by('-for_month')
 
@@ -671,15 +677,23 @@ def manage_payouts(request):
         messages.error(request, "Only organizers can access this page")
         return redirect('committee:committee_list')
 
-    payouts = Payout.objects.filter(
+    # Fetch payouts with related data to prevent N+1 queries
+    payouts = Payout.objects.select_related(
+        'membership__member__user_profile',
+        'membership__committee',
+        'received_by'
+    ).filter(
         membership__committee__organizer=request.user
     ).order_by('-paid_at')
 
     # Get active memberships for the create payout dropdown
-    memberships = Membership.objects.filter(
+    memberships = Membership.objects.select_related(
+        'member__user_profile',
+        'committee'
+    ).filter(
         committee__organizer=request.user,
         status='ACTIVE'
-    ).select_related('member', 'committee')
+    )
 
     return render(request, 'committee/manage_payouts.html', {
         'payouts': payouts,
@@ -834,8 +848,11 @@ def member_committee_detail(request, pk):
         messages.error(request, "You are not an active member of this committee.")
         return redirect('committee:member_dashboard')
 
-    # Get all active members of the committee
-    all_memberships = Membership.objects.filter(committee=committee, status='ACTIVE').select_related('member')
+    # Get all active members of the committee with related data
+    all_memberships = Membership.objects.filter(
+        committee=committee, 
+        status='ACTIVE'
+    ).select_related('member').prefetch_related('member__user_profile')
 
     # Get contributions for the logged-in member
     my_contributions = Contribution.objects.filter(membership=user_membership).order_by('-for_month')
