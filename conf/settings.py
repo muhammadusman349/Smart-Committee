@@ -159,12 +159,18 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 SITE_ID = 1
-ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
+# Email verification
+ACCOUNT_EMAIL_VERIFICATION = "none"
+
+# Login only by email
+ACCOUNT_LOGIN_METHODS = {"email"}
+
+# Signup requires only email + passwords
+ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+
+# Your custom user model mapping
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_USER_MODEL_EMAIL_FIELD = 'email'
+ACCOUNT_USER_MODEL_EMAIL_FIELD = "email"
 
 # Crispy Forms
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
