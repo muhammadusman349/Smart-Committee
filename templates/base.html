@@ -6,9 +6,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Committee Savings System{% endblock %}</title>
     <meta name="description" content="Manage committee savings securely and transparently with our Django-based platform."/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
+                        'display': ['Playfair Display', 'serif'],
+                        'body': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a',
+                        },
+                        secondary: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'bounce-subtle': 'bounceSubtle 2s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        bounceSubtle: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -16,97 +79,165 @@
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
     
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        .card-hover {
+            transition: all 0.2s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-primary {
+            background: #2563eb;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+    </style>
+    
     {% block extra_css %}{% endblock %}
 </head>
 
 <body class="bg-gray-50 font-sans leading-normal tracking-normal flex flex-col min-h-screen">
 
-    <!-- Responsive Navigation Bar -->
-    <nav class="bg-white shadow-md sticky top-0 z-50">
-        <div class="container mx-auto px-6 py-3 flex justify-between items-center">
-            <a class="text-xl font-bold text-blue-600" href="{% url 'home' %}">
-                <i class="fas fa-piggy-bank mr-2"></i>
-                CommitteeApp
+    <!-- Professional Navigation Bar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a class="flex items-center space-x-4 group" href="{% url 'home' %}">
+                <div class="relative">
+                    <!-- Unique Professional Logo -->
+                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg transform group-hover:scale-105 transition-all duration-300">
+                        <svg class="w-7 h-7 text-white" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Unique geometric logo design -->
+                            <path d="M8 6L16 2L24 6V12L16 16L8 12V6Z" fill="currentColor" fill-opacity="0.9"/>
+                            <path d="M8 14L16 10L24 14V20L16 24L8 20V14Z" fill="currentColor" fill-opacity="0.7"/>
+                            <path d="M12 18L16 16L20 18V22L16 24L12 22V18Z" fill="currentColor"/>
+                            <circle cx="16" cy="8" r="2" fill="rgba(255,255,255,0.8)"/>
+                            <circle cx="16" cy="20" r="1.5" fill="rgba(255,255,255,0.9)"/>
+                        </svg>
+                    </div>
+                    <!-- Subtle glow effect -->
+                    <div class="absolute inset-0 bg-gradient-to-br from-indigo-400 to-cyan-400 rounded-xl blur-md opacity-20 group-hover:opacity-30 transition-opacity duration-300 -z-10"></div>
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-2xl font-bold font-display text-gray-800 leading-tight tracking-tight">FinanceCore</span>
+                    <span class="text-xs font-medium font-body text-gray-500 -mt-1 tracking-wide">COMMITTEE SOLUTIONS</span>
+                </div>
             </a>
             
             <!-- Mobile Menu Button -->
             <div class="md:hidden">
-                <button id="mobile-menu-button" class="text-gray-800 hover:text-blue-600 focus:outline-none">
-                    <i class="fas fa-bars text-2xl"></i>
+                <button id="mobile-menu-button" class="p-2 rounded-lg text-secondary-600 hover:text-primary-600 hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all">
+                    <i class="fas fa-bars text-xl"></i>
                 </button>
             </div>
             
             <!-- Desktop Menu -->
-            <div class="hidden md:flex items-center space-x-4">
+            <div class="hidden md:flex items-center space-x-6">
                 {% if user.is_authenticated %}
                     <!-- Profile Dropdown -->
                     <div class="relative" x-data="{ open: false }">
-                        <button @click="open = !open" class="flex items-center space-x-2 focus:outline-none">
-                            <div class="w-10 h-10 rounded-full overflow-hidden">
+                        <button @click="open = !open" class="flex items-center space-x-3 p-2 rounded-xl hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all group">
+                            <div class="w-9 h-9 rounded-full overflow-hidden border border-gray-200 shadow-sm">
                                 {% if user.user_profile.profile_picture %}
                                     <img src="{{ user.user_profile.profile_picture.url }}" alt="{{ user.get_full_name }}" class="w-full h-full object-cover">
                                 {% else %}
-                                    <div class="w-full h-full bg-blue-500 flex items-center justify-center">
-                                        <span class="text-white font-semibold">{{ user.first_name|first|upper }}{{ user.last_name|first|upper|default:'' }}</span>
+                                    <div class="w-full h-full bg-blue-600 flex items-center justify-center">
+                                        <span class="text-white font-medium text-sm">{{ user.first_name|first|upper }}{{ user.last_name|first|upper|default:'' }}</span>
                                     </div>
                                 {% endif %}
                             </div>
-                            <span class="text-gray-700">{{ user.full_name|default:user.first_name }}</span>
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" :class="{ 'transform rotate-180': open }">
+                            <div class="text-left">
+                                <div class="text-sm font-semibold text-secondary-800 group-hover:text-primary-700 transition-colors">
+                                    {{ user.full_name|default:user.first_name }}
+                                </div>
+                                <div class="text-xs text-secondary-500">
+                                    {% if user.is_organizer %}Organizer{% else %}Member{% endif %}
+                                </div>
+                            </div>
+                            <svg class="w-4 h-4 text-secondary-400 group-hover:text-primary-600 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" :class="{ 'transform rotate-180': open }">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </button>
                         
                         <!-- Dropdown Menu -->
                         <div x-show="open" @click.away="open = false" 
-                             class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50"
-                             x-transition:enter="transition ease-out duration-100"
-                             x-transition:enter-start="transform opacity-0 scale-95"
-                             x-transition:enter-end="transform opacity-100 scale-100"
-                             x-transition:leave="transition ease-in duration-75"
-                             x-transition:leave-start="transform opacity-100 scale-100"
-                             x-transition:leave-end="transform opacity-0 scale-95">
-                            <a href="{% url 'profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <i class="fas fa-user-circle mr-2"></i> My Profile
+                             class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="transform opacity-0 scale-95 translate-y-1"
+                             x-transition:enter-end="transform opacity-100 scale-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-150"
+                             x-transition:leave-start="transform opacity-100 scale-100 translate-y-0"
+                             x-transition:leave-end="transform opacity-0 scale-95 translate-y-1">
+                            <a href="{% url 'profile' %}" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-user-circle text-gray-500 mr-3"></i>
+                                <span>My Profile</span>
                             </a>
                             <div class="border-t border-gray-100 my-1"></div>
-                            <a href="{% url 'account_logout' %}" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50">
-                                <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                            <a href="{% url 'account_logout' %}" class="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
+                                <i class="fas fa-sign-out-alt text-red-500 mr-3"></i>
+                                <span>Logout</span>
                             </a>
                         </div>
                     </div>
                 {% else %}
-                    <a href="{% url 'account_login' %}" class="text-gray-600 hover:text-blue-600 transition duration-300 px-3 py-2">Login</a>
-                    <a href="{% url 'account_signup' %}" class="bg-blue-600 text-white px-4 py-2 rounded-full hover:bg-blue-700 transition duration-300">Sign Up</a>
+                    <div class="flex items-center space-x-3">
+                        <a href="{% url 'account_login' %}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
+                            Login
+                        </a>
+                        <a href="{% url 'account_signup' %}" class="btn-primary px-5 py-2 text-sm font-medium text-white rounded-md shadow-sm">
+                            Sign Up
+                        </a>
+                    </div>
                 {% endif %}
             </div>
         </div>
         
         <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden px-6 pb-4 space-y-2">
-            {% comment %} <a href="{% url 'home' %}" class="block text-gray-800 hover:bg-blue-50 p-2 rounded">Home</a>
-            <a href="{% url 'committee:committee_list' %}" class="block text-gray-800 hover:bg-blue-50 p-2 rounded">Committees</a> {% endcomment %}
-            <hr/>
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200 px-6 pb-6 space-y-3">
             {% if user.is_authenticated %}
-                <a href="{% url 'profile' %}" class="flex items-center space-x-2 p-2 rounded hover:bg-gray-100">
-                    <div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-                        {% if user.user_profile.profile_picture %}
-                            <img src="{{ user.user_profile.profile_picture.url }}" alt="{{ user.get_full_name }}" class="w-full h-full object-cover">
-                        {% else %}
-                            <div class="w-full h-full bg-blue-500 flex items-center justify-center">
-                                <span class="text-white text-sm font-semibold">{{ user.first_name|first|upper }}{{ user.last_name|first|upper|default:'' }}</span>
-                            </div>
-                        {% endif %}
-                    </div>
-                    <span class="text-gray-800">My Profile</span>
-                </a>
-                <hr class="my-2 border-gray-200">
-                <a href="{% url 'account_logout' %}" class="block p-2 text-red-600 rounded hover:bg-red-50">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                </a>
+                <div class="pt-4">
+                    <a href="{% url 'profile' %}" class="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div class="w-9 h-9 rounded-full overflow-hidden border border-gray-200 shadow-sm flex-shrink-0">
+                            {% if user.user_profile.profile_picture %}
+                                <img src="{{ user.user_profile.profile_picture.url }}" alt="{{ user.get_full_name }}" class="w-full h-full object-cover">
+                            {% else %}
+                                <div class="w-full h-full bg-blue-600 flex items-center justify-center">
+                                    <span class="text-white text-sm font-medium">{{ user.first_name|first|upper }}{{ user.last_name|first|upper|default:'' }}</span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="flex-1">
+                            <div class="text-sm font-medium text-gray-800">{{ user.full_name|default:user.first_name }}</div>
+                            <div class="text-xs text-gray-500">View Profile</div>
+                        </div>
+                        <i class="fas fa-chevron-right text-gray-400"></i>
+                    </a>
+                </div>
+                <div class="border-t border-secondary-100 pt-3">
+                    <a href="{% url 'account_logout' %}" class="flex items-center space-x-3 p-3 text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                        <i class="fas fa-sign-out-alt text-red-500"></i>
+                        <span class="font-medium">Logout</span>
+                    </a>
+                </div>
             {% else %}
-                <a href="{% url 'account_login' %}" class="block bg-gray-200 text-gray-800 text-center p-2 rounded mb-2 hover:bg-gray-300">Login</a>
-                <a href="{% url 'account_signup' %}" class="block bg-blue-600 text-white text-center p-2 rounded hover:bg-blue-700">Sign Up</a>
+                <div class="pt-4 space-y-3">
+                    <a href="{% url 'account_login' %}" class="block w-full text-center px-4 py-2 text-sm font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors">
+                        Login
+                    </a>
+                    <a href="{% url 'account_signup' %}" class="block w-full text-center btn-primary px-4 py-2 text-sm font-medium text-white rounded-md shadow-sm">
+                        Sign Up
+                    </a>
+                </div>
             {% endif %}
         </div>
     </nav>
@@ -157,9 +288,9 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <!-- About Section -->
                 <div>
-                    <h3 class="text-lg font-bold mb-4">CommitteeApp</h3>
-                    <p class="text-gray-400">
-                        Simplifying committee savings with a secure and transparent platform.
+                    <h3 class="text-lg font-semibold mb-4 text-white font-display">FinanceCore</h3>
+                    <p class="text-gray-400 font-body">
+                        Professional committee financial management solution for modern organizations.
                     </p>
                 </div>
                 
@@ -196,7 +327,7 @@
             <hr class="border-gray-700 my-8">
             
             <div class="text-center text-gray-500">
-                <p>&copy; {% now "Y" %} CommitteeApp. All Rights Reserved.</p>
+                <p>&copy; {% now "Y" %} FinanceCore. All Rights Reserved.</p>
             </div>
         </div>
     </footer>

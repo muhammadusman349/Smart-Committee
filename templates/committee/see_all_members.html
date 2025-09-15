@@ -4,7 +4,7 @@
 {% block committee_content %}
 <div class="p-8">
     <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">All Committees Members</h1>
+        <h1 class="text-3xl font-bold font-display text-gray-900">All Committees Members</h1>
         {% comment %} <a href="{% url 'committee:membership_create' committee.pk %}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-200">
             <i class="fas fa-user-plus mr-2"></i> Add Member
         </a> {% endcomment %}
@@ -37,7 +37,7 @@
                                 {% endif %}
                             </div>
                             <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-900">{{ membership.member.full_name }}</div>
+                                <div class="text-sm font-medium font-display text-gray-900">{{ membership.member.full_name }}</div>
                                 <div class="text-sm text-gray-500">{{ membership.member.email }}</div>
                             </div>
                         </div>
@@ -69,7 +69,7 @@
                 <tr>
                     <td colspan="7" class="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-500">
                         <i class="fas fa-users text-gray-400 text-4xl mb-3"></i>
-                        <p>No members found</p>
+                        <p class="font-body">No members found</p>
                     </td>
                 </tr>
                 {% endfor %}

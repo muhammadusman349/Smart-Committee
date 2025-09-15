@@ -12,7 +12,7 @@
 {% block committee_content %}
 <div class="p-8">
     <div class="flex justify-between items-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">All Contributions</h1>
+        <h1 class="text-3xl font-bold font-display text-gray-900">All Contributions</h1>
         <a href="{% url 'committee:organizer_dashboard' %}" class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition duration-200">
             <i class="fas fa-arrow-left mr-2"></i> Back to Dashboard
         </a>
@@ -44,7 +44,7 @@
                                 {% endif %}
                             </div>
                             <div class="ml-4">
-                                <div class="text-sm font-medium text-gray-900">{{ contribution.membership.member.full_name }}</div>
+                                <div class="text-sm font-medium font-display text-gray-900">{{ contribution.membership.member.full_name }}</div>
                                 <div class="text-sm text-gray-500">{{ contribution.membership.member.email }}</div>
                             </div>
                         </div>

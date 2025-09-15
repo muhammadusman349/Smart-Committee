@@ -8,8 +8,8 @@
     <div class="max-w-2xl mx-auto">
         <div class="flex justify-between items-center mb-8">
             <div>
-                <h1 class="text-3xl font-bold text-gray-900">{{ title }}</h1>
-                <p class="text-gray-600 mt-1">Update membership details for {{ membership.member.full_name }}</p>
+                <h1 class="text-3xl font-bold font-display text-gray-900">{{ title }}</h1>
+                <p class="text-gray-600 font-body mt-1">Update membership details for {{ membership.member.full_name }}</p>
             </div>
         </div>
 
@@ -20,7 +20,7 @@
                         {{ membership.member.first_name|first }}{{ membership.member.last_name|first }}
                     </div>
                     <div class="ml-4">
-                        <h3 class="text-lg font-semibold text-gray-900">{{ membership.member.get_full_name }}</h3>
+                        <h3 class="text-lg font-semibold font-display text-gray-900">{{ membership.member.get_full_name }}</h3>
                         <p class="text-sm text-gray-600">{{ membership.member.email }}</p>
                     </div>
                 </div>

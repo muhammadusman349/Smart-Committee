@@ -7,11 +7,11 @@
         <div class="flex justify-between items-center mb-8">
             <div>
                 {% if title == 'Record Contribution' %}
-                <h1 class="text-3xl font-bold text-gray-900">Record Contribution</h1>
-                <p class="text-gray-600 mt-1">Submit a new contribution for the selected member.</p>
+                <h1 class="text-3xl font-bold font-display text-gray-900">Record Contribution</h1>
+                <p class="text-gray-600 font-body mt-1">Submit a new contribution for the selected member.</p>
                 {% else %}
-                <h1 class="text-3xl font-bold text-gray-900">Update Contribution</h1>
-                <p class="text-gray-600 mt-1">Edit contribution details</p>
+                <h1 class="text-3xl font-bold font-display text-gray-900">Update Contribution</h1>
+                <p class="text-gray-600 font-body mt-1">Edit contribution details</p>
                 {% endif %}
             </div>
         </div>
@@ -23,7 +23,7 @@
                         {{ membership.member.first_name|first }}{{ membership.member.last_name|first }}
                     </div>
                     <div class="ml-4">
-                        <h3 class="text-lg font-semibold text-gray-900">{{ membership.member.full_name }}</h3>
+                        <h3 class="text-lg font-semibold font-display text-gray-900">{{ membership.member.full_name }}</h3>
                         <p class="text-sm text-gray-600">{{ membership.member.email }}</p>
                     </div>
                 </div>
