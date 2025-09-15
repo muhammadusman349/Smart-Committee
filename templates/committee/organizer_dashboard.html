@@ -13,8 +13,8 @@
 <div class="p-8">
     <!-- Dashboard Header -->
     <div class="mb-8">
-        <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome back, {{ user.full_name|default:user.get_username|default:'User' }}!</h2>
-        <p class="text-gray-600">Comprehensive overview of your committee management activities</p>
+        <h2 class="text-3xl font-bold font-display text-gray-900 mb-2">Welcome back, {{ user.full_name|default:user.get_username|default:'User' }}!</h2>
+        <p class="text-gray-600 font-body">Comprehensive overview of your committee management activities</p>
     </div>
     
     <!-- Stats Grid -->
@@ -22,7 +22,7 @@
         <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg p-6 text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-lg font-semibold mb-1">Total Committees</h3>
+                    <h3 class="text-lg font-semibold font-display mb-1">Total Committees</h3>
                     <p class="text-3xl font-bold">{{ total_committees }}</p>
                     <p class="text-blue-100 text-sm mt-2">Active committees managed</p>
                 </div>
@@ -35,7 +35,7 @@
         <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-lg p-6 text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-lg font-semibold mb-1">Total Members</h3>
+                    <h3 class="text-lg font-semibold font-display mb-1">Total Members</h3>
                     <p class="text-3xl font-bold">{{ total_members }}</p>
                     <p class="text-green-100 text-sm mt-2">Across all committees</p>
                 </div>
@@ -48,7 +48,7 @@
         <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-lg p-6 text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-lg font-semibold mb-1">Total Contributions</h3>
+                    <h3 class="text-lg font-semibold font-display mb-1">Total Contributions</h3>
                     <p class="text-3xl font-bold">{{ total_contributions|floatformat:2 }}</p>
                     <p class="text-purple-100 text-sm mt-2">Collected this month</p>
                 </div>
@@ -61,7 +61,7 @@
         <div class="bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl shadow-lg p-6 text-white">
             <div class="flex items-center justify-between">
                 <div>
-                    <h3 class="text-lg font-semibold mb-1">Total Payouts</h3>
+                    <h3 class="text-lg font-semibold font-display mb-1">Total Payouts</h3>
                     <p class="text-3xl font-bold">{{ total_payouts|floatformat:2 }}</p>
                     <p class="text-pink-100 text-sm mt-2">Disbursed this month</p>
                 </div>
@@ -74,15 +74,15 @@
     
     <!-- Next Contribution Date -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-        <h3 class="text-xl font-bold text-gray-900 mb-4">Next Contribution Date</h3>
-        <p class="text-gray-600">Contributions for the next cycle are due on <span class="font-semibold text-blue-600">{{ next_contribution_date|date:"F 1, Y" }}</span>.</p>
+        <h3 class="text-xl font-bold font-display text-gray-900 mb-4">Next Contribution Date</h3>
+        <p class="text-gray-600 font-body">Contributions for the next cycle are due on <span class="font-semibold text-blue-600">{{ next_contribution_date|date:"F 1, Y" }}</span>.</p>
     </div>
 
     <!-- Quick Actions -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <!-- Recent Activity -->
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Recent Activity</h3>
+            <h3 class="text-xl font-bold font-display text-gray-900 mb-4">Recent Activity</h3>
             <div class="space-y-4">
                 {% if new_committee_created != null %}
                 <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
@@ -90,7 +90,7 @@
                         <i class="fas fa-plus text-blue-600"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="font-medium text-gray-900">New committee created</p>
+                        <p class="font-medium font-display text-gray-900">New committee created</p>
                         {% if new_committee_created >= 24 %}
                             <p class="text-sm text-gray-500">{{ new_committee_created|div:24 }} {% if new_committee_created|div:24 == 1 %}day{% else %}days{% endif %} ago</p>
                         {% else %}
@@ -114,7 +114,7 @@
                         <i class="fas fa-user-plus text-green-600"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="font-medium text-gray-900">New member joined</p>
+                        <p class="font-medium font-display text-gray-900">New member joined</p>
                         {% if new_member_joined >= 24 %}
                             <p class="text-sm text-gray-500">{{ new_member_joined|div:24 }} {% if new_member_joined|div:24 == 1 %}day{% else %}days{% endif %} ago</p>
                         {% else %}
@@ -138,7 +138,7 @@
                         <i class="fas fa-rupee-sign text-purple-600"></i>
                     </div>
                     <div class="flex-1">
-                        <p class="font-medium text-gray-900">Payment received</p>
+                        <p class="font-medium font-display text-gray-900">Payment received</p>
                         {% if payment_received >= 24 %}
                             <p class="text-sm text-gray-500">{{ payment_received|div:24 }} {% if payment_received|div:24 == 1 %}day{% else %}days{% endif %} ago</p>
                         {% else %}

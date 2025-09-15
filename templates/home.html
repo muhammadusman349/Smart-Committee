@@ -4,35 +4,30 @@
 {% block title %}Committee Savings Management{% endblock %}
 
 {% block content %}
-<!-- Hero Section for Unauthenticated Users -->
-<section class="relative bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 text-white overflow-hidden">
-    <div class="absolute inset-0 bg-black opacity-20"></div>
-    <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=\"60\" height=\"60\" viewBox=\"0 0 60 60\" xmlns=\"http://www.w3.org/2000/svg\"%3E%3Cg fill=\"none\" fill-rule=\"evenodd\"%3E%3Cg fill=\"%239fa8da\" fill-opacity=\"0.1\"%3E%3Cpath d=\"m36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
-    
-    <div class="relative container mx-auto px-6 py-20 md:py-32">
+<!-- Professional Hero Section -->
+<section class="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+    <div class="container mx-auto px-6 py-16 md:py-24">
         <div class="grid lg:grid-cols-2 gap-12 items-center">
-            <div class="space-y-8">
+            <div class="space-y-6">
                 <div class="space-y-4">
-                    <h1 class="text-5xl lg:text-7xl font-bold leading-tight">
-                        Smart Committee
-                        <span class="bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text text-transparent">
-                            Savings
-                        </span>
+                    <h1 class="text-4xl lg:text-5xl font-bold font-display leading-tight">
+                        Professional Committee
+                        <span class="text-blue-200">Financial Management</span>
                     </h1>
-                    <p class="text-xl lg:text-2xl text-blue-100 leading-relaxed">
-                        Streamline your committee management with our secure, intuitive platform. 
-                        Track contributions, manage payouts, and ensure transparency effortlessly.
+                    <p class="text-lg lg:text-xl text-blue-100 leading-relaxed">
+                        Streamline your committee operations with our secure, enterprise-grade platform. 
+                        Track contributions, manage distributions, and maintain complete transparency.
                     </p>
                 </div>
                 
                 <div class="flex flex-col sm:flex-row gap-4">
                     <a href="{% url 'account_signup' %}" 
-                       class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:from-yellow-500 hover:to-orange-600 transform hover:scale-105 transition duration-300 shadow-lg">
-                        <i class="fas fa-rocket mr-2"></i>
+                       class="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition duration-200 shadow-sm">
+                        <i class="fas fa-arrow-right mr-2"></i>
                         Get Started
                     </a>
                     <a href="{% url 'account_login' %}" 
-                       class="border-2 border-white text-white px-8 py-4 rounded-xl font-semibold text-lg hover:bg-white hover:text-blue-600 transform hover:scale-105 transition duration-300">
+                       class="border border-white text-white px-6 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition duration-200">
                         <i class="fas fa-sign-in-alt mr-2"></i>
                         Sign In
                     </a>
@@ -51,24 +46,24 @@
             </div>
             
             <div class="relative">
-                <div class="bg-white rounded-2xl shadow-xl p-6 transform rotate-2 hover:rotate-0 transition duration-500">
-                    <div class="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-4 mb-4">
+                <div class="bg-white rounded-lg shadow-lg p-6 border border-gray-200">
+                    <div class="bg-blue-600 rounded-lg p-4 mb-4">
                         <div class="flex items-center justify-between text-white">
                             <div>
-                                <h3 class="font-semibold">Total Savings</h3>
+                                <h3 class="font-semibold text-sm">Total Managed Funds</h3>
                                 <p class="text-2xl font-bold">₹{{ total_contributions_all|floatformat:2 }}</p>
                             </div>
-                            <i class="fas fa-piggy-bank text-3xl opacity-80"></i>
+                            <i class="fas fa-chart-bar text-2xl opacity-80"></i>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3">
-                        <div class="bg-green-50 rounded-lg p-3 text-center">
-                            <i class="fas fa-users text-green-600 mb-1"></i>
-                            <p class="text-sm text-green-800 font-medium">{{ total_members_all }} Members</p>
+                        <div class="bg-gray-50 rounded-lg p-3 text-center border">
+                            <i class="fas fa-users text-gray-600 mb-1"></i>
+                            <p class="text-sm text-gray-800 font-medium">{{ total_members_all }} Members</p>
                         </div>
-                        <div class="bg-blue-50 rounded-lg p-3 text-center">
-                            <i class="fas fa-calendar text-blue-600 mb-1"></i>
-                            <p class="text-sm text-blue-800 font-medium">{{ total_committees_all }} Committees</p>
+                        <div class="bg-gray-50 rounded-lg p-3 text-center border">
+                            <i class="fas fa-building text-gray-600 mb-1"></i>
+                            <p class="text-sm text-gray-800 font-medium">{{ total_committees_all }} Committees</p>
                         </div>
                     </div>
                 </div>
@@ -81,48 +76,56 @@
 <section class="py-16 bg-white">
     <div class="container mx-auto px-6">
         <div class="text-center mb-12">
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">Platform Statistics</h2>
-            <p class="text-xl text-gray-600">Real-time insights from our community</p>
+            <h2 class="text-4xl font-bold font-display text-gray-900 mb-4">Platform Statistics</h2>
+            <p class="text-xl text-gray-600 font-body">Real-time insights from our community</p>
         </div>
         
-        <div class="grid md:grid-cols-4 gap-8">
-            <div class="text-center group">
-                <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-8 mb-4 transform group-hover:scale-105 transition duration-300">
-                    <i class="fas fa-users text-white text-4xl mb-4"></i>
-                    <h3 class="text-4xl font-bold text-white mb-2">
+        <div class="grid md:grid-cols-4 gap-6">
+            <div class="text-center">
+                <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition duration-200">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-building text-blue-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-2">
                         <span class="countup" data-target="{{ total_committees_all }}">0</span>
                     </h3>
-                    <p class="text-blue-100">Active Committees</p>
+                    <p class="text-gray-600">Active Committees</p>
                 </div>
             </div>
             
-            <div class="text-center group">
-                <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-8 mb-4 transform group-hover:scale-105 transition duration-300">
-                    <i class="fas fa-user-friends text-white text-4xl mb-4"></i>
-                    <h3 class="text-4xl font-bold text-white mb-2">
+            <div class="text-center">
+                <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition duration-200">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-users text-green-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-2">
                         <span class="countup" data-target="{{ total_members_all }}">0</span>
                     </h3>
-                    <p class="text-green-100">Registered Members</p>
+                    <p class="text-gray-600">Registered Members</p>
                 </div>
             </div>
             
-            <div class="text-center group">
-                <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-8 mb-4 transform group-hover:scale-105 transition duration-300">
-                    <i class="fas fa-rupee-sign text-white text-4xl mb-4"></i>
-                    <h3 class="text-4xl font-bold text-white mb-2">
+            <div class="text-center">
+                <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition duration-200">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-rupee-sign text-purple-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-2">
                         ₹<span class="countup" data-target="{{ total_contributions_all }}">0</span>
                     </h3>
-                    <p class="text-purple-100">Total Savings</p>
+                    <p class="text-gray-600">Total Managed</p>
                 </div>
             </div>
             
-            <div class="text-center group">
-                <div class="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-8 mb-4 transform group-hover:scale-105 transition duration-300">
-                    <i class="fas fa-heart text-white text-4xl mb-4"></i>
-                    <h3 class="text-4xl font-bold text-white mb-2">
+            <div class="text-center">
+                <div class="bg-white rounded-lg border border-gray-200 p-6 shadow-sm hover:shadow-md transition duration-200">
+                    <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-shield-check text-gray-600 text-xl"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-gray-900 mb-2">
                         <span class="countup" data-target="99">0</span>%
                     </h3>
-                    <p class="text-orange-100">Satisfaction Rate</p>
+                    <p class="text-gray-600">Security Rating</p>
                 </div>
             </div>
         </div>
@@ -133,53 +136,53 @@
 <section id="features" class="py-20 bg-gray-50">
     <div class="container mx-auto px-6">
         <div class="text-center mb-12">
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">Why Choose Us</h2>
-            <p class="text-xl text-gray-600">Empower your committee with advanced tools and unmatched security</p>
+            <h2 class="text-4xl font-bold font-display text-gray-900 mb-4">Why Choose FinanceCore</h2>
+            <p class="text-xl text-gray-600 font-body">Empower your committee with advanced tools and unmatched security</p>
         </div>
         
         <div class="grid lg:grid-cols-3 gap-8">
-            <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition duration-300 group">
-                <div class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg w-16 h-16 flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300">
-                    <i class="fas fa-shield-alt text-white text-2xl"></i>
+            <div class="bg-white rounded-lg border border-gray-200 p-8 hover:shadow-md transition duration-200">
+                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                    <i class="fas fa-shield-alt text-blue-600 text-xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-4">Top-Tier Security</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">
-                    Your financial data is protected with state-of-the-art encryption and authentication.
+                <h3 class="text-xl font-bold font-display text-gray-900 mb-4">Enterprise Security</h3>
+                <p class="text-gray-600 font-body leading-relaxed mb-6">
+                    Your financial data is protected with bank-grade security and compliance standards.
                 </p>
                 <ul class="space-y-2 text-sm text-gray-600">
-                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>256-bit SSL encryption</li>
-                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Two-factor authentication</li>
-                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Regular security audits</li>
+                    <li class="flex items-center"><i class="fas fa-check text-blue-600 mr-2"></i>256-bit SSL encryption</li>
+                    <li class="flex items-center"><i class="fas fa-check text-blue-600 mr-2"></i>Multi-factor authentication</li>
+                    <li class="flex items-center"><i class="fas fa-check text-blue-600 mr-2"></i>Regular security audits</li>
                 </ul>
             </div>
             
-            <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition duration-300 group">
-                <div class="bg-gradient-to-br from-green-500 to-green-600 rounded-lg w-16 h-16 flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300">
-                    <i class="fas fa-chart-line text-white text-2xl"></i>
+            <div class="bg-white rounded-lg border border-gray-200 p-8 hover:shadow-md transition duration-200">
+                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-6">
+                    <i class="fas fa-chart-line text-green-600 text-xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-4">Real-Time Insights</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">
-                    Stay informed with live tracking of contributions and payouts.
+                <h3 class="text-xl font-bold font-display text-gray-900 mb-4">Real-Time Analytics</h3>
+                <p class="text-gray-600 font-body leading-relaxed mb-6">
+                    Monitor committee performance with comprehensive dashboards and reporting tools.
                 </p>
                 <ul class="space-y-2 text-sm text-gray-600">
-                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Live dashboard updates</li>
-                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Smart notifications</li>
-                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Mobile access</li>
+                    <li class="flex items-center"><i class="fas fa-check text-green-600 mr-2"></i>Live dashboard updates</li>
+                    <li class="flex items-center"><i class="fas fa-check text-green-600 mr-2"></i>Automated notifications</li>
+                    <li class="flex items-center"><i class="fas fa-check text-green-600 mr-2"></i>Mobile accessibility</li>
                 </ul>
             </div>
             
-            <div class="bg-white rounded-xl shadow-lg p-8 hover:shadow-xl transition duration-300 group">
-                <div class="bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg w-16 h-16 flex items-center justify-center mb-6 group-hover:scale-110 transition duration-300">
-                    <i class="fas fa-file-alt text-white text-2xl"></i>
+            <div class="bg-white rounded-lg border border-gray-200 p-8 hover:shadow-md transition duration-200">
+                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
+                    <i class="fas fa-file-alt text-purple-600 text-xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-900 mb-4">Automated Reporting</h3>
-                <p class="text-gray-600 leading-relaxed mb-6">
-                    Generate detailed financial reports with a single click.
+                <h3 class="text-xl font-bold font-display text-gray-900 mb-4">Compliance Reporting</h3>
+                <p class="text-gray-600 font-body leading-relaxed mb-6">
+                    Generate detailed reports for audits and regulatory compliance with ease.
                 </p>
                 <ul class="space-y-2 text-sm text-gray-600">
-                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Monthly statements</li>
-                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Tax-ready documents</li>
-                    <li class="flex items-center"><i class="fas fa-check text-green-500 mr-2"></i>Custom reports</li>
+                    <li class="flex items-center"><i class="fas fa-check text-purple-600 mr-2"></i>Monthly statements</li>
+                    <li class="flex items-center"><i class="fas fa-check text-purple-600 mr-2"></i>Audit-ready documents</li>
+                    <li class="flex items-center"><i class="fas fa-check text-purple-600 mr-2"></i>Custom reporting</li>
                 </ul>
             </div>
         </div>
@@ -190,87 +193,86 @@
 <section class="py-20 bg-white">
     <div class="container mx-auto px-6">
         <div class="text-center mb-12">
-            <h2 class="text-4xl font-bold text-gray-900 mb-4">Hear from Our Community</h2>
-            <p class="text-xl text-gray-600">Trusted by committee groups nationwide</p>
+            <h2 class="text-4xl font-bold font-display text-gray-900 mb-4">What Our Users Say</h2>
+            <p class="text-xl text-gray-600 font-body">Trusted by committees worldwide</p>
         </div>
         
         <div class="grid lg:grid-cols-3 gap-8">
-            <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-8 hover:shadow-lg transition duration-300">
+            <div class="bg-white rounded-lg border border-gray-200 p-8 hover:shadow-md transition duration-200">
                 <div class="flex items-center mb-6">
-                    <img class="w-12 h-12 rounded-full mr-4" 
-                         src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
-                         alt="Sarah Johnson">
-                    <div>
-                        <h4 class="font-bold text-gray-900">Sarah Johnson</h4>
-                        <p class="text-gray-600 text-sm">Savings Group Leader</p>
+                    <div class="w-12 h-12 bg-gray-200 rounded-full mr-4 flex items-center justify-center">
+                        <i class="fas fa-user text-gray-600"></i>
                     </div>
-                    <div class="ml-auto flex text-yellow-400">
+                    <div>
+                        <h4 class="font-semibold font-display text-gray-900">Sarah Johnson</h4>
+                        <p class="text-gray-600 text-sm">Committee Organizer</p>
+                    </div>
+                    <div class="ml-auto flex text-gray-400">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
                 </div>
-                <p class="text-gray-700 italic">"This platform has simplified our committee management. No more manual tracking, and everything is transparent!"</p>
+                <p class="text-gray-700 font-body">"This platform has streamlined our committee operations. The transparency and automation features have eliminated manual errors."</p>
             </div>
             
-            <div class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl p-8 hover:shadow-lg transition duration-300">
+            <div class="bg-white rounded-lg border border-gray-200 p-8 hover:shadow-md transition duration-200">
                 <div class="flex items-center mb-6">
-                    <img class="w-12 h-12 rounded-full mr-4" 
-                         src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
-                         alt="Michael Chen">
-                    <div>
-                        <h4 class="font-bold text-gray-900">Michael Chen</h4>
-                        <p class="text-gray-600 text-sm">Committee Treasurer</p>
+                    <div class="w-12 h-12 bg-gray-200 rounded-full mr-4 flex items-center justify-center">
+                        <i class="fas fa-user text-gray-600"></i>
                     </div>
-                    <div class="ml-auto flex text-yellow-400">
+                    <div>
+                        <h4 class="font-semibold font-display text-gray-900">Michael Chen</h4>
+                        <p class="text-gray-600 text-sm">Financial Controller</p>
+                    </div>
+                    <div class="ml-auto flex text-gray-400">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
                 </div>
-                <p class="text-gray-700 italic">"The real-time tracking and automated reports save us hours every month. Highly recommended!"</p>
+                <p class="text-gray-700 font-body">"The automated reporting and compliance features have significantly reduced our administrative overhead and improved accuracy."</p>
             </div>
             
-            <div class="bg-gradient-to-br from-purple-50 to-violet-100 rounded-xl p-8 hover:shadow-lg transition duration-300">
+            <div class="bg-white rounded-lg border border-gray-200 p-8 hover:shadow-md transition duration-200">
                 <div class="flex items-center mb-6">
-                    <img class="w-12 h-12 rounded-full mr-4" 
-                         src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" 
-                         alt="Amina Bello">
+                    <div class="w-12 h-12 bg-gray-200 rounded-full mr-4 flex items-center justify-center">
+                        <i class="fas fa-user text-gray-600"></i>
+                    </div>
                     <div>
-                        <h4 class="font-bold text-gray-900">Amina Bello</h4>
+                        <h4 class="font-semibold font-display text-gray-900">Amina Bello</h4>
                         <p class="text-gray-600 text-sm">Committee Member</p>
                     </div>
-                    <div class="ml-auto flex text-yellow-400">
+                    <div class="ml-auto flex text-gray-400">
                         <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                     </div>
                 </div>
-                <p class="text-gray-700 italic">"Checking my contributions on the go is so easy. The platform is intuitive and reliable."</p>
+                <p class="text-gray-700 font-body">"The platform provides excellent visibility into committee finances. The mobile interface makes it easy to stay updated on the go."</p>
             </div>
         </div>
     </div>
 </section>
 
 <!-- CTA Section -->
-<section class="py-20 bg-gradient-to-r from-blue-600 to-purple-700 text-white relative overflow-hidden">
-    <div class="absolute inset-0 bg-black opacity-20"></div>
-    <div class="relative container mx-auto px-6 text-center">
-        <h2 class="text-5xl font-bold mb-6">Ready to Simplify Your Committee?</h2>
-        <p class="text-xl mb-8 max-w-3xl mx-auto leading-relaxed">
-            Join thousands of committees managing their savings with ease. Start your journey today.
+<section class="py-20 bg-blue-600 text-white">
+    <div class="container mx-auto px-6 text-center">
+        <h2 class="text-4xl font-bold font-display mb-6">Ready to Transform Your Committee Management?</h2>
+        <p class="text-lg font-body mb-8 max-w-2xl mx-auto leading-relaxed">
+            Join organizations worldwide who trust our platform for secure, transparent committee financial management.
         </p>
         
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
             <a href="{% url 'account_signup' %}" 
-               class="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-10 py-4 rounded-xl font-bold text-lg hover:from-yellow-500 hover:to-orange-600 transform hover:scale-105 transition duration-300 shadow-lg">
-                <i class="fas fa-rocket mr-2"></i>
-                Start Now
+               class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition duration-200 shadow-sm">
+                <i class="fas fa-arrow-right mr-2"></i>
+                Get Started Today
             </a>
             <a href="#features" 
-               class="border-2 border-white text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-white hover:text-blue-600 transform hover:scale-105 transition duration-300">
+               class="border border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition duration-200">
                 Learn More
             </a>
         </div>
         
         <div class="flex items-center justify-center space-x-8 text-sm">
-            <div class="flex items-center"><i class="fas fa-check-circle mr-2 text-green-400"></i>No setup fees</div>
-            <div class="flex items-center"><i class="fas fa-check-circle mr-2 text-green-400"></i>Cancel anytime</div>
-            <div class="flex items-center"><i class="fas fa-check-circle mr-2 text-green-400"></i>24/7 support</div>
+            <div class="flex items-center"><i class="fas fa-check mr-2 text-blue-200"></i>Enterprise Security</div>
+            <div class="flex items-center"><i class="fas fa-check mr-2 text-blue-200"></i>Compliance Ready</div>
+            <div class="flex items-center"><i class="fas fa-check mr-2 text-blue-200"></i>24/7 Support</div>
         </div>
     </div>
 </section>

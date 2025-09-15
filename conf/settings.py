@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-^8f-po$@zyypd+-14!c3n3w9szam)+8k_+i-van7xj=5kb7&8#
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -137,6 +137,9 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # settings.py
 AUTH_USER_MODEL = 'accounts.User'  # Point to your custom user model
+
+# Custom adapter for allauth
+ACCOUNT_ADAPTER = 'accounts.adapters.CustomAccountAdapter'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',

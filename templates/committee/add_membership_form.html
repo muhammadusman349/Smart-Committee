@@ -5,7 +5,7 @@
 
 {% block committee_content %}
 <div class="container mx-auto mt-4">
-    <h2 class="text-xl font-semibold">{{ title }} for {{ committee.name }}</h2>
+    <h2 class="text-xl font-semibold font-display">{{ title }} for {{ committee.name }}</h2>
     <hr class="my-4">
     <form method="post" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
         {% csrf_token %}
