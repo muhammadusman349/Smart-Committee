@@ -1,4 +1,5 @@
 from allauth.account.adapter import DefaultAccountAdapter
+from django.contrib import messages
 
 
 class CustomAccountAdapter(DefaultAccountAdapter):
@@ -6,9 +7,37 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         # Call the parent class's save_user method
         user = super().save_user(request, user, form, commit=False)
 
-        # Set is_organizer to True for new users
-        user.is_organizer = True
+        # Check if user is signing up through an invitation link
+        from committee.models import Invitation, Membership
+        pending_invitations = Invitation.objects.filter(
+            email__iexact=user.email,
+            status='PENDING'
+        )
 
-        if commit:
-            user.save()
+        if pending_invitations.exists():
+            # Invited users start as members (not organizers)
+            user.is_organizer = False
+            if commit:
+                user.save()
+                # Auto-accept all pending invitations for this email
+                for invitation in pending_invitations:
+                    # Create membership
+                    Membership.objects.get_or_create(
+                        committee=invitation.committee,
+                        member=user,
+                        defaults={'status': 'ACTIVE'}
+                    )
+                    # Mark invitation as accepted
+                    invitation.status = 'ACCEPTED'
+                    invitation.save()
+                    # Add success message
+                    messages.success(
+                        request,
+                        f"Welcome! You've successfully joined the committee '{invitation.committee.name}'."
+                    )
+        else:
+            # Regular signups start as organizers (can create committees immediately)
+            user.is_organizer = True
+            if commit:
+                user.save()
         return user

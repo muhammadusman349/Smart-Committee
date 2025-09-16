@@ -9,7 +9,6 @@ from .models import Profile
 from committee.models import Committee, Membership, Contribution
 
 
-# Simplified home function to redirect authenticated users and show basic stats for unauthenticated users
 def home(request):
     if request.user.is_authenticated:
         if request.user.is_organizer:
