@@ -25,6 +25,8 @@ from .views import (
     manage_contributions,
     manage_payouts,
     bulk_contribution,
+    invitation_send,
+    invitation_accept,
 )
 app_name = 'committee'
 
@@ -41,6 +43,10 @@ urlpatterns = [
     path('committee/<int:committee_pk>/members/add/', membership_create, name='membership_create'),
     path('committee/memberships/<int:pk>/update/', membership_update, name='membership_update'),
     path('committee/memberships/<int:pk>/delete/', membership_delete, name='membership_delete'),
+
+    # Invitation URLs
+    path('committee/<int:committee_pk>/invite/', invitation_send, name='invitation_send'),
+    path('invitation/accept/<str:token>/', invitation_accept, name='invitation_accept'),
 
     # Contribution URLs
     path('memberships/<int:membership_pk>/contributions/add/', contribution_create, name='contribution_create'),

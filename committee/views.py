@@ -11,13 +11,16 @@ from django.utils import timezone
 from django.urls import reverse
 from django.http import JsonResponse
 from django.contrib import messages
-from .models import Committee, Membership, Contribution, Payout
+from .models import Committee, Membership, Contribution, Payout, Invitation
 from .forms import (
     CommitteeForm,
     MembershipForm,
     ContributionForm,
-    PayoutForm
+    PayoutForm,
+    InvitationForm
 )
+from secrets import token_urlsafe
+from .tasks import send_invitation_email
 
 # Committee Views
 
@@ -89,11 +92,109 @@ def committee_detail(request, pk):
 
 
 @login_required
+def invitation_send(request, committee_pk):
+    """Organizer sends an invitation to join a committee via email"""
+    committee = get_object_or_404(Committee, pk=committee_pk)
+    if committee.organizer != request.user:
+        messages.error(request, "Only the organizer can send invitations for this committee.")
+        return redirect('committee:committee_detail', pk=committee.pk)
+
+    if request.method == 'POST':
+        form = InvitationForm(request.POST, request=request, committee=committee)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            token = token_urlsafe(32)
+            invitation = Invitation.objects.create(
+                committee=committee,
+                invited_by=request.user,
+                email=email,
+                token=token,
+            )
+
+            # Send invitation email asynchronously using Celery
+            send_invitation_email.delay(
+                committee_id=committee.id,
+                inviter_name=request.user.full_name,
+                inviter_email=request.user.email,
+                recipient_email=email,
+                token=token,
+                site_domain=request.get_host()
+            )
+
+            messages.success(request, f"Invitation is being sent to {email}.")
+            return redirect('committee:committee_detail', pk=committee.pk)
+    else:
+        form = InvitationForm(request=request, committee=committee)
+
+    return render(request, 'committee/invitation_form.html', {
+        'form': form,
+        'committee': committee,
+        'title': 'Invite Member'
+    })
+
+
+def _can_accept(invitation: Invitation, user: User) -> bool:
+    """Helper to check if user can accept the invitation."""
+    if invitation.status != 'PENDING':
+        return False
+    if invitation.expires_at and timezone.now() > invitation.expires_at:
+        return False
+    # Email must match
+    return user.email.lower() == invitation.email.lower()
+
+
+@login_required
+def invitation_accept(request, token):
+    """Accept an invitation by token. Requires login with the same email."""
+    invitation = get_object_or_404(Invitation, token=token)
+
+    if invitation.status != 'PENDING':
+        messages.error(request, "This invitation is no longer valid.")
+        return render(request, 'committee/invitation_status.html', {
+            'invitation': invitation,
+            'status': 'invalid'
+        })
+
+    # Auto-expire if past expiry
+    if invitation.expires_at and timezone.now() > invitation.expires_at:
+        invitation.status = 'EXPIRED'
+        invitation.save()
+        messages.error(request, "This invitation has expired.")
+        return render(request, 'committee/invitation_status.html', {
+            'invitation': invitation,
+            'status': 'expired'
+        })
+
+    if not _can_accept(invitation, request.user):
+        # Suggest logging in with the invited email or signing up
+        login_url = reverse('account_login') + f"?next={request.path}"
+        signup_url = reverse('account_signup') + f"?next={request.path}"
+        return render(request, 'committee/invitation_accept_login_required.html', {
+            'invitation': invitation,
+            'login_url': login_url,
+            'signup_url': signup_url,
+        })
+
+    # Create membership if not exists
+    committee = invitation.committee
+    member = request.user
+    Membership.objects.get_or_create(committee=committee, member=member, defaults={'status': 'ACTIVE'})
+
+    invitation.status = 'ACCEPTED'
+    invitation.save()
+
+    messages.success(request, f"You have successfully joined the committee '{committee.name}'.")
+    return redirect('committee:member_committee_detail', pk=committee.pk)
+
+
+@login_required
 def committee_create(request):
-    """Committee creation (organizers only)"""
+    """Committee creation - auto-upgrades members to organizers"""
+    # Auto-upgrade to organizer if user is creating their first committee
     if not request.user.is_organizer:
-        messages.error(request, "Only organizers can create committees")
-        return redirect('committee:committee_list')
+        request.user.is_organizer = True
+        request.user.save()
+        messages.info(request, "You've been upgraded to organizer status!")
 
     if request.method == 'POST':
         form = CommitteeForm(request.POST, request=request)
