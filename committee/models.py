@@ -2,7 +2,7 @@ from django.db import models
 from accounts.models import User
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
-from datetime import date
+from datetime import date, timedelta
 
 
 class Committee(models.Model):
@@ -166,19 +166,34 @@ class Payout(models.Model):
         return 'bg-yellow-100 text-yellow-800'
 
 
-# class Invitation(models.Model):
-#     STATUS_CHOICES = [
-#         ('PENDING', 'Pending'),
-#         ('ACCEPTED', 'Accepted'),
-#         ('EXPIRED', 'Expired'),
-#     ]
+class Invitation(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('ACCEPTED', 'Accepted'),
+        ('EXPIRED', 'Expired'),
+    ]
 
-#     committee = models.ForeignKey(Committee, on_delete=models.CASCADE, related_name='invitations')
-#     invited_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invitations_sent')
-#     email = models.EmailField()
-#     token = models.CharField(max_length=100, unique=True)
-#     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
-#     created_at = models.DateTimeField(auto_now_add=True)
+    committee = models.ForeignKey(Committee, on_delete=models.CASCADE, related_name='invitations')
+    invited_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invitations_sent')
+    email = models.EmailField()
+    token = models.CharField(max_length=100, unique=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='PENDING')
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
 
-#     def __str__(self):
-#         return f"Invitation to {self.email} for {self.committee.name}"
+    class Meta:
+        indexes = [
+            models.Index(fields=["token"]),
+        ]
+
+    def __str__(self):
+        return f"Invitation to {self.email} for {self.committee.name}"
+
+    def save(self, *args, **kwargs):
+        # Set default expiry to 7 days from creation if not provided
+        if not self.pk and not self.expires_at:
+            self.expires_at = timezone.now() + timedelta(days=7)
+        # Auto-expire if past expiry
+        if self.status == 'PENDING' and self.expires_at and timezone.now() > self.expires_at:
+            self.status = 'EXPIRED'
+        return super().save(*args, **kwargs)
