@@ -30,6 +30,8 @@ from .views import (
     invitation_list,
     invitation_resend,
     invitation_revoke,
+    switch_to_organizer,
+    step_down_organizer,
 )
 app_name = 'committee'
 
@@ -77,5 +79,9 @@ urlpatterns = [
     path('member-dashboard/', member_dashboard, name='member_dashboard'),
     path('member/committee/<int:pk>/', member_committee_detail, name='member_committee_detail'),
     path('member/contributions/<int:membership_pk>/add/', member_contribution_create, name='member_contribution_create'),
+    
+    # Role switching
+    path('switch-to-organizer/', switch_to_organizer, name='switch_to_organizer'),
+    path('step-down-organizer/', step_down_organizer, name='step_down_organizer'),
 
 ]

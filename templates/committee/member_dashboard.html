@@ -8,10 +8,29 @@
 <div class="bg-gray-100 min-h-screen font-sans">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
-        <!-- Header -->
+        <!-- Header with Role Navigation -->
         <div class="mb-8">
-            <h1 class="text-3xl font-bold font-display text-gray-800">Member Dashboard</h1>
-            <p class="text-gray-500 font-body mt-1">Your overview of committees, contributions, and payouts.</p>
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl font-bold font-display text-gray-800">Member Dashboard</h1>
+                    <p class="text-gray-500 font-body mt-1">Your overview of committees, contributions, and payouts.</p>
+                </div>
+                <div class="flex space-x-3">
+                    {% if user.is_organizer %}
+                        <a href="{% url 'committee:organizer_dashboard' %}" 
+                           class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-200">
+                            <i class="fas fa-cog mr-2"></i>
+                            Organizer Dashboard
+                        </a>
+                    {% else %}
+                        <a href="{% url 'committee:switch_to_organizer' %}" 
+                           class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition duration-200">
+                            <i class="fas fa-arrow-up mr-2"></i>
+                            Become Organizer
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
         </div>
 
         <!-- Stats Section -->
