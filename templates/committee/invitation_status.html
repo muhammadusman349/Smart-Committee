@@ -1,0 +1,156 @@
+{% extends 'committee/committee_base.html' %}
+
+{% block title %}Invitation Status{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
+  <div class="container mx-auto max-w-2xl">
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+      
+      {% if status == 'expired' %}
+        <!-- Expired Status -->
+        <div class="bg-gradient-to-r from-red-500 to-red-600 px-8 py-8 text-center">
+          <div class="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full mb-4">
+            <i class="fas fa-clock text-white text-3xl"></i>
+          </div>
+          <h1 class="text-3xl font-bold text-white mb-2">Invitation Expired</h1>
+          <p class="text-red-100">This invitation is no longer valid</p>
+        </div>
+        
+        <div class="px-8 py-8">
+          <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
+              <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+            </div>
+            <p class="text-gray-700 text-lg mb-6">
+              Sorry, this invitation has expired and can no longer be used to join the committee.
+            </p>
+          </div>
+          
+          <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+            <h3 class="font-semibold text-red-800 mb-2 flex items-center">
+              <i class="fas fa-info-circle mr-2"></i>
+              What can you do?
+            </h3>
+            <ul class="text-red-700 space-y-2 text-sm">
+              <li class="flex items-start">
+                <i class="fas fa-envelope text-red-600 mr-2 mt-0.5"></i>
+                Contact the committee organizer to request a new invitation
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-phone text-red-600 mr-2 mt-0.5"></i>
+                Reach out directly if you have their contact information
+              </li>
+            </ul>
+          </div>
+          
+          {% if invitation.invited_by %}
+          <div class="bg-gray-50 rounded-lg p-4 mb-6">
+            <h4 class="font-medium text-gray-800 mb-2">Committee Organizer:</h4>
+            <div class="flex items-center">
+              <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center mr-3">
+                <i class="fas fa-user text-gray-600"></i>
+              </div>
+              <div>
+                <p class="font-semibold text-gray-900">{{ invitation.invited_by.get_full_name }}</p>
+                <a href="mailto:{{ invitation.invited_by.email }}" class="text-blue-600 hover:underline text-sm">
+                  {{ invitation.invited_by.email }}
+                </a>
+              </div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+      {% elif status == 'invalid' %}
+        <!-- Invalid Status -->
+        <div class="bg-gradient-to-r from-yellow-500 to-orange-500 px-8 py-8 text-center">
+          <div class="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full mb-4">
+            <i class="fas fa-exclamation-triangle text-white text-3xl"></i>
+          </div>
+          <h1 class="text-3xl font-bold text-white mb-2">Invalid Invitation</h1>
+          <p class="text-yellow-100">This invitation cannot be processed</p>
+        </div>
+        
+        <div class="px-8 py-8">
+          <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mb-4">
+              <i class="fas fa-question-circle text-yellow-600 text-2xl"></i>
+            </div>
+            <p class="text-gray-700 text-lg mb-6">
+              This invitation is no longer valid. It may have already been accepted or revoked by the organizer.
+            </p>
+          </div>
+          
+          <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
+            <h3 class="font-semibold text-yellow-800 mb-2 flex items-center">
+              <i class="fas fa-lightbulb mr-2"></i>
+              Possible reasons:
+            </h3>
+            <ul class="text-yellow-700 space-y-2 text-sm">
+              <li class="flex items-start">
+                <i class="fas fa-check text-yellow-600 mr-2 mt-0.5"></i>
+                You may have already accepted this invitation
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-times text-yellow-600 mr-2 mt-0.5"></i>
+                The organizer may have revoked the invitation
+              </li>
+              <li class="flex items-start">
+                <i class="fas fa-link text-yellow-600 mr-2 mt-0.5"></i>
+                The invitation link may be corrupted or incomplete
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      {% else %}
+        <!-- General Status -->
+        <div class="bg-gradient-to-r from-blue-500 to-indigo-600 px-8 py-8 text-center">
+          <div class="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full mb-4">
+            <i class="fas fa-info-circle text-white text-3xl"></i>
+          </div>
+          <h1 class="text-3xl font-bold text-white mb-2">Invitation Status</h1>
+          <p class="text-blue-100">Current invitation information</p>
+        </div>
+        
+        <div class="px-8 py-8">
+          <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+              <i class="fas fa-clipboard-list text-blue-600 text-2xl"></i>
+            </div>
+            <div class="inline-flex items-center px-4 py-2 bg-gray-100 rounded-lg">
+              <span class="text-gray-600 mr-2">Status:</span>
+              <span class="font-semibold text-gray-900 capitalize">{{ invitation.status }}</span>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Footer Actions -->
+      <div class="px-8 py-6 bg-gray-50 border-t">
+        <div class="flex items-center justify-center space-x-4">
+          <a href="/" class="inline-flex items-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition duration-200">
+            <i class="fas fa-home mr-2"></i>
+            Go to Homepage
+          </a>
+          
+          {% if status == 'expired' or status == 'invalid' %}
+          <a href="{% url 'account_login' %}" class="inline-flex items-center px-6 py-3 border border-blue-600 text-blue-600 hover:bg-blue-50 font-medium rounded-lg transition duration-200">
+            <i class="fas fa-sign-in-alt mr-2"></i>
+            Login to Account
+          </a>
+          {% endif %}
+        </div>
+        
+        <div class="text-center mt-4">
+          <p class="text-gray-500 text-sm">
+            Need help? 
+            <a href="mailto:support@committee.com" class="text-blue-600 hover:underline">Contact Support</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

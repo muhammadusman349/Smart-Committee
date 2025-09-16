@@ -1,0 +1,155 @@
+{% extends 'committee/committee_base.html' %}
+
+{% block title %}Accept Committee Invitation{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 py-12">
+  <div class="container mx-auto max-w-3xl">
+    <!-- Main Invitation Card -->
+    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <!-- Header with gradient -->
+      <div class="bg-gradient-to-r from-green-600 to-blue-600 px-8 py-8 text-center">
+        <div class="inline-flex items-center justify-center w-20 h-20 bg-white bg-opacity-20 rounded-full mb-4">
+          <i class="fas fa-envelope-open text-white text-3xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-white mb-2">You're Invited!</h1>
+        <p class="text-green-100 text-lg">Join "{{ invitation.committee.name }}" committee</p>
+      </div>
+
+      <!-- Committee Details Section -->
+      <div class="px-8 py-6 bg-gray-50 border-b">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-info-circle text-blue-600 mr-2"></i>
+          Committee Details
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            <div class="flex items-center p-3 bg-white rounded-lg shadow-sm">
+              <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-dollar-sign text-green-600"></i>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-gray-600">Monthly Contribution</p>
+                <p class="text-lg font-semibold text-gray-900">${{ invitation.committee.monthly_amount }}</p>
+              </div>
+            </div>
+            <div class="flex items-center p-3 bg-white rounded-lg shadow-sm">
+              <div class="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-calendar text-blue-600"></i>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-gray-600">Duration</p>
+                <p class="text-lg font-semibold text-gray-900">{{ invitation.committee.duration_months }} months</p>
+              </div>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <div class="flex items-center p-3 bg-white rounded-lg shadow-sm">
+              <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-play text-purple-600"></i>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-gray-600">Start Date</p>
+                <p class="text-lg font-semibold text-gray-900">{{ invitation.committee.start_date }}</p>
+              </div>
+            </div>
+            <div class="flex items-center p-3 bg-white rounded-lg shadow-sm">
+              <div class="flex-shrink-0 w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                <i class="fas fa-user text-orange-600"></i>
+              </div>
+              <div class="ml-3">
+                <p class="text-sm text-gray-600">Organizer</p>
+                <p class="text-lg font-semibold text-gray-900">{{ invitation.invited_by.full_name }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Authentication Section -->
+      <div class="px-8 py-8">
+        <div class="text-center mb-8">
+          <h2 class="text-2xl font-semibold text-gray-800 mb-3">Ready to Join?</h2>
+          <p class="text-gray-600 mb-2">
+            To accept this invitation, authenticate with the email address:
+          </p>
+          <div class="inline-flex items-center px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+            <i class="fas fa-envelope text-blue-600 mr-2"></i>
+            <span class="font-semibold text-blue-800">{{ invitation.email }}</span>
+          </div>
+        </div>
+
+        <!-- Action Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Login Card -->
+          <div class="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition duration-200">
+            <div class="text-center">
+              <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                <i class="fas fa-sign-in-alt text-blue-600 text-2xl"></i>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-2">Already have an account?</h3>
+              <p class="text-gray-600 text-sm mb-6">Sign in with your existing credentials</p>
+              <a href="{{ login_url }}" 
+                 class="w-full inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition duration-200 transform hover:scale-105">
+                <i class="fas fa-sign-in-alt mr-2"></i>
+                Login & Accept
+              </a>
+            </div>
+          </div>
+
+          <!-- Signup Card -->
+          <div class="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition duration-200">
+            <div class="text-center">
+              <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                <i class="fas fa-user-plus text-green-600 text-2xl"></i>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-800 mb-2">New to our platform?</h3>
+              <p class="text-gray-600 text-sm mb-6">Create your account and join instantly</p>
+              <a href="{{ signup_url }}" 
+                 class="w-full inline-flex items-center justify-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition duration-200 transform hover:scale-105">
+                <i class="fas fa-user-plus mr-2"></i>
+                Sign Up & Join
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Benefits Section -->
+        <div class="mt-8 p-6 bg-gradient-to-r from-blue-50 to-green-50 rounded-xl border border-blue-200">
+          <h4 class="font-semibold text-gray-800 mb-3 flex items-center">
+            <i class="fas fa-star text-yellow-500 mr-2"></i>
+            What happens next?
+          </h4>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mr-2 mt-0.5"></i>
+              <span class="text-gray-700">Instant committee membership</span>
+            </div>
+            <div class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mr-2 mt-0.5"></i>
+              <span class="text-gray-700">Access to committee dashboard</span>
+            </div>
+            <div class="flex items-start">
+              <i class="fas fa-check-circle text-green-500 mr-2 mt-0.5"></i>
+              <span class="text-gray-700">Start contributing right away</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="px-8 py-4 bg-gray-50 border-t text-center">
+        <p class="text-gray-500 text-sm">
+          Need help? Contact the organizer at 
+          <a href="mailto:{{ invitation.invited_by.email }}" class="text-blue-600 hover:underline">
+            {{ invitation.invited_by.email }}
+          </a>
+        </p>
+        <div class="mt-2">
+          <a href="/" class="text-gray-400 hover:text-gray-600 text-sm">← Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

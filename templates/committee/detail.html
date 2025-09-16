@@ -23,6 +23,10 @@
                 <i class="fas fa-edit mr-2"></i> Edit
             </a>
 
+            <a href="{% url 'committee:invitation_list' committee.pk %}" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition duration-200">
+                <i class="fas fa-list mr-2"></i> Manage Invitations
+            </a>
+
             {% if committee.status != 'COMPLETED' %}
             <form method="post" action="{% url 'committee:toggle_status' committee.id %}">
                 {% csrf_token %}
@@ -96,7 +100,7 @@
                         <div class="flex items-center">
                             <div class="flex-shrink-0 h-10 w-10">
                                 {% if membership.member.user_profile.profile_picture %}
-                                    <img src="{{ membership.member.user_profile.profile_picture.url }}" alt="{{ membership.member.get_full_name }}" class="h-10 w-10 rounded-full object-cover">
+                                    <img src="{{ membership.member.user_profile.profile_picture.url }}" alt="{{ membership.member.full_name }}" class="h-10 w-10 rounded-full object-cover">
                                 {% else %}
                                     <div class="h-10 w-10 rounded-full bg-blue-500 text-white flex items-center justify-center">
                                         {{ membership.member.first_name|first|upper }}{{ membership.member.last_name|first|upper }}
@@ -104,7 +108,7 @@
                                 {% endif %}
                             </div>
                             <div class="ml-4">
-                                <div class="text-sm font-semibold text-gray-900">{{ membership.member.get_full_name }}</div>
+                                <div class="text-sm font-semibold text-gray-900">{{ membership.member.full_name }}</div>
                                 <div class="text-sm text-gray-500">
                                     <i class="fas fa-envelope mr-1"></i> {{ membership.member.email }}
                                 </div>
@@ -137,10 +141,9 @@
                             <i class="fas fa-users text-gray-300 text-5xl mb-4"></i>
                             <p class="text-gray-500 text-lg mb-4">No members found in this committee</p>
                             {% if is_organizer %}
-                            <button type="button" onclick="document.getElementById('addMembersModal').classList.remove('hidden')" 
-                                    class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-200 shadow-md hover:shadow-lg">
-                                <i class="fas fa-user-plus mr-2"></i> Add First Member
-                            </button>
+                            <a href="{% url 'committee:invitation_send' committee.pk %}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-200">
+                                <i class="fas fa-paper-plane mr-2"></i> Invite First Member
+                            </a>
                             {% endif %}
                         </div>
                     </li>
@@ -157,9 +160,9 @@
                 
                 {% if is_organizer and committee.memberships.count > 0 %}
                 <div class="mt-6 text-center">
-                    <button type="button" onclick="document.getElementById('addMembersModal').classList.remove('hidden')" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                        <i class="fas fa-user-plus mr-2"></i> Add More Members
-                    </button>
+                    <a href="{% url 'committee:invitation_send' committee.pk %}" class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-200">
+                        <i class="fas fa-paper-plane mr-2"></i> Invite Member
+                    </a>
                 </div>
                 {% endif %}
             </div>
@@ -225,7 +228,7 @@
                                                             {% endif %}
                                                         </div>
                                                         <div class="ml-4">
-                                                            <div class="text-sm font-medium text-gray-900">{{ user.get_full_name }}</div>
+                                                            <div class="text-sm font-medium text-gray-900">{{ user.full_name }}</div>
                                                         </div>
                                                     </div>
                                                 </td>
