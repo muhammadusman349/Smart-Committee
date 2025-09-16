@@ -1,5 +1,6 @@
 from allauth.account.adapter import DefaultAccountAdapter
 from django.contrib import messages
+from django.utils import timezone
 
 
 class CustomAccountAdapter(DefaultAccountAdapter):
@@ -27,8 +28,9 @@ class CustomAccountAdapter(DefaultAccountAdapter):
                         member=user,
                         defaults={'status': 'ACTIVE'}
                     )
-                    # Mark invitation as accepted
+                    # Mark invitation as accepted and expire the token
                     invitation.status = 'ACCEPTED'
+                    invitation.expires_at = timezone.now()  # Immediately expire the token
                     invitation.save()
                     # Add success message
                     messages.success(
@@ -36,8 +38,7 @@ class CustomAccountAdapter(DefaultAccountAdapter):
                         f"Welcome! You've successfully joined the committee '{invitation.committee.name}'."
                     )
         else:
-            # Regular signups start as organizers (can create committees immediately)
-            user.is_organizer = True
+            # Regular signups rely on model default (is_organizer=True)
             if commit:
                 user.save()
         return user
