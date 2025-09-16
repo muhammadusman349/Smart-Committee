@@ -21,6 +21,7 @@ from .forms import (
 )
 from secrets import token_urlsafe
 from .tasks import send_invitation_email
+from django.views.decorators.http import require_http_methods
 
 # Committee Views
 
@@ -135,6 +136,10 @@ def invitation_send(request, committee_pk):
 
 def _can_accept(invitation: Invitation, user: User) -> bool:
     """Helper to check if user can accept the invitation."""
+    # Must be logged in to compare emails
+    if not getattr(user, 'is_authenticated', False):
+        return False
+
     if invitation.status != 'PENDING':
         return False
     if invitation.expires_at and timezone.now() > invitation.expires_at:
@@ -143,7 +148,6 @@ def _can_accept(invitation: Invitation, user: User) -> bool:
     return user.email.lower() == invitation.email.lower()
 
 
-@login_required
 def invitation_accept(request, token):
     """Accept an invitation by token. Requires login with the same email."""
     invitation = get_object_or_404(Invitation, token=token)
@@ -180,11 +184,98 @@ def invitation_accept(request, token):
     member = request.user
     Membership.objects.get_or_create(committee=committee, member=member, defaults={'status': 'ACTIVE'})
 
+    # Mark invitation as accepted and expire the token
     invitation.status = 'ACCEPTED'
+    invitation.expires_at = timezone.now()  # Immediately expire the token
     invitation.save()
 
     messages.success(request, f"You have successfully joined the committee '{committee.name}'.")
     return redirect('committee:member_committee_detail', pk=committee.pk)
+
+
+@login_required
+def invitation_list(request, pk):
+    """View and manage invitations for a committee"""
+    committee = get_object_or_404(Committee, pk=pk, organizer=request.user)
+    invitations = committee.invitations.all().order_by('-created_at')
+
+    # Accurate counts for statuses
+    pending_count = invitations.filter(status='PENDING').count()
+    accepted_count = invitations.filter(status='ACCEPTED').count()
+    expired_count = invitations.filter(status='EXPIRED').count()
+    total_count = invitations.count()
+
+    return render(request, 'committee/invitation_list.html', {
+        'committee': committee,
+        'invitations': invitations,
+        'pending_count': pending_count,
+        'accepted_count': accepted_count,
+        'expired_count': expired_count,
+        'total_count': total_count,
+        'scheme': request.scheme,
+        'site_domain': request.get_host(),
+    })
+
+
+@login_required
+@require_http_methods(["POST"])
+def invitation_resend(request, pk):
+    """Resend an expired or failed invitation"""
+    invitation = get_object_or_404(Invitation, pk=pk)
+
+    # Security check: only organizer can resend
+    if invitation.committee.organizer != request.user:
+        messages.error(request, "You don't have permission to resend this invitation.")
+        return redirect('committee:committee_detail', pk=invitation.committee.pk)
+
+    # Only allow resending if invitation is expired or pending
+    if invitation.status not in ['EXPIRED', 'PENDING']:
+        messages.error(request, "This invitation cannot be resent.")
+        return redirect('committee:invitation_list', pk=invitation.committee.pk)
+
+    # Generate new token and reset expiry
+    invitation.token = token_urlsafe(32)
+    invitation.expires_at = timezone.now() + timedelta(days=7)
+    invitation.status = 'PENDING'
+    invitation.save()
+
+    # Send new invitation email
+    send_invitation_email.delay(
+        invitation_id=invitation.id,
+        committee_name=invitation.committee.name,
+        organizer_name=invitation.invited_by.get_full_name(),
+        recipient_email=invitation.email,
+        token=invitation.token,
+        site_domain=request.get_host()
+    )
+
+    messages.success(request, f"Invitation has been resent to {invitation.email}.")
+    return redirect('committee:invitation_list', pk=invitation.committee.pk)
+
+
+@login_required
+@require_http_methods(["POST"])
+def invitation_revoke(request, pk):
+    """Revoke a pending invitation"""
+    invitation = get_object_or_404(Invitation, pk=pk)
+
+    # Security check: only organizer can revoke
+    if invitation.committee.organizer != request.user:
+        messages.error(request, "You don't have permission to revoke this invitation.")
+        return redirect('committee:committee_detail', pk=invitation.committee.pk)
+
+    # Only allow revoking pending invitations
+    if invitation.status != 'PENDING':
+        messages.error(request, "This invitation cannot be revoked.")
+        return redirect('committee:invitation_list', pk=invitation.committee.pk)
+
+    # Mark as expired
+    invitation.status = 'EXPIRED'
+    invitation.expires_at = timezone.now()
+    invitation.save()
+
+    messages.success(request, f"Invitation to {invitation.email} has been revoked.")
+    return redirect('committee:invitation_list', pk=invitation.committee.pk)
 
 
 @login_required

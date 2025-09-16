@@ -1,0 +1,122 @@
+{% extends 'committee/committee_base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block committee_content %}
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
+  <div class="container mx-auto max-w-2xl">
+    <!-- Header Card -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-6">
+      <div class="bg-gradient-to-r from-blue-600 to-indigo-600 px-8 py-6">
+        <h1 class="text-3xl font-bold text-white flex items-center">
+          <i class="fas fa-paper-plane mr-3"></i>
+          Invite New Member
+        </h1>
+        <p class="text-blue-100 mt-2">Send an invitation to join "{{ committee.name }}"</p>
+      </div>
+      
+      <!-- Committee Info -->
+      <div class="px-8 py-6 bg-gray-50 border-b">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+          <div class="flex items-center">
+            <i class="fas fa-dollar-sign text-green-600 mr-2"></i>
+            <span class="text-gray-600">Monthly:</span>
+            <span class="font-semibold ml-1">${{ committee.monthly_amount }}</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-calendar text-blue-600 mr-2"></i>
+            <span class="text-gray-600">Duration:</span>
+            <span class="font-semibold ml-1">{{ committee.duration_months }} months</span>
+          </div>
+          <div class="flex items-center">
+            <i class="fas fa-users text-purple-600 mr-2"></i>
+            <span class="text-gray-600">Members:</span>
+            <span class="font-semibold ml-1">{{ committee.memberships.count }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Invitation Form -->
+    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+      <div class="px-8 py-6">
+        <form method="post" class="space-y-6">
+          {% csrf_token %}
+          
+          <div class="space-y-2">
+            <label for="{{ form.email.id_for_label }}" class="block text-sm font-semibold text-gray-700">
+              <i class="fas fa-envelope text-gray-400 mr-2"></i>
+              Email Address
+            </label>
+            <div class="relative max-w-md">
+              <input type="email" 
+                     name="{{ form.email.name }}" 
+                     id="{{ form.email.id_for_label }}"
+                     class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 {% if form.email.errors %}border-red-500 ring-2 ring-red-200{% endif %}"
+                     placeholder="Enter member's email address"
+                     value="{{ form.email.value|default:'' }}">
+              <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                <i class="fas fa-at text-gray-400"></i>
+              </div>
+            </div>
+            {% if form.email.errors %}
+              <div class="flex items-center text-red-600 text-sm mt-2">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                {{ form.email.errors.0 }}
+              </div>
+            {% endif %}
+            <p class="text-xs text-gray-500 mt-1">
+              <i class="fas fa-info-circle mr-1"></i>
+              The member will receive an email invitation with instructions to join
+            </p>
+          </div>
+
+          {% if form.non_field_errors %}
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div class="flex items-start">
+                <i class="fas fa-exclamation-triangle text-red-500 mr-3 mt-0.5"></i>
+                <div class="text-red-700">
+                  {% for err in form.non_field_errors %}
+                    <p>{{ err }}</p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          <!-- Action Buttons -->
+          <div class="flex items-center justify-between pt-6 border-t border-gray-200">
+            <a href="{% url 'committee:committee_detail' committee.pk %}" 
+               class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition duration-200">
+              <i class="fas fa-arrow-left mr-2"></i>
+              Back to Committee
+            </a>
+            
+            <button type="submit" 
+                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 transform hover:scale-105 transition duration-200 shadow-lg">
+              <i class="fas fa-paper-plane mr-2"></i>
+              Send Invitation
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Help Section -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-6">
+      <div class="flex items-start">
+        <i class="fas fa-lightbulb text-blue-600 mr-3 mt-1"></i>
+        <div class="text-blue-800">
+          <h4 class="font-semibold mb-1">How it works:</h4>
+          <ul class="text-sm space-y-1">
+            <li>• Member receives an email with invitation details</li>
+            <li>• They can create an account or login with the invited email</li>
+            <li>• Once accepted, they'll automatically join your committee</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
