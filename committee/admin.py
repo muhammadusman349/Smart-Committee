@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Committee, Membership, Contribution, Payout
+from .models import Committee, Membership, Contribution, Payout, Invitation
 
 # Register your models here.
 
@@ -38,3 +38,12 @@ class PayoutAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Payout, PayoutAdmin)
+
+
+class InvitationAdmin(admin.ModelAdmin):
+    list_display = ('id', 'email', 'committee', 'invited_by', 'status', 'created_at', 'expires_at')
+    search_fields = ('email',)
+    list_filter = ('status',)
+
+
+admin.site.register(Invitation, InvitationAdmin)

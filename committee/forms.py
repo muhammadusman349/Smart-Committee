@@ -1,7 +1,7 @@
 from django import forms
 from django.utils import timezone
 from django.db.models import Sum
-from .models import Committee, Membership, Contribution, Payout
+from .models import Committee, Membership, Contribution, Payout, Invitation
 from accounts.models import User
 
 
@@ -49,6 +49,40 @@ class MembershipForm(forms.ModelForm):
         return instance
 
 
+class InvitationForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'member@example.com'}))
+
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        self.committee = kwargs.pop('committee', None)
+        super().__init__(*args, **kwargs)
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        # Cannot invite organizer
+        if self.committee and self.committee.organizer.email.lower() == email.lower():
+            raise forms.ValidationError("You cannot invite yourself (organizer) to the committee.")
+        return email
+
+    def clean(self):
+        cleaned_data = super().clean()
+        email = cleaned_data.get('email')
+
+        # Security: only organizer can invite
+        if not self.request or self.committee.organizer != self.request.user:
+            raise forms.ValidationError("You don't have permission to invite members to this committee.")
+
+        # Check if already a member
+        if email and Membership.objects.filter(committee=self.committee, member__email__iexact=email, status='ACTIVE').exists():
+            raise forms.ValidationError("This user is already an active member of the committee.")
+
+        # Prevent duplicate pending invitations
+        if email and Invitation.objects.filter(committee=self.committee, email__iexact=email, status='PENDING').exists():
+            raise forms.ValidationError("An invitation has already been sent to this email and is still pending.")
+
+        return cleaned_data
+
+
 class CommitteeForm(forms.ModelForm):
     start_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}))
@@ -69,9 +103,8 @@ class CommitteeForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        # Security: Ensure the user is an organizer
-        if not self.request.user.is_organizer:
-            raise forms.ValidationError("You must be an organizer to create or edit a committee.")
+        # Note: We don't check is_organizer here anymore since committee_create view
+        # will auto-upgrade users to organizer status when they create their first committee
 
         # If updating, ensure the user owns the committee
         if self.instance and self.instance.pk and self.instance.organizer != self.request.user:
