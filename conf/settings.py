@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,6 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'django_celery_beat',
+    'django_celery_results',
     "accounts",
     "committee",
     'crispy_forms',
@@ -150,8 +153,8 @@ LOGIN_URL = 'account_login'
 LOGIN_REDIRECT_URL = '/'
 # LOGOUT_REDIRECT_URL = 'home'
 
-# For password reset
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Development
+# For password reset - Comment out console backend to use SMTP
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Development
 
 # For profile images
 MEDIA_URL = '/media/'
@@ -188,7 +191,31 @@ ALLAUTH_UI = {
     "ENABLE_DARK_MODE": True,  # Enable dark mode toggle
 }
 
-# settings.py
+
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# save Celery task result in Django's database
+CELERY_RESULT_BACKEND = "django-db"
+
+# broker_connections_retry_on_startup
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
+
+# Celery
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+CELERY_BROKER_URL = "amqp://localhost:5672"
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = "UTC"
+
+# Email Configuration
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = config('EMAIL_PORT', cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL', cast=bool)
+
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
