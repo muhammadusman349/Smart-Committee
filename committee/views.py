@@ -279,6 +279,41 @@ def invitation_revoke(request, pk):
 
 
 @login_required
+def switch_to_organizer(request):
+    """Allow members to become organizers"""
+    if not request.user.is_organizer:
+        request.user.is_organizer = True
+        request.user.save()
+        messages.success(request, "You've been upgraded to organizer status! You can now create and manage committees.")
+        return redirect('committee:organizer_dashboard')
+    else:
+        messages.info(request, "You're already an organizer.")
+        return redirect('committee:organizer_dashboard')
+
+
+@login_required
+def step_down_organizer(request):
+    """Allow organizers to remove their organizer status"""
+    if not request.user.is_organizer:
+        messages.error(request, "You're not currently an organizer.")
+        return redirect('committee:member_dashboard')
+
+    # Check if user has any committees they organize
+    organized_committees = Committee.objects.filter(organizer=request.user).count()
+
+    if organized_committees > 0:
+        messages.error(request, f"You cannot step down as organizer while you have {organized_committees} active committee(s). Please transfer or delete your committees first.")
+        return redirect('committee:organizer_dashboard')
+
+    # Remove organizer status
+    request.user.is_organizer = False
+    request.user.save()
+
+    messages.success(request, "You have stepped down from organizer status. You can become an organizer again anytime by creating a committee.")
+    return redirect('committee:member_dashboard')
+
+
+@login_required
 def committee_create(request):
     """Committee creation - auto-upgrades members to organizers"""
     # Auto-upgrade to organizer if user is creating their first committee
@@ -729,7 +764,10 @@ def organizer_dashboard(request):
     """Dashboard for organizers to manage committees and view statistics"""
     if not request.user.is_organizer:
         messages.error(request, "Only organizers can access the dashboard")
-        return redirect('committee:committee_list')
+        return redirect('committee:member_dashboard')
+
+    # Check if organizer is also a member of any committee
+    is_also_member = Membership.objects.filter(member=request.user, status='ACTIVE').exists()
 
     # Calculate statistics
     total_committees = Committee.objects.filter(organizer=request.user).count()
@@ -801,6 +839,7 @@ def organizer_dashboard(request):
         'active_memberships': active_memberships,
         'next_contribution_date': next_contribution_date,
         'current_month': current_month,
+        'is_also_member': is_also_member,
         'form_errors': []
     })
 
@@ -976,8 +1015,8 @@ def bulk_contribution(request):
 @login_required
 def member_dashboard(request):
     """Dashboard for members to see their committees, contributions, and payouts."""
-    if request.user.is_organizer:
-        return redirect('committee:organizer_dashboard')
+    # Allow access to member dashboard regardless of organizer status
+    # Users can be both organizers and members
 
     memberships = Membership.objects.filter(member=request.user, status='ACTIVE').select_related('committee')
     committees = []

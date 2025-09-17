@@ -11,10 +11,30 @@
 
 {% block committee_content %}
 <div class="p-8">
-    <!-- Dashboard Header -->
+    <!-- Dashboard Header with Role Navigation -->
     <div class="mb-8">
-        <h2 class="text-3xl font-bold font-display text-gray-900 mb-2">Welcome back, {{ user.full_name|default:user.get_username|default:'User' }}!</h2>
-        <p class="text-gray-600 font-body">Comprehensive overview of your committee management activities</p>
+        <div class="flex justify-between items-center">
+            <div>
+                <h2 class="text-3xl font-bold font-display text-gray-900 mb-2">Welcome back, {{ user.full_name|default:user.get_username|default:'User' }}!</h2>
+                <p class="text-gray-600 font-body">Comprehensive overview of your committee management activities</p>
+            </div>
+            <div class="flex space-x-3">
+                {% if is_also_member %}
+                    <a href="{% url 'committee:member_dashboard' %}" 
+                       class="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition duration-200">
+                        <i class="fas fa-user mr-2"></i>
+                        Member Dashboard
+                    </a>
+                {% endif %}
+                
+                <button type="button" 
+                        onclick="document.getElementById('stepDownModal').classList.remove('hidden')"
+                        class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition duration-200">
+                    <i class="fas fa-arrow-down mr-2"></i>
+                    Step Down as Organizer
+                </button>
+            </div>
+        </div>
     </div>
     
     <!-- Stats Grid -->
@@ -161,11 +181,64 @@
 
     </div>
 </div>
+
+<!-- Step Down Organizer Modal -->
+<div id="stepDownModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+            </div>
+            <h3 class="text-lg font-medium text-gray-900 mt-4">Step Down as Organizer</h3>
+            <div class="mt-2 px-7 py-3">
+                <p class="text-sm text-gray-500">
+                    Are you sure you want to step down as organizer? 
+                </p>
+                <p class="text-sm text-gray-500 mt-2">
+                    <strong>Note:</strong> You can only do this if you have no active committees.
+                </p>
+                <p class="text-sm text-gray-400 mt-2">
+                    You can become an organizer again anytime by creating a new committee.
+                </p>
+            </div>
+            <div class="items-center px-4 py-3">
+                <div class="flex space-x-3">
+                    <button id="cancelStepDown" 
+                            class="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                        Cancel
+                    </button>
+                    <form method="get" action="{% url 'committee:step_down_organizer' %}" class="w-full">
+                        <button type="submit" 
+                                class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                            Yes, Step Down
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Modal functionality
+    const modal = document.getElementById('stepDownModal');
+    const cancelBtn = document.getElementById('cancelStepDown');
+    
+    // Close modal when clicking cancel
+    cancelBtn.addEventListener('click', function() {
+        modal.classList.add('hidden');
+    });
+    
+    // Close modal when clicking outside
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.classList.add('hidden');
+        }
+    });
+    
     // Add smooth scrolling for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
