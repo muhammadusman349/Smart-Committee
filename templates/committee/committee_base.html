@@ -3,10 +3,7 @@
 
 {% block extra_css %}
 <style>
-    .committee-sidebar {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    }
+    /* Committee Cards */
     .committee-card {
         transition: all 0.3s ease;
         border: 1px solid #e5e7eb;
@@ -15,212 +12,238 @@
         transform: translateY(-4px);
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
-    .committee-nav-item {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Navigation Items */
+    .nav-btn {
+        transition: all 0.2s ease;
         position: relative;
         overflow: hidden;
     }
-    .committee-nav-item:hover {
-        background-color: rgba(255, 255, 255, 0.15);
-        transform: translateX(6px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-    .committee-nav-item.active {
-        background: linear-gradient(90deg, rgba(255, 255, 255, 0.25) 0%, rgba(255, 255, 255, 0.1) 100%);
-        border-left: 4px solid #fbbf24;
-        box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
-        transform: translateX(4px);
-    }
-    .committee-nav-item.active::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(90deg, rgba(251, 191, 36, 0.1) 0%, transparent 50%);
-        pointer-events: none;
+    
+    .nav-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
     
-    /* Mobile menu button styles */
-    .mobile-menu-btn {
-        position: fixed !important;
-        top: 80px !important;
-        right: 16px !important;
-        z-index: 9999 !important;
-        display: block !important;
-        width: 48px !important;
-        height: 48px !important;
-        border-radius: 12px !important;
-        background: linear-gradient(135deg, #3b82f6, #8b5cf6) !important;
+    .nav-btn.active {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
         color: white !important;
-        border: none !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-        cursor: pointer !important;
-        transition: all 0.3s ease !important;
+        border-color: #1d4ed8 !important;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
     }
     
-    .mobile-menu-btn:hover {
-        transform: scale(1.05) !important;
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important;
+    .nav-btn.active:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
     }
     
-    .mobile-menu-btn:active {
-        transform: scale(0.95) !important;
+    
+    /* Responsive Design */
+    @media (max-width: 640px) {
+        .nav-btn {
+            font-size: 0.75rem;
+            padding: 0.5rem 0.75rem;
+        }
+        
+        .nav-btn i {
+            font-size: 0.75rem;
+        }
     }
     
-    /* Hide on desktop */
+    @media (max-width: 768px) {
+        .committee-header {
+            padding: 1rem;
+        }
+        
+        .nav-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+    }
+    
     @media (min-width: 1024px) {
-        .mobile-menu-btn {
-            display: none !important;
+        .nav-grid {
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
         }
     }
     
-    /* Mobile specific styles */
-    @media (max-width: 1023px) {
-        .committee-sidebar {
-            height: 100vh !important;
-            max-height: 100vh !important;
-            width: 320px !important;
-            max-width: 85vw !important;
-            border-radius: 0 !important;
-        }
-        
-        .mobile-menu-btn {
-            display: block !important;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-        
-        body.sidebar-open {
-            overflow: hidden !important;
-        }
-    }
-    
-    /* Improved mobile overlay */
-    .mobile-overlay {
-        backdrop-filter: blur(2px);
-        -webkit-backdrop-filter: blur(2px);
-    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="min-h-screen bg-gray-50">
-    <!-- Mobile Menu Button -->
-    <button id="mobile-menu-btn" class="mobile-menu-btn lg:hidden" style="position: fixed; top: 80px; right: 16px; z-index: 9999; display: block; width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; border: none; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer;">
-        <i id="menu-icon" class="fas fa-bars text-lg" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;"></i>
-    </button>
-
-    <!-- Mobile Overlay -->
-    <div id="mobile-overlay" class="mobile-overlay fixed inset-0 bg-black bg-opacity-60 z-40 hidden transition-opacity duration-300"></div>
 
     <!-- Committee Header -->
-    <div class="bg-white shadow-sm border-b">
+    <div class="bg-white shadow-sm border-b committee-header">
         <div class="container mx-auto px-4 sm:px-6 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3 lg:space-x-4">
-                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-2">
-                        <i class="fas fa-users text-white text-lg lg:text-xl"></i>
+            <div class="flex flex-col space-y-4">
+                <!-- Header Title Section -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3 lg:space-x-4 min-w-0 flex-1">
+                        <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-2 flex-shrink-0">
+                            <i class="fas fa-users text-white text-lg lg:text-xl"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h1 class="text-lg sm:text-xl lg:text-2xl font-bold font-display text-gray-900 truncate">
+                                {% block page_title %}Committee Management{% endblock %}
+                            </h1>
+                            <p class="text-gray-600 font-body text-xs lg:text-sm hidden sm:block">
+                                {% block page_subtitle %}Manage your committee finances efficiently{% endblock %}
+                            </p>
+                        </div>
                     </div>
-                    <div class="min-w-0 flex-1">
-                        <h1 class="text-lg sm:text-xl lg:text-2xl font-bold font-display text-gray-900 truncate">
-                            {% block page_title %}Committee Management{% endblock %}
-                        </h1>
-                        <p class="text-gray-600 font-body text-xs lg:text-sm hidden sm:block">
-                            {% block page_subtitle %}Manage your committee finances efficiently{% endblock %}
-                        </p>
+                    
+                    <!-- Mobile Menu Button -->
+                    {% if user.is_organizer %}
+                    <div class="lg:hidden" x-data="{ open: false }">
+                        <button @click="open = !open" class="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                        
+                        <!-- Mobile Sidebar Menu -->
+                        <div x-show="open" @click.away="open = false" class="fixed inset-0 z-50">
+                            <!-- Backdrop -->
+                            <div @click="open = false" class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+                            
+                            <!-- Sidebar -->
+                            <div class="fixed left-0 top-0 h-full w-80 max-w-xs bg-white shadow-2xl transform transition-transform duration-300 ease-in-out"
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="transform -translate-x-full"
+                                 x-transition:enter-end="transform translate-x-0"
+                                 x-transition:leave="transition ease-in duration-300"
+                                 x-transition:leave-start="transform translate-x-0"
+                                 x-transition:leave-end="transform -translate-x-full">
+                                <!-- Header -->
+                                <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-6">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-users text-white text-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-white font-semibold text-lg">Committee</h3>
+                                                <p class="text-blue-100 text-sm">Management</p>
+                                            </div>
+                                        </div>
+                                        <button @click="open = false" class="w-8 h-8 flex items-center justify-center rounded-full bg-white bg-opacity-20 text-white hover:bg-opacity-30 transition-all">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Menu Items -->
+                                <nav class="px-4 py-6 space-y-2">
+                                    <a href="{% url 'committee:organizer_dashboard' %}" @click="open = false" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-blue-50 transition-colors {% if request.resolver_match.url_name == 'organizer_dashboard' %}bg-blue-50 text-blue-600{% endif %}">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-chart-pie text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Dashboard</div>
+                                            <div class="text-sm text-gray-500">Overview & Analytics</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="{% url 'committee:committee_list' %}" @click="open = false" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-blue-50 transition-colors {% if request.resolver_match.url_name == 'committee_list' %}bg-blue-50 text-blue-600{% endif %}">
+                                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-list-ul text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Committees</div>
+                                            <div class="text-sm text-gray-500">Manage all committees</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="{% url 'committee:see_all_members' %}" @click="open = false" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-blue-50 transition-colors {% if 'see_all_members' in request.path %}bg-blue-50 text-blue-600{% endif %}">
+                                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-users text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Members</div>
+                                            <div class="text-sm text-gray-500">View all members</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="{% url 'committee:manage_contributions' %}" @click="open = false" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-blue-50 transition-colors {% if 'manage_contributions' in request.path %}bg-blue-50 text-blue-600{% endif %}">
+                                        <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-dollar-sign text-yellow-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Contributions</div>
+                                            <div class="text-sm text-gray-500">Manage payments</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="{% url 'committee:manage_payouts' %}" @click="open = false" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-blue-50 transition-colors {% if 'manage_payouts' in request.path %}bg-blue-50 text-blue-600{% endif %}">
+                                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-hand-holding-usd text-red-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Payouts</div>
+                                            <div class="text-sm text-gray-500">Distribute funds</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="{% url 'committee:bulk_contribution' %}" @click="open = false" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-blue-50 transition-colors {% if 'bulk_contribution' in request.path %}bg-blue-50 text-blue-600{% endif %}">
+                                        <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-calendar-plus text-indigo-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Set Contributions</div>
+                                            <div class="text-sm text-gray-500">Schedule payments</div>
+                                        </div>
+                                    </a>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Desktop Navigation -->
+                {% if user.is_organizer %}
+                <div class="hidden md:block">
+                    <div class="flex flex-wrap gap-2 lg:gap-3 items-center justify-start lg:justify-end">
+                        <a href="{% url 'committee:organizer_dashboard' %}" class="nav-btn inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-all {% if request.resolver_match.url_name == 'organizer_dashboard' %}active{% endif %}">
+                            <i class="fas fa-chart-pie mr-2"></i>
+                            <span class="hidden lg:inline">Dashboard</span>
+                            <span class="lg:hidden">Dash</span>
+                        </a>
+                        <a href="{% url 'committee:committee_list' %}" class="nav-btn inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-all {% if request.resolver_match.url_name == 'committee_list' %}active{% endif %}">
+                            <i class="fas fa-list-ul mr-2"></i>
+                            <span class="hidden lg:inline">Committees</span>
+                            <span class="lg:hidden">Comm</span>
+                        </a>
+                        <a href="{% url 'committee:see_all_members' %}" class="nav-btn inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-all {% if 'see_all_members' in request.path %}active{% endif %}">
+                            <i class="fas fa-users mr-2"></i>
+                            <span class="hidden lg:inline">Members</span>
+                            <span class="lg:hidden">Mem</span>
+                        </a>
+                        <a href="{% url 'committee:manage_contributions' %}" class="nav-btn inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-all {% if 'manage_contributions' in request.path %}active{% endif %}">
+                            <i class="fas fa-dollar-sign mr-2"></i>
+                            <span class="hidden lg:inline">Contributions</span>
+                            <span class="lg:hidden">Cont</span>
+                        </a>
+                        <a href="{% url 'committee:manage_payouts' %}" class="nav-btn inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-all {% if 'manage_payouts' in request.path %}active{% endif %}">
+                            <i class="fas fa-hand-holding-usd mr-2"></i>
+                            <span class="hidden lg:inline">Payouts</span>
+                            <span class="lg:hidden">Pay</span>
+                        </a>
+                        <a href="{% url 'committee:bulk_contribution' %}" class="nav-btn inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-all {% if 'bulk_contribution' in request.path %}active{% endif %}">
+                            <i class="fas fa-calendar-plus mr-2"></i>
+                            <span class="hidden lg:inline">Set Contributions</span>
+                            <span class="lg:hidden">Set</span>
+                        </a>
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
 
     <div class="container mx-auto px-4 sm:px-6 py-4 lg:py-8">
-        <div class="flex flex-col lg:flex-row gap-4 lg:gap-8">
-            <!-- Sidebar Navigation -->
-            <div class="lg:w-1/4">
-                <div id="mobile-sidebar" class="committee-sidebar lg:rounded-2xl p-4 lg:p-6 text-white lg:static lg:transform-none fixed top-0 left-0 bottom-0 z-50 w-80 max-w-xs transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out overflow-y-auto lg:overflow-visible">
-                    <!-- Close button for mobile -->
-                    <div class="lg:hidden flex justify-between items-center mb-6 pb-4 border-b border-white border-opacity-20">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                                <i class="fas fa-users text-white text-sm"></i>
-                            </div>
-                            <span class="font-display font-semibold text-lg">FinanceCore</span>
-                        </div>
-                        <button id="close-sidebar" class="text-white hover:text-gray-300 p-2 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-200">
-                            <i class="fas fa-times text-xl"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="mb-6 lg:mb-8">
-                        <h3 class="text-lg font-semibold font-display mb-2">Quick Navigation</h3>
-                        <p class="text-blue-100 font-body text-sm">Access committee features</p>
-                    </div>
-                    
-                    <nav class="space-y-1 lg:space-y-2">
-                        {% if user.is_organizer %}
-                        <!-- Organizer Quick Navigation -->
-                        <div class="mb-3 lg:mb-4">
-                            <h4 class="text-xs font-semibold font-sans text-blue-200 uppercase tracking-wider mb-2">QUICK NAVIGATION</h4>
-                        </div>
-                        
-                        <a href="{% url 'committee:organizer_dashboard' %}" 
-                           class="committee-nav-item flex items-center space-x-3 p-2.5 lg:p-3 rounded-lg font-body text-sm lg:text-base {% if request.resolver_match.url_name == 'organizer_dashboard' %}active{% endif %}">
-                            <i class="fas fa-chart-pie w-4 lg:w-5 text-center"></i>
-                            <span class="font-medium">Dashboard</span>
-                        </a>
-                        <a href="{% url 'committee:committee_list' %}" 
-                            class="committee-nav-item flex items-center space-x-3 p-2.5 lg:p-3 rounded-lg font-body text-sm lg:text-base {% if request.resolver_match.url_name == 'committee_list' %}active{% endif %}">
-                            <i class="fas fa-list-ul w-4 lg:w-5 text-center"></i>
-                            <span class="font-medium">All Committees</span>
-                        </a>
-                        <a href="{% url 'committee:see_all_members' %}" 
-                           class="committee-nav-item flex items-center space-x-3 p-2.5 lg:p-3 rounded-lg font-body text-sm lg:text-base {% if 'see_all_members' in request.path %}active{% endif %}">
-                            <i class="fas fa-users w-4 lg:w-5 text-center"></i>
-                            <span class="font-medium">Manage Members</span>
-                        </a>
-                        
-                        <a href="{% url 'committee:manage_contributions' %}" 
-                           class="committee-nav-item flex items-center space-x-3 p-2.5 lg:p-3 rounded-lg font-body text-sm lg:text-base {% if 'manage_contributions' in request.path %}active{% endif %}">
-                            <i class="fas fa-rupee-sign w-4 lg:w-5 text-center"></i>
-                            <span class="font-medium">Contributions</span>
-                        </a>
-                        
-                        <a href="{% url 'committee:manage_payouts' %}" 
-                           class="committee-nav-item flex items-center space-x-3 p-2.5 lg:p-3 rounded-lg font-body text-sm lg:text-base {% if 'manage_payouts' in request.path %}active{% endif %}">
-                            <i class="fas fa-hand-holding-usd w-4 lg:w-5 text-center"></i>
-                            <span class="font-medium">Payouts</span>
-                        </a>
-                        
-                        <a href="{% url 'committee:bulk_contribution' %}" 
-                           class="committee-nav-item flex items-center space-x-3 p-2.5 lg:p-3 rounded-lg font-body text-sm lg:text-base {% if 'bulk_contribution' in request.path %}active{% endif %}">
-                            <i class="fas fa-calendar-plus w-4 lg:w-5 text-center"></i>
-                            <span class="font-medium">Set Contributions</span>
-                        </a>
-                        
-                        <div class="border-t border-white border-opacity-20 my-4"></div>
-                        {% endif %}
-                    </nav>
-                    
-                    <!-- User Info -->
-                    <div class="mt-6 lg:mt-8 pt-4 lg:pt-6 border-t border-white border-opacity-20">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 lg:w-10 lg:h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-white text-sm lg:text-base"></i>
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <p class="font-medium font-display text-sm lg:text-base truncate">{{ user.first_name|default:user.email }}</p>
-                                <p class="text-blue-100 text-xs lg:text-sm font-body">Main Organizer</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Main Content Area -->
-            <div class="lg:w-3/4 w-full min-w-0">
                 <!-- Breadcrumb -->
                 <nav class="mb-4 lg:mb-6">
                     <ol class="flex items-center space-x-2 text-xs lg:text-sm text-gray-600 font-body overflow-x-auto pb-2">
@@ -231,56 +254,75 @@
                     </ol>
                 </nav>
                 
-                <!-- Messages -->
-                {% if messages %}
-                <div class="mb-6 space-y-3">
-                    {% for message in messages %}
-                    {% if message.tags == 'error' %}
-                        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="fas fa-exclamation-triangle mr-2"></i>
-                                {{ message }}
-                            </div>
+        <!-- Messages -->
+        {% if messages %}
+        <div class="mb-6 space-y-3">
+            {% for message in messages %}
+            {% if message.tags == 'error' %}
+                <div class="bg-red-50 border-l-4 border-red-400 text-red-800 px-4 py-3 rounded-lg shadow-sm animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-3 text-red-500"></i>
+                            <span class="font-medium">{{ message }}</span>
                         </div>
-                    {% elif message.tags == 'success' %}
-                        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="fas fa-check-circle mr-2"></i>
-                                {{ message }}
-                            </div>
-                        </div>
-                    {% elif message.tags == 'warning' %}
-                        <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="fas fa-exclamation-triangle mr-2"></i>
-                                {{ message }}
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="fas fa-info-circle mr-2"></i>
-                                {{ message }}
-                            </div>
-                        </div>
-                    {% endif %}
-                    {% endfor %}
-                </div>
-                {% endif %}
-                
-                <!-- Page Content -->
-                <div class="bg-white rounded-lg lg:rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                    {% block committee_content %}
-                    <div class="p-4 lg:p-8">
-                        <p class="text-gray-600">Content goes here...</p>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-red-400 hover:text-red-600 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
                     </div>
-                    {% endblock %}
                 </div>
-                
-                <!-- Additional Content -->
-                {% block additional_content %}{% endblock %}
-            </div>
+            {% elif message.tags == 'success' %}
+                <div class="bg-green-50 border-l-4 border-green-400 text-green-800 px-4 py-3 rounded-lg shadow-sm animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle mr-3 text-green-500"></i>
+                            <span class="font-medium">{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-green-400 hover:text-green-600 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            {% elif message.tags == 'warning' %}
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 px-4 py-3 rounded-lg shadow-sm animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-3 text-yellow-500"></i>
+                            <span class="font-medium">{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-yellow-400 hover:text-yellow-600 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            {% else %}
+                <div class="bg-blue-50 border-l-4 border-blue-400 text-blue-800 px-4 py-3 rounded-lg shadow-sm animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-info-circle mr-3 text-blue-500"></i>
+                            <span class="font-medium">{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-blue-400 hover:text-blue-600 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            {% endif %}
+            {% endfor %}
         </div>
+        {% endif %}
+                
+        <!-- Page Content -->
+        <div class="bg-white rounded-lg lg:rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            {% block committee_content %}
+            <div class="p-4 lg:p-8">
+                <p class="text-gray-600">Content goes here...</p>
+            </div>
+            {% endblock %}
+        </div>
+        
+        <!-- Additional Content -->
+        {% block additional_content %}{% endblock %}
+    </div>
     </div>
 </div>
 {% endblock %}
@@ -288,239 +330,33 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM Content Loaded - Starting mobile menu initialization');
-    
-    // Mobile sidebar functionality with error handling
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const mobileSidebar = document.getElementById('mobile-sidebar');
-    const mobileOverlay = document.getElementById('mobile-overlay');
-    const closeSidebar = document.getElementById('close-sidebar');
-    const menuIcon = document.getElementById('menu-icon');
-    let sidebarOpen = false;
-    
-    // Debug logging
-    console.log('Elements found:', {
-        mobileMenuBtn: !!mobileMenuBtn,
-        mobileSidebar: !!mobileSidebar,
-        mobileOverlay: !!mobileOverlay,
-        closeSidebar: !!closeSidebar,
-        menuIcon: !!menuIcon
-    });
-    
-    // Ensure the mobile button sits at the top of the stacking order and is not constrained by parent stacking contexts
-    if (mobileMenuBtn && !mobileMenuBtn.dataset.movedToBody) {
-        try {
-            document.body.appendChild(mobileMenuBtn);
-            mobileMenuBtn.dataset.movedToBody = 'true';
-            // Defensive styles (in case Tailwind classes are overridden on some pages)
-            mobileMenuBtn.style.position = 'fixed';
-            mobileMenuBtn.style.top = mobileMenuBtn.style.top || '80px';
-            mobileMenuBtn.style.right = mobileMenuBtn.style.right || '16px';
-            mobileMenuBtn.style.zIndex = '2147483647'; // max z-index
-            mobileMenuBtn.style.pointerEvents = 'auto';
-        } catch (e) {
-            console.warn('Could not move mobileMenuBtn to body:', e);
-        }
-    }
-    
-    if (!mobileMenuBtn) {
-        console.error('Mobile menu button not found!');
-        return;
-    }
-    
-    function openSidebar() {
-        console.log('Opening sidebar...');
-        sidebarOpen = true;
-        document.body.classList.add('sidebar-open');
-        
-        if (mobileSidebar) {
-            mobileSidebar.classList.remove('-translate-x-full');
-            mobileSidebar.style.transform = 'translateX(0)';
-            console.log('Sidebar opened');
-        }
-        
-        if (mobileOverlay) {
-            mobileOverlay.classList.remove('hidden');
-            mobileOverlay.style.opacity = '1';
-            console.log('Overlay shown');
-        }
-        
-        // Animate menu icon to X (Font Awesome 6 uses fa-xmark)
-        if (menuIcon) {
-            menuIcon.style.transform = 'rotate(90deg)';
-            setTimeout(() => {
-                menuIcon.classList.remove('fa-bars');
-                // Remove both possible close icons to avoid duplicates
-                menuIcon.classList.remove('fa-times');
-                menuIcon.classList.remove('fa-xmark');
-                // Prefer fa-xmark (FA6), fallback to fa-times
-                menuIcon.classList.add('fa-xmark');
-                menuIcon.style.transform = 'rotate(0deg)';
-            }, 150);
-        }
-    }
-    
-    function closeSidebarFunc() {
-        console.log('Closing sidebar...');
-        sidebarOpen = false;
-        document.body.classList.remove('sidebar-open');
-        
-        if (mobileSidebar) {
-            mobileSidebar.classList.add('-translate-x-full');
-            mobileSidebar.style.transform = 'translateX(-100%)';
-            console.log('Sidebar closed');
-        }
-        
-        if (mobileOverlay) {
-            mobileOverlay.classList.add('hidden');
-            mobileOverlay.style.opacity = '0';
-            console.log('Overlay hidden');
-        }
-        
-        // Animate menu icon back to bars
-        if (menuIcon) {
-            menuIcon.style.transform = 'rotate(-90deg)';
-            setTimeout(() => {
-                menuIcon.classList.remove('fa-xmark');
-                menuIcon.classList.remove('fa-times');
-                menuIcon.classList.add('fa-bars');
-                menuIcon.style.transform = 'rotate(0deg)';
-            }, 150);
-        }
-    }
-    
-    // Enhanced button interactions with better event handling
-    mobileMenuBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        console.log('Mobile menu button clicked! Current state:', sidebarOpen);
-        
-        try {
-            if (sidebarOpen) {
-                closeSidebarFunc();
-            } else {
-                openSidebar();
-            }
-        } catch (error) {
-            console.error('Error toggling sidebar:', error);
-        }
-    });
-    
-    // Add visual feedback
-    mobileMenuBtn.addEventListener('mousedown', function(e) {
-        this.style.transform = 'scale(0.95)';
-    });
-    
-    mobileMenuBtn.addEventListener('mouseup', function(e) {
-        this.style.transform = 'scale(1)';
-    });
-    
-    mobileMenuBtn.addEventListener('touchstart', function(e) {
-        this.style.transform = 'scale(0.95)';
-    }, { passive: true });
-    
-    mobileMenuBtn.addEventListener('touchend', function(e) {
-        this.style.transform = 'scale(1)';
-    }, { passive: true });
-    
-    console.log('Mobile menu button event listeners attached successfully');
-    
-    // Close button functionality
-    if (closeSidebar) {
-        closeSidebar.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            console.log('Close button clicked');
-            closeSidebarFunc();
-        });
-        console.log('Close button event listener attached');
-    }
-    
-    // Overlay click to close
-    if (mobileOverlay) {
-        mobileOverlay.addEventListener('click', function(e) {
-            console.log('Overlay clicked');
-            closeSidebarFunc();
-        });
-        console.log('Overlay event listener attached');
-    }
-    
-    // Enhanced navigation link handling
-    const navItems = document.querySelectorAll('#mobile-sidebar .committee-nav-item');
-    console.log('Found navigation items:', navItems.length);
-    
-    navItems.forEach(link => {
-        link.addEventListener('click', function(e) {
-            console.log('Navigation item clicked');
-            
-            // Add active state immediately for better UX
-            document.querySelectorAll('.committee-nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            this.classList.add('active');
-            
-            // Close sidebar on mobile after navigation
-            if (window.innerWidth < 1024) {
+    // Auto-dismiss messages after 5 seconds
+    const messages = document.querySelectorAll('[class*="animate-fade-in"]');
+    messages.forEach(message => {
+        setTimeout(() => {
+            if (message.parentElement) {
+                message.style.opacity = '0';
+                message.style.transform = 'translateY(-10px)';
                 setTimeout(() => {
-                    closeSidebarFunc();
-                }, 200);
+                    message.remove();
+                }, 300);
             }
-        });
-        
-        // Add visual feedback for navigation items
-        link.addEventListener('mouseenter', function() {
-            this.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-        });
-        
-        link.addEventListener('mouseleave', function() {
-            this.style.backgroundColor = '';
-        });
+        }, 5000);
     });
     
-    // Handle window resize
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            if (window.innerWidth >= 1024 && sidebarOpen) {
-                console.log('Window resized to desktop, closing sidebar');
-                closeSidebarFunc();
-            }
-        }, 250);
-    });
-    
-    // Prevent body scroll when sidebar is open
-    document.addEventListener('touchmove', function(e) {
-        if (sidebarOpen && mobileSidebar && !mobileSidebar.contains(e.target)) {
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
             e.preventDefault();
-        }
-    }, { passive: false });
-    
-    // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && sidebarOpen) {
-            console.log('Escape key pressed, closing sidebar');
-            closeSidebarFunc();
-        }
-    });
-    
-    // Update active navigation states
-    function updateActiveNavItem() {
-        const currentPath = window.location.pathname;
-        document.querySelectorAll('.committee-nav-item').forEach(item => {
-            const href = item.getAttribute('href');
-            if (href && (currentPath === href || currentPath.includes(href.split('/').pop()))) {
-                item.classList.add('active');
-            } else {
-                item.classList.remove('active');
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
             }
         });
-    }
-    
-    updateActiveNavItem();
-    
-    console.log('Mobile menu initialization complete');
+    });
 });
 </script>
 {% endblock %}

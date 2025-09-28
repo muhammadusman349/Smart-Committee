@@ -15,7 +15,7 @@
     <div class="mb-8">
         <div class="flex justify-between items-center">
             <div>
-                <h2 class="text-3xl font-bold font-display text-gray-900 mb-2">Welcome back, {{ user.full_name|default:user.get_username|default:'User' }}!</h2>
+                <h2 class="text-3xl font-bold font-display text-gray-900 mb-2">Welcome back, {{ user.full_name|default:user.first_name|default:'User' }}!</h2>
                 <p class="text-gray-600 font-body">Comprehensive overview of your committee management activities</p>
             </div>
             <div class="flex space-x-3">
@@ -73,7 +73,7 @@
                     <p class="text-purple-100 text-sm mt-2">Collected this month</p>
                 </div>
                 <div class="bg-white bg-opacity-20 rounded-full p-3">
-                    <i class="fas fa-rupee-sign text-2xl"></i>
+                    <i class="fas fa-dollar-sign text-2xl"></i>
                 </div>
             </div>
         </div>
@@ -155,7 +155,7 @@
                 {% if payment_received != null %}
                 <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                     <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                        <i class="fas fa-rupee-sign text-purple-600"></i>
+                        <i class="fas fa-dollar-sign text-purple-600"></i>
                     </div>
                     <div class="flex-1">
                         <p class="font-medium font-display text-gray-900">Payment received</p>

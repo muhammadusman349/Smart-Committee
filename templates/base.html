@@ -283,51 +283,178 @@
     </main>
 
     <!-- Enhanced Footer -->
-    <footer class="bg-gray-800 text-white mt-auto">
-        <div class="container mx-auto px-6 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <!-- About Section -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4 text-white font-display">FinanceCore</h3>
-                    <p class="text-gray-400 font-body">
-                        Professional committee financial management solution for modern organizations.
-                    </p>
-                </div>
-                
-                <!-- Quick Links -->
-                <div>
-                    <h3 class="text-lg font-bold mb-4">Quick Links</h3>
-                    <ul class="space-y-2">
-                        <li><a href="{% url 'home' %}" class="text-gray-400 hover:text-white">Home</a></li>
-                        <li><a href="{% url 'committee:committee_list' %}" class="text-gray-400 hover:text-white">Committees</a></li>
-                        <li><a href="{% url 'account_signup' %}" class="text-gray-400 hover:text-white">Sign Up</a></li>
-                    </ul>
-                </div>
-                
-                <!-- Legal -->
-                <div>
-                    <h3 class="text-lg font-bold mb-4">Legal</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-400 hover:text-white">Privacy Policy</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Terms of Service</a></li>
-                    </ul>
-                </div>
-                
-                <!-- Social Media -->
-                <div>
-                    <h3 class="text-lg font-bold mb-4">Follow Us</h3>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+    <footer class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white relative overflow-hidden">
+        <!-- Animated background elements -->
+        <div class="absolute inset-0 bg-gradient-to-r from-blue-600/10 to-purple-600/10"></div>
+        <div class="absolute top-0 left-0 w-full h-full">
+            <div class="absolute top-10 left-10 w-32 h-32 bg-blue-500/10 rounded-full blur-xl animate-pulse"></div>
+            <div class="absolute bottom-10 right-10 w-24 h-24 bg-purple-500/10 rounded-full blur-xl animate-pulse" style="animation-delay: 1s;"></div>
+            <div class="absolute top-1/2 left-1/2 w-16 h-16 bg-indigo-500/10 rounded-full blur-lg animate-pulse" style="animation-delay: 2s;"></div>
+        </div>
+
+        <div class="relative z-10">
+            <div class="container mx-auto px-6 py-16">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                    <!-- About Section -->
+                    <div class="group">
+                        <h3 class="text-xl font-bold font-display mb-6 group-hover:text-blue-400 transition-colors duration-300">FinanceCore</h3>
+                        <p class="text-gray-400 font-body mb-6 leading-relaxed">
+                            Professional committee financial management solution for modern organizations. Secure, transparent, and efficient.
+                        </p>
+                        <div class="flex space-x-3">
+                            <a href="#" class="w-10 h-10 bg-gray-700/50 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                                <i class="fab fa-facebook-f text-white"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-gray-700/50 hover:bg-blue-400 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                                <i class="fab fa-twitter text-white"></i>
+                            </a>
+                            <a href="#" class="w-10 h-10 bg-gray-700/50 hover:bg-blue-700 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-1">
+                                <i class="fab fa-linkedin-in text-white"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Quick Links -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-6 hover:text-blue-400 transition-colors duration-300 cursor-pointer">Quick Links</h3>
+                        <ul class="space-y-3">
+                            <li>
+                                <a href="{% url 'home' %}" class="text-gray-400 hover:text-white hover:translate-x-1 transition-all duration-300 inline-block group">
+                                    <i class="fas fa-chevron-right text-xs mr-2 group-hover:text-blue-400 transition-colors"></i>
+                                    Home
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'committee:committee_list' %}" class="text-gray-400 hover:text-white hover:translate-x-1 transition-all duration-300 inline-block group">
+                                    <i class="fas fa-chevron-right text-xs mr-2 group-hover:text-blue-400 transition-colors"></i>
+                                    Committees
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'account_signup' %}" class="text-gray-400 hover:text-white hover:translate-x-1 transition-all duration-300 inline-block group">
+                                    <i class="fas fa-chevron-right text-xs mr-2 group-hover:text-blue-400 transition-colors"></i>
+                                    Sign Up
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#features" class="text-gray-400 hover:text-white hover:translate-x-1 transition-all duration-300 inline-block group">
+                                    <i class="fas fa-chevron-right text-xs mr-2 group-hover:text-blue-400 transition-colors"></i>
+                                    Features
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Services -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-6 hover:text-blue-400 transition-colors duration-300 cursor-pointer">Services</h3>
+                        <ul class="space-y-3">
+                            <li>
+                                <a href="#" class="text-gray-400 hover:text-white hover:translate-x-1 transition-all duration-300 inline-block group">
+                                    <i class="fas fa-chevron-right text-xs mr-2 group-hover:text-blue-400 transition-colors"></i>
+                                    Financial Tracking
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-gray-400 hover:text-white hover:translate-x-1 transition-all duration-300 inline-block group">
+                                    <i class="fas fa-chevron-right text-xs mr-2 group-hover:text-blue-400 transition-colors"></i>
+                                    Member Management
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-gray-400 hover:text-white hover:translate-x-1 transition-all duration-300 inline-block group">
+                                    <i class="fas fa-chevron-right text-xs mr-2 group-hover:text-blue-400 transition-colors"></i>
+                                    Reporting & Analytics
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-gray-400 hover:text-white hover:translate-x-1 transition-all duration-300 inline-block group">
+                                    <i class="fas fa-chevron-right text-xs mr-2 group-hover:text-blue-400 transition-colors"></i>
+                                    Security & Compliance
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Contact & Newsletter -->
+                    <div>
+                        <h3 class="text-lg font-bold mb-6 hover:text-blue-400 transition-colors duration-300 cursor-pointer">Stay Connected</h3>
+                        <p class="text-gray-400 mb-4 font-body">
+                            Subscribe to our newsletter for updates and tips.
+                        </p>
+                        <form class="space-y-3">
+                            <div class="relative">
+                                <input type="email" placeholder="Enter your email"
+                                       class="w-full px-4 py-2 bg-gray-700/50 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                                <button type="submit"
+                                        class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-md transition-all duration-300 hover:scale-105">
+                                    <i class="fas fa-paper-plane text-sm"></i>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="mt-4 pt-4 border-t border-gray-700">
+                            <p class="text-xs text-gray-500 mb-2">24/7 Support</p>
+                            <a href="mailto:support@financecore.com"
+                               class="text-blue-400 hover:text-blue-300 transition-colors duration-300 flex items-center group">
+                                <i class="fas fa-envelope mr-2 group-hover:scale-110 transition-transform"></i>
+                                support@financecore.com
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <hr class="border-gray-700 my-8">
-            
-            <div class="text-center text-gray-500">
-                <p>&copy; {% now "Y" %} FinanceCore. All Rights Reserved.</p>
+
+                <hr class="border-gray-700 mb-8">
+
+                <!-- Bottom section with enhanced copyright and legal -->
+                <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                    <div class="text-center md:text-left">
+                        <p class="text-gray-400 font-body">
+                            &copy; {% now "Y" %} FinanceCore. All Rights Reserved.
+                            <span class="hidden md:inline">|</span>
+                            <span class="block md:inline">Made with ❤️ for committee management</span>
+                        </p>
+                    </div>
+
+                    <div class="flex items-center space-x-6">
+                        <!-- Legal links with hover effects -->
+                        <a href="#" class="text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block group">
+                            <i class="fas fa-shield-alt mr-1 group-hover:text-blue-400 transition-colors"></i>
+                            Privacy Policy
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-1 inline-block group">
+                            <i class="fas fa-file-contract mr-1 group-hover:text-blue-400 transition-colors"></i>
+                            Terms of Service
+                        </a>
+
+                        <!-- Back to top button -->
+                        <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+                                class="w-10 h-10 bg-gray-700/50 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 hover:-translate-y-1 group">
+                            <i class="fas fa-arrow-up text-white group-hover:text-blue-100 transition-colors"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Trust indicators -->
+                <div class="mt-8 pt-8 border-t border-gray-700">
+                    <div class="flex flex-wrap justify-center items-center gap-6 text-sm text-gray-400">
+                        <div class="flex items-center space-x-2 group hover:text-white transition-colors cursor-pointer">
+                            <i class="fas fa-shield-check text-green-500 group-hover:scale-110 transition-transform"></i>
+                            <span>SSL Secured</span>
+                        </div>
+                        <div class="flex items-center space-x-2 group hover:text-white transition-colors cursor-pointer">
+                            <i class="fas fa-lock text-blue-500 group-hover:scale-110 transition-transform"></i>
+                            <span>Bank-Grade Security</span>
+                        </div>
+                        <div class="flex items-center space-x-2 group hover:text-white transition-colors cursor-pointer">
+                            <i class="fas fa-headset text-purple-500 group-hover:scale-110 transition-transform"></i>
+                            <span>24/7 Support</span>
+                        </div>
+                        <div class="flex items-center space-x-2 group hover:text-white transition-colors cursor-pointer">
+                            <i class="fas fa-globe text-indigo-500 group-hover:scale-110 transition-transform"></i>
+                            <span>Global Access</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </footer>
