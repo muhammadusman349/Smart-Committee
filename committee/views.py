@@ -3,14 +3,13 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q, Sum
 from accounts.models import User
-from django.db.models import Sum
 from datetime import date, timedelta
 import calendar
 from django.utils import timezone
 from django.urls import reverse
 from django.http import JsonResponse
-from django.contrib import messages
 from .models import Committee, Membership, Contribution, Payout, Invitation
 from .forms import (
     CommitteeForm,
@@ -28,24 +27,85 @@ from django.views.decorators.http import require_http_methods
 
 @login_required
 def committee_list(request):
-    """List committees for the logged-in organizer with pagination"""
+    """List committees for the logged-in organizer with search and filtering"""
     # Ensure only organizers can access
     if not request.user.is_organizer:
         messages.error(request, "Only organizers can view this page.")
         return redirect('home')
 
-    committees_list = Committee.objects.filter(
-        organizer=request.user
-    ).order_by('start_date')
+    # Get search query and status filter from request
+    search_query = request.GET.get('q', '')
+    status_filter = request.GET.get('status', '')
 
-    # Pagination - 5 items per page
-    paginator = Paginator(committees_list, 5)
+    # Start with base queryset
+    committees_list = Committee.objects.filter(organizer=request.user)
+
+    total_committees = committees_list.count()
+    active_committees = committees_list.filter(status='ACTIVE').count()
+
+    # Get all committees for the current user
+    user_committees = list(committees_list.values_list('id', flat=True))
+
+    # Calculate pending contributions (PENDING or LATE status)
+    pending_contributions = Contribution.objects.filter(
+        membership__committee_id__in=user_committees,
+        payment_status__in=['PENDING', 'LATE']
+    ).count()
+
+    # Calculate total members across all committees (only active members)
+    total_members = Membership.objects.filter(
+        committee_id__in=user_committees,
+        status='ACTIVE'
+    ).count()
+
+    # Apply search filter
+    if search_query:
+        committees_list = committees_list.filter(
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+
+    # Apply status filter
+    if status_filter and status_filter != 'all':
+        if status_filter == 'active':
+            committees_list = committees_list.filter(status='ACTIVE')
+        elif status_filter == 'completed':
+            committees_list = committees_list.filter(status='COMPLETED')
+        elif status_filter == 'upcoming':
+            committees_list = committees_list.filter(status='UPCOMING')
+
+    # Order by start date
+    committees_list = committees_list.order_by('start_date')
+
+    # Pagination - 10 items per page
+    paginator = Paginator(committees_list, 3)
     page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+
+    try:
+        page_obj = paginator.page(page_number)
+    except PageNotAnInteger:
+        page_obj = paginator.page(1)
+    except EmptyPage:
+        page_obj = paginator.page(paginator.num_pages)
+
+    # Get status counts for the filter dropdown
+    status_counts = {
+        'all': Committee.objects.filter(organizer=request.user).count(),
+        'active': Committee.objects.filter(organizer=request.user, status='ACTIVE').count(),
+        'completed': Committee.objects.filter(organizer=request.user, status='COMPLETED').count(),
+        'upcoming': Committee.objects.filter(organizer=request.user, status='UPCOMING').count(),
+    }
 
     return render(request, 'committee/list.html', {
         'committees': page_obj,
-        'page_obj': page_obj
+        'total_committees': total_committees,
+        'active_committees': active_committees,
+        'pending_contributions': pending_contributions,
+        'total_members': total_members,
+        'page_obj': page_obj,
+        'search_query': search_query,
+        'status_filter': status_filter,
+        'status_counts': status_counts,
     })
 
 

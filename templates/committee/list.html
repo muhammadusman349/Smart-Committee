@@ -16,25 +16,55 @@
             <h1 class="text-3xl font-bold font-display text-gray-900 mb-2">Committee Management</h1>
             <p class="text-gray-600 font-body">Manage and track your committee memberships</p>
         </div>
-        <div class="flex flex-col sm:flex-row gap-3">
+        <div class="flex flex-col sm:flex-row gap-3 ">
             <a href="{% url 'committee:committee_create' %}" 
-               class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+               class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 whitespace-nowrap">
                 <i class="fas fa-plus mr-2"></i> Create Committee
             </a>
-            <div class="relative flex-1 min-w-[250px]">
-                <input type="text" placeholder="Search committees..." 
-                       class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full">
-                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-            </div>
-            <div class="relative">
-                <select class="pl-3 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none w-full bg-white">
-                    <option>All Statuses</option>
-                    <option>Active</option>
-                    <option>Completed</option>
-                    <option>Upcoming</option>
-                </select>
-                <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
-            </div>
+            
+            <form method="get" action="{% url 'committee:committee_list' %}" class="flex-1 flex flex-col sm:flex-row gap-3 items-center">
+                <!-- Search Input -->
+                <div class="relative w-64">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            name="q" 
+                            value="{{ search_query|default:'' }}"
+                            placeholder="Search..." 
+                            class="pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full text-sm"
+                            aria-label="Search committees">
+                        <i class="fas fa-search absolute left-2.5 top-2.5 text-gray-400 text-sm"></i>
+                    </div>
+                </div>
+                
+                <!-- Status Filter -->
+                <div class="relative min-w-[180px]">
+                    <select 
+                        name="status" 
+                        class="pl-3 pr-10 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none w-full bg-white"
+                        onchange="this.form.submit()">
+                        <option value="all" {% if not status_filter or status_filter == 'all' %}selected{% endif %}>All Statuses </option>
+                        <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Active</option>
+                        <option value="upcoming" {% if status_filter == 'upcoming' %}selected{% endif %}>Upcoming</option>
+                        <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+                    </select>
+                    <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
+                </div>
+                
+                <!-- Hidden fields to maintain other GET parameters -->
+                <input type="hidden" name="page" value="1">
+                
+                <!-- Submit Button (hidden, triggered by select change or form submission) -->
+                <button type="submit" class="hidden">Apply Filters</button>
+                
+                <!-- Clear Filters Button (shown when filters are active) -->
+                {% if search_query or status_filter %}
+                <a href="{% url 'committee:committee_list' %}" 
+                   class="inline-flex items-center justify-center px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-md shadow-sm text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <i class="fas fa-times mr-1"></i> Clear
+                </a>
+                {% endif %}
+            </form>
         </div>
     </div>
 
@@ -44,7 +74,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600">Total Committees</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ committees|length }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ total_committees }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
                     <i class="fas fa-layer-group text-blue-600 text-xl"></i>
@@ -56,7 +86,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-sm text-gray-600">Active Committees</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ active_count }}</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ active_committees }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
                     <i class="fas fa-chart-line text-green-600 text-xl"></i>
@@ -67,8 +97,8 @@
         <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-100">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm text-gray-600">Pending Payouts</p>
-                    <p class="text-2xl font-bold text-gray-900">{{ pending_payouts }}</p>
+                    <p class="text-sm text-gray-600">Pending Contributions</p>
+                    <p class="text-2xl font-bold text-gray-900">{{ pending_contributions }}</p>
                 </div>
                 <div class="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center">
                     <i class="fas fa-hand-holding-usd text-amber-600 text-xl"></i>
@@ -151,7 +181,7 @@
                             <i class="fas fa-rupee-sign w-4 mr-2"></i>
                             Monthly Amount
                         </span>
-                        <span class="font-medium text-green-600">₹{{ committee.monthly_amount }}</span>
+                        <span class="font-medium text-green-600">${{ committee.monthly_amount }}</span>
                     </div>
                     <div class="flex items-center justify-between text-sm">
                         <span class="text-gray-500 flex items-center">
@@ -174,24 +204,21 @@
             </div>
             
             <!-- Card Footer -->
-            <div class="px-6 py-4 bg-gray-50 border-t flex items-center justify-between">
-                <a href="{% url 'committee:committee_detail' committee.pk %}" 
-                   class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-200">
-                    <i class="fas fa-eye mr-2"></i>
-                    View Details
-                </a>
-                
-                <div class="flex space-x-2">
-                    <a href="{% url 'committee:committee_update' committee.pk %}" 
-                       class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition duration-200">
-                        <i class="fas fa-edit mr-2"></i>
-                        Edit
+            <div class="px-4 sm:px-6 py-3 bg-gray-50 border-t">
+                <div class="flex flex-row gap-3">
+                    <!-- View Button -->
+                    <a href="{% url 'committee:committee_detail' committee.pk %}" 
+                       class="flex-1 inline-flex items-center justify-center px-3 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                        <i class="fas fa-eye mr-1.5 text-sm"></i>
+                        <span class="sm:hidden">View</span>
+                        <span class="hidden sm:inline">View Details</span>
                     </a>
                     
-                    <a href="{% url 'committee:manage_contributions' %}?committee={{ committee.id }}" 
-                       class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition duration-200">
-                        <i class="fas fa-rupee-sign mr-2"></i>
-                        Funds
+                    <!-- Edit Button -->
+                    <a href="{% url 'committee:committee_update' committee.pk %}" 
+                       class="flex-1 inline-flex items-center justify-center px-3 py-2.5 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                        <i class="fas fa-edit mr-1.5 text-sm"></i>
+                        <span>Edit</span>
                     </a>
                 </div>
             </div>

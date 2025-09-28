@@ -12,30 +12,34 @@
 
 {% block committee_content %}
 <div class="p-8">
-    <div class="flex justify-between items-center mb-8">
+    <div class="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-8 gap-4">
         <div>
-            <h1 class="text-3xl font-bold font-display text-gray-900">{{ committee.name }}</h1>
+            <h1 class="text-2xl lg:text-3xl font-bold font-display text-gray-900">{{ committee.name }}</h1>
             <p class="text-gray-600 font-body mt-1">{{ committee.description }}</p>
         </div>
         {% if is_organizer %}
-        <div class="flex space-x-4">
-            <a href="{% url 'committee:committee_update' committee.pk %}" class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition duration-200">
+        <div class="flex flex-col sm:flex-row gap-3 lg:gap-4">
+            <a href="{% url 'committee:committee_update' committee.pk %}" class="inline-flex items-center justify-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition duration-200">
                 <i class="fas fa-edit mr-2"></i> Edit
             </a>
 
-            <a href="{% url 'committee:invitation_list' committee.pk %}" class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition duration-200">
-                <i class="fas fa-list mr-2"></i> Manage Invitations
+            <a href="{% url 'committee:invitation_list' committee.pk %}" class="inline-flex items-center justify-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition duration-200">
+                <i class="fas fa-list mr-2"></i> 
+                <span class="hidden sm:inline">Manage Invitations</span>
+                <span class="sm:hidden">Invitations</span>
             </a>
 
             {% if committee.status != 'COMPLETED' %}
             <form method="post" action="{% url 'committee:toggle_status' committee.id %}">
                 {% csrf_token %}
-                <button type="submit" class="inline-flex items-center px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-lg transition duration-200">
+                <button type="submit" class="inline-flex items-center justify-center px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm font-medium rounded-lg transition duration-200 w-full sm:w-auto">
                     <i class="fas fa-power-off mr-2"></i>
                     {% if committee.status == 'ACTIVE' %}
-                        Deactivate Committee
+                        <span class="hidden sm:inline">Deactivate Committee</span>
+                        <span class="sm:hidden">Deactivate</span>
                     {% elif committee.status == 'DEACTIVATED' %}
-                        Reactivate Committee
+                        <span class="hidden sm:inline">Reactivate Committee</span>
+                        <span class="sm:hidden">Reactivate</span>
                     {% endif %}
                 </button>
             </form>
