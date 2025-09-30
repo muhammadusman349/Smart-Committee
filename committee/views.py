@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q, Sum
-from accounts.models import User
+from accounts.models import User, Contact
 from datetime import date, timedelta
 import calendar
 from django.utils import timezone
@@ -20,7 +19,7 @@ from .forms import (
 )
 from secrets import token_urlsafe
 from .tasks import send_invitation_email
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_POST
 
 # Committee Views
 
@@ -885,6 +884,18 @@ def organizer_dashboard(request):
     current_month = now.replace(day=1)
     next_contribution_date = (current_month + timedelta(days=32)).replace(day=1)
 
+    # Contact statistics (only for staff/admin users)
+    contact_stats = {}
+    recent_contacts = []
+    if request.user.is_staff:
+        contact_stats = {
+            'total_contacts': Contact.objects.count(),
+            'new_contacts': Contact.objects.filter(is_read=False, is_replied=False).count(),
+            'pending_replies': Contact.objects.filter(is_read=True, is_replied=False).count(),
+            'replied_contacts': Contact.objects.filter(is_replied=True).count(),
+        }
+        recent_contacts = Contact.objects.exclude(contact_type='newsletter').order_by('-created_at')[:5]
+
     return render(request, 'committee/organizer_dashboard.html', {
         'total_committees': total_committees,
         'total_members': total_members,
@@ -900,6 +911,8 @@ def organizer_dashboard(request):
         'next_contribution_date': next_contribution_date,
         'current_month': current_month,
         'is_also_member': is_also_member,
+        'contact_stats': contact_stats,
+        'recent_contacts': recent_contacts,
         'form_errors': []
     })
 
