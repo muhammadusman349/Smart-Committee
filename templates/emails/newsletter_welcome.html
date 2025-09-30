@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to FinanceCore Newsletter!</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+        }
+        .content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+            border: 1px solid #e9ecef;
+        }
+        .welcome-message {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .benefits-list {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f7fafc;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+        .benefit-icon {
+            font-size: 20px;
+            margin-right: 15px;
+            width: 30px;
+            text-align: center;
+        }
+        .cta-section {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            text-align: center;
+            margin: 25px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: white;
+            color: #38a169;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 10px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 14px;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .unsubscribe {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">🎉 Welcome to FinanceCore!</div>
+        <p style="font-size: 18px; margin: 0;">Thank you for subscribing to our newsletter</p>
+    </div>
+    
+    <div class="content">
+        <div class="welcome-message">
+            <h2 style="color: #2d3748; margin-bottom: 15px;">Hello and Welcome!</h2>
+            <p style="font-size: 16px; color: #4a5568;">
+                We're thrilled to have you join our community of committee management professionals. 
+                You're now part of a growing network focused on financial transparency and efficient committee operations.
+            </p>
+        </div>
+
+        <div class="benefits-list">
+            <h3 style="color: #2d3748; margin-bottom: 20px; text-align: center;">📬 What You'll Receive</h3>
+            
+            <div class="benefit-item">
+                <span class="benefit-icon">🚀</span>
+                <div>
+                    <strong>Latest Platform Updates</strong><br>
+                    <span style="color: #666; font-size: 14px;">Be the first to know about new features and improvements</span>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <span class="benefit-icon">💡</span>
+                <div>
+                    <strong>Tips & Best Practices</strong><br>
+                    <span style="color: #666; font-size: 14px;">Expert advice on financial tracking and member management</span>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <span class="benefit-icon">📊</span>
+                <div>
+                    <strong>Industry Insights</strong><br>
+                    <span style="color: #666; font-size: 14px;">Trends and analysis in committee management and finance</span>
+                </div>
+            </div>
+            
+            <div class="benefit-item">
+                <span class="benefit-icon">🎁</span>
+                <div>
+                    <strong>Exclusive Offers</strong><br>
+                    <span style="color: #666; font-size: 14px;">Special promotions and early access to premium features</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h3 style="margin-bottom: 15px;">Ready to Get Started?</h3>
+            <p style="margin-bottom: 20px;">Explore our platform and see how we can help streamline your committee management.</p>
+            <a href="{{ platform_url }}" class="btn">Explore FinanceCore</a>
+            <a href="{{ contact_url }}" class="btn" style="background: transparent; border: 2px solid white; color: white;">Contact Support</a>
+        </div>
+
+        <div style="background: white; padding: 20px; border-radius: 8px; text-align: center;">
+            <h4 style="color: #2d3748; margin-bottom: 10px;">Questions or Need Help?</h4>
+            <p style="color: #4a5568; margin-bottom: 15px;">
+                Our support team is here to help you make the most of FinanceCore.
+            </p>
+            <p style="color: #666; font-size: 14px;">
+                📧 Email: <a href="mailto:{{ support_email }}" style="color: #667eea;">{{ support_email }}</a><br>
+                🕒 Response Time: Within 24 hours
+            </p>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>FinanceCore - Committee Management Platform</strong></p>
+        <p>Empowering committees with transparent financial management</p>
+        
+        <div class="unsubscribe">
+            <p><strong>Manage Your Subscription</strong></p>
+            <p>If you wish to unsubscribe from our newsletter, please contact us at {{ support_email }}</p>
+            <p style="margin-top: 10px; font-size: 11px;">
+                © {{ current_year }} FinanceCore. All rights reserved.
+            </p>
+        </div>
+    </div>
+</body>
+</html>

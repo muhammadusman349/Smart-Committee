@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Features - Committee Management{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-indigo-600 to-indigo-700 text-white py-20">
+    <div class="container mx-auto px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="w-16 h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-star text-3xl"></i>
+            </div>
+            <h1 class="text-4xl lg:text-5xl font-bold mb-6">Platform Features</h1>
+            <p class="text-xl text-indigo-100 leading-relaxed">
+                Discover all the powerful features that make committee management effortless and efficient
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Main Features -->
+<section class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="max-w-6xl mx-auto">
+            
+            <!-- Core Features Grid -->
+            <div class="grid lg:grid-cols-3 gap-8 mb-20">
+                <div class="bg-white rounded-2xl border border-gray-200 p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-shield-alt text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Enterprise Security</h3>
+                    <p class="text-gray-600 mb-6">Bank-grade security with 256-bit SSL encryption, multi-factor authentication, and regular security audits.</p>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-center"><i class="fas fa-check text-blue-600 mr-2"></i>256-bit SSL encryption</li>
+                        <li class="flex items-center"><i class="fas fa-check text-blue-600 mr-2"></i>Multi-factor authentication</li>
+                        <li class="flex items-center"><i class="fas fa-check text-blue-600 mr-2"></i>Regular security audits</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white rounded-2xl border border-gray-200 p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Real-Time Analytics</h3>
+                    <p class="text-gray-600 mb-6">Monitor committee performance with comprehensive dashboards and reporting tools.</p>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-center"><i class="fas fa-check text-green-600 mr-2"></i>Live dashboard updates</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-600 mr-2"></i>Automated notifications</li>
+                        <li class="flex items-center"><i class="fas fa-check text-green-600 mr-2"></i>Mobile accessibility</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white rounded-2xl border border-gray-200 p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                    <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-6">
+                        <i class="fas fa-file-alt text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Compliance Reporting</h3>
+                    <p class="text-gray-600 mb-6">Generate detailed reports for audits and regulatory compliance with ease.</p>
+                    <ul class="space-y-2 text-sm text-gray-600">
+                        <li class="flex items-center"><i class="fas fa-check text-purple-600 mr-2"></i>Monthly statements</li>
+                        <li class="flex items-center"><i class="fas fa-check text-purple-600 mr-2"></i>Audit-ready documents</li>
+                        <li class="flex items-center"><i class="fas fa-check text-purple-600 mr-2"></i>Custom reporting</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Financial Management Features -->
+            <div class="mb-20">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Financial Management</h2>
+                    <p class="text-xl text-gray-600">Complete financial oversight and control</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="text-center p-6 bg-gray-50 rounded-xl">
+                        <i class="fas fa-wallet text-blue-600 text-2xl mb-3"></i>
+                        <h4 class="font-semibold text-gray-900 mb-2">Contribution Tracking</h4>
+                        <p class="text-sm text-gray-600">Automated member contribution monitoring</p>
+                    </div>
+                    <div class="text-center p-6 bg-gray-50 rounded-xl">
+                        <i class="fas fa-credit-card text-green-600 text-2xl mb-3"></i>
+                        <h4 class="font-semibold text-gray-900 mb-2">Payment Processing</h4>
+                        <p class="text-sm text-gray-600">Secure payment gateway integration</p>
+                    </div>
+                    <div class="text-center p-6 bg-gray-50 rounded-xl">
+                        <i class="fas fa-chart-pie text-purple-600 text-2xl mb-3"></i>
+                        <h4 class="font-semibold text-gray-900 mb-2">Budget Management</h4>
+                        <p class="text-sm text-gray-600">Set and track committee budgets</p>
+                    </div>
+                    <div class="text-center p-6 bg-gray-50 rounded-xl">
+                        <i class="fas fa-receipt text-orange-600 text-2xl mb-3"></i>
+                        <h4 class="font-semibold text-gray-900 mb-2">Expense Tracking</h4>
+                        <p class="text-sm text-gray-600">Detailed expense categorization</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Member Management Features -->
+            <div class="mb-20">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Member Management</h2>
+                    <p class="text-xl text-gray-600">Streamlined member operations</p>
+                </div>
+                
+                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                    <div>
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fas fa-user-plus text-green-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Easy Invitations</h4>
+                                    <p class="text-gray-600">Send secure email invitations with automatic follow-ups</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fas fa-users-cog text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Role Management</h4>
+                                    <p class="text-gray-600">Assign roles and permissions for different access levels</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mr-4">
+                                    <i class="fas fa-bell text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">Communication Hub</h4>
+                                    <p class="text-gray-600">Built-in messaging and notification system</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 rounded-2xl p-8">
+                        <h3 class="font-semibold text-gray-900 mb-4">Member Activity Dashboard</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-white rounded-lg">
+                                <span class="text-sm text-gray-600">Active Members</span>
+                                <span class="font-bold text-green-600">248</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-white rounded-lg">
+                                <span class="text-sm text-gray-600">Pending Invitations</span>
+                                <span class="font-bold text-orange-600">12</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-white rounded-lg">
+                                <span class="text-sm text-gray-600">Payment Compliance</span>
+                                <span class="font-bold text-blue-600">94%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Features -->
+            <div class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-12 mb-20">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-4">Advanced Features</h2>
+                    <p class="text-xl text-gray-600">Powerful tools for sophisticated committee management</p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                            <i class="fas fa-robot text-indigo-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2">AI-Powered Insights</h4>
+                        <p class="text-gray-600">Machine learning algorithms provide predictive analytics and recommendations</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                            <i class="fas fa-mobile-alt text-green-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2">Mobile App</h4>
+                        <p class="text-gray-600">Native mobile applications for iOS and Android with offline capabilities</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+                            <i class="fas fa-plug text-purple-600 text-2xl"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2">API Integration</h4>
+                        <p class="text-gray-600">RESTful APIs for seamless integration with existing systems</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 rounded-2xl p-12 text-center text-white">
+                <h2 class="text-3xl font-bold mb-4">Experience All Features</h2>
+                <p class="text-xl text-indigo-100 mb-8">Start your free trial and explore every feature we offer</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="{% url 'account_signup' %}" class="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition">
+                        Start Free Trial
+                    </a>
+                    <a href="{% url 'home' %}" class="border border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-indigo-600 transition">
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

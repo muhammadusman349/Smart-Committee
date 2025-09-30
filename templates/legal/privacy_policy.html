@@ -1,0 +1,202 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Privacy Policy - Committee Management{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-16">
+    <div class="container mx-auto px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="w-16 h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-shield-alt text-3xl"></i>
+            </div>
+            <h1 class="text-4xl lg:text-5xl font-bold mb-6">Privacy Policy</h1>
+            <p class="text-xl text-gray-300 leading-relaxed">
+                Your privacy is our priority. Learn how we protect and handle your data.
+            </p>
+            <p class="text-sm text-gray-400 mt-4">Last updated: {{ "now"|date:"F j, Y" }}</p>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="py-16 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="max-w-4xl mx-auto prose prose-lg">
+            
+            <!-- Introduction -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Introduction</h2>
+                <p class="text-gray-600 leading-relaxed">
+                    FinanceCore ("we," "our," or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our committee management platform and services.
+                </p>
+            </div>
+
+            <!-- Information We Collect -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Information We Collect</h2>
+                
+                <div class="bg-blue-50 rounded-xl p-6 mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Personal Information</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start"><i class="fas fa-dot-circle text-blue-600 mt-2 mr-3 text-xs"></i>Name, email address, and contact information</li>
+                        <li class="flex items-start"><i class="fas fa-dot-circle text-blue-600 mt-2 mr-3 text-xs"></i>Account credentials and authentication information</li>
+                        <li class="flex items-start"><i class="fas fa-dot-circle text-blue-600 mt-2 mr-3 text-xs"></i>Profile information and preferences</li>
+                        <li class="flex items-start"><i class="fas fa-dot-circle text-blue-600 mt-2 mr-3 text-xs"></i>Committee membership and role information</li>
+                    </ul>
+                </div>
+
+                <div class="bg-green-50 rounded-xl p-6 mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Financial Information</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start"><i class="fas fa-dot-circle text-green-600 mt-2 mr-3 text-xs"></i>Payment information (processed securely through third-party providers)</li>
+                        <li class="flex items-start"><i class="fas fa-dot-circle text-green-600 mt-2 mr-3 text-xs"></i>Transaction history and contribution records</li>
+                        <li class="flex items-start"><i class="fas fa-dot-circle text-green-600 mt-2 mr-3 text-xs"></i>Banking information for payouts (encrypted and secured)</li>
+                    </ul>
+                </div>
+
+                <div class="bg-purple-50 rounded-xl p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Usage Information</h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start"><i class="fas fa-dot-circle text-purple-600 mt-2 mr-3 text-xs"></i>Device information and browser type</li>
+                        <li class="flex items-start"><i class="fas fa-dot-circle text-purple-600 mt-2 mr-3 text-xs"></i>IP address and location data</li>
+                        <li class="flex items-start"><i class="fas fa-dot-circle text-purple-600 mt-2 mr-3 text-xs"></i>Platform usage patterns and feature interactions</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- How We Use Your Information -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">How We Use Your Information</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Service Provision</h4>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li>• Process committee transactions</li>
+                            <li>• Manage member accounts</li>
+                            <li>• Generate financial reports</li>
+                            <li>• Provide customer support</li>
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 rounded-xl p-6">
+                        <h4 class="font-semibold text-gray-900 mb-3">Platform Improvement</h4>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li>• Analyze usage patterns</li>
+                            <li>• Develop new features</li>
+                            <li>• Enhance security measures</li>
+                            <li>• Optimize performance</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Security -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Data Security</h2>
+                <div class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-xl">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Security Measures</h3>
+                    <p class="text-gray-600 mb-4">
+                        We implement industry-standard security measures to protect your personal information:
+                    </p>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <h4 class="font-medium text-gray-900 mb-2">Technical Safeguards</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• 256-bit SSL encryption</li>
+                                <li>• Multi-factor authentication</li>
+                                <li>• Regular security audits</li>
+                                <li>• Encrypted data storage</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="font-medium text-gray-900 mb-2">Administrative Safeguards</h4>
+                            <ul class="text-sm text-gray-600 space-y-1">
+                                <li>• Access controls and permissions</li>
+                                <li>• Employee training programs</li>
+                                <li>• Incident response procedures</li>
+                                <li>• Regular compliance reviews</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Information Sharing -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Information Sharing</h2>
+                <p class="text-gray-600 mb-6">
+                    We do not sell, trade, or otherwise transfer your personal information to third parties except in the following circumstances:
+                </p>
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-4 mt-1">
+                            <i class="fas fa-handshake text-blue-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Service Providers</h4>
+                            <p class="text-gray-600">Trusted third-party service providers who assist in operating our platform (payment processors, hosting providers, etc.)</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-4 mt-1">
+                            <i class="fas fa-balance-scale text-green-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Legal Requirements</h4>
+                            <p class="text-gray-600">When required by law, regulation, or legal process to protect our rights or comply with judicial proceedings</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-4 mt-1">
+                            <i class="fas fa-users text-purple-600 text-sm"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900 mb-2">Committee Members</h4>
+                            <p class="text-gray-600">Relevant information shared within your committee for transparency and operational purposes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Your Rights -->
+            <div class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Your Rights</h2>
+                <div class="bg-indigo-50 rounded-xl p-6">
+                    <p class="text-gray-600 mb-4">You have the following rights regarding your personal information:</p>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-center"><i class="fas fa-check text-indigo-600 mr-2"></i>Access your personal data</li>
+                            <li class="flex items-center"><i class="fas fa-check text-indigo-600 mr-2"></i>Correct inaccurate information</li>
+                            <li class="flex items-center"><i class="fas fa-check text-indigo-600 mr-2"></i>Request data deletion</li>
+                        </ul>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-center"><i class="fas fa-check text-indigo-600 mr-2"></i>Data portability</li>
+                            <li class="flex items-center"><i class="fas fa-check text-indigo-600 mr-2"></i>Withdraw consent</li>
+                            <li class="flex items-center"><i class="fas fa-check text-indigo-600 mr-2"></i>File complaints</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="bg-gray-50 rounded-xl p-8 text-center">
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">Questions About This Policy?</h2>
+                <p class="text-gray-600 mb-6">
+                    If you have any questions about this Privacy Policy or our data practices, please contact us:
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="mailto:privacy@financecore.com" class="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition">
+                        <i class="fas fa-envelope mr-2"></i>
+                        Email Us
+                    </a>
+                    <a href="{% url 'home' %}" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 transition">
+                        <i class="fas fa-home mr-2"></i>
+                        Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

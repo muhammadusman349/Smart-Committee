@@ -1,0 +1,25 @@
+Re: {{ contact.subject }}
+
+Hello {{ contact.name }},
+
+Thank you for contacting us. Here's our response to your inquiry:
+
+{{ reply_message }}
+
+---
+ORIGINAL MESSAGE
+Subject: {{ contact.subject }}
+Message: {{ contact.message }}
+Submitted: {{ contact.created_at|date:"F j, Y g:i A" }}
+
+Best regards,
+{{ admin_signature }}
+FinanceCore Support Team
+
+---
+NEED MORE HELP?
+If you have any further questions, please don't hesitate to contact us.
+We're here to help you succeed with your committee management!
+
+FinanceCore - Committee Management Platform
+© {{ current_year }} FinanceCore. All rights reserved.

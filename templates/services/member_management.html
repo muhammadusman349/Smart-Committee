@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Member Management - Committee Management{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-green-600 to-green-700 text-white py-20">
+    <div class="container mx-auto px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="w-16 h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-users text-3xl"></i>
+            </div>
+            <h1 class="text-4xl lg:text-5xl font-bold mb-6">Member Management</h1>
+            <p class="text-xl text-green-100 leading-relaxed">
+                Effortlessly manage your committee members with our comprehensive member management system
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="max-w-6xl mx-auto">
+            
+            <!-- Overview -->
+            <div class="grid lg:grid-cols-2 gap-12 items-center mb-20">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-6">Streamlined Member Operations</h2>
+                    <p class="text-lg text-gray-600 mb-6">
+                        Our member management system simplifies the process of adding, organizing, and communicating with committee members. 
+                        From invitation workflows to role management, everything is automated and secure.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Automated member invitation and onboarding process</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Role-based access control and permissions</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Member activity tracking and engagement metrics</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 rounded-2xl p-8">
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="font-semibold text-gray-900 mb-4">Member Directory</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">JD</div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-900">John Doe</div>
+                                    <div class="text-sm text-gray-500">Organizer</div>
+                                </div>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Active</span>
+                            </div>
+                            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">SM</div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-900">Sarah Miller</div>
+                                    <div class="text-sm text-gray-500">Member</div>
+                                </div>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Active</span>
+                            </div>
+                            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                                <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white text-sm font-bold mr-3">MJ</div>
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-900">Mike Johnson</div>
+                                    <div class="text-sm text-gray-500">Member</div>
+                                </div>
+                                <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">Pending</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid md:grid-cols-3 gap-8 mb-20">
+                <div class="text-center p-8 bg-white border border-gray-200 rounded-2xl hover:shadow-lg transition-shadow">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-user-plus text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Easy Invitations</h3>
+                    <p class="text-gray-600">Send secure email invitations with automatic follow-ups and status tracking.</p>
+                </div>
+                
+                <div class="text-center p-8 bg-white border border-gray-200 rounded-2xl hover:shadow-lg transition-shadow">
+                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-shield-alt text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Role Management</h3>
+                    <p class="text-gray-600">Assign roles and permissions to control access to sensitive committee information.</p>
+                </div>
+                
+                <div class="text-center p-8 bg-white border border-gray-200 rounded-2xl hover:shadow-lg transition-shadow">
+                    <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-bell text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Communication Hub</h3>
+                    <p class="text-gray-600">Built-in messaging and notification system to keep members informed and engaged.</p>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-12 text-center text-white">
+                <h2 class="text-3xl font-bold mb-4">Build Stronger Committees</h2>
+                <p class="text-xl text-green-100 mb-8">Start managing your members more effectively today</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="{% url 'account_signup' %}" class="bg-white text-green-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition">
+                        Get Started
+                    </a>
+                    <a href="{% url 'home' %}#features" class="border border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-green-600 transition">
+                        View Features
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

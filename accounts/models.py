@@ -73,3 +73,53 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.email} Profile"
+
+
+class Contact(models.Model):
+    CONTACT_TYPES = [
+        ('general', 'General Inquiry'),
+        ('support', 'Technical Support'),
+        ('business', 'Business Inquiry'),
+        ('newsletter', 'Newsletter Subscription'),
+    ]
+
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20, blank=True)
+    contact_type = models.CharField(max_length=20, choices=CONTACT_TYPES, default='general')
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    is_replied = models.BooleanField(default=False)
+    admin_reply = models.TextField(blank=True, help_text="Admin's reply to this contact message")
+    replied_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='contact_replies')
+    replied_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.name} - {self.subject}"
+
+    @property
+    def status(self):
+        """Return the current status of the contact"""
+        if self.is_replied:
+            return "Replied"
+        elif self.is_read:
+            return "Read"
+        else:
+            return "New"
+
+    @property
+    def priority_class(self):
+        """Return CSS class based on contact type for styling"""
+        priority_map = {
+            'support': 'text-red-600 bg-red-50',
+            'business': 'text-purple-600 bg-purple-50',
+            'general': 'text-blue-600 bg-blue-50',
+            'newsletter': 'text-green-600 bg-green-50',
+        }
+        return priority_map.get(self.contact_type, 'text-gray-600 bg-gray-50')

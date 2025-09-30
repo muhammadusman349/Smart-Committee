@@ -1,0 +1,39 @@
+Welcome to FinanceCore Newsletter!
+
+Hello and Welcome!
+
+Thank you for subscribing to the FinanceCore newsletter! We're thrilled to have you join our community of committee management professionals.
+
+WHAT YOU'LL RECEIVE
+===================
+🚀 Latest Platform Updates
+   - Be the first to know about new features and improvements
+
+💡 Tips & Best Practices  
+   - Expert advice on financial tracking and member management
+
+📊 Industry Insights
+   - Trends and analysis in committee management and finance
+
+🎁 Exclusive Offers
+   - Special promotions and early access to premium features
+
+READY TO GET STARTED?
+=====================
+Explore our platform: {{ platform_url }}
+Contact Support: {{ contact_url }}
+
+NEED HELP?
+==========
+Our support team is here to help you make the most of FinanceCore.
+
+Email: {{ support_email }}
+Response Time: Within 24 hours
+
+---
+MANAGE YOUR SUBSCRIPTION
+If you wish to unsubscribe from our newsletter, please contact us at {{ support_email }}
+
+FinanceCore - Committee Management Platform
+Empowering committees with transparent financial management
+© {{ current_year }} FinanceCore. All rights reserved.
