@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Contact - {{ contact.name }} - Admin{% endblock %}
+
+{% block content %}
+<!-- Admin Header -->
+<section class="bg-gradient-to-r from-red-600 to-red-700 text-white py-12">
+    <div class="container mx-auto px-6">
+        <div class="flex items-center">
+            <a href="{% url 'admin_contact_detail' contact.id %}" class="text-red-200 hover:text-white mr-4">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="text-3xl font-bold mb-2">Delete Contact</h1>
+                <p class="text-red-100">Are you sure you want to delete this contact message?</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Delete Confirmation -->
+<section class="py-16 bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-6">
+        <div class="max-w-2xl mx-auto">
+            
+            <!-- Warning Card -->
+            <div class="bg-white rounded-lg shadow-sm p-8 mb-6">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                        <i class="fas fa-exclamation-triangle text-red-600 text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900">Confirm Deletion</h2>
+                        <p class="text-gray-600">This action cannot be undone.</p>
+                    </div>
+                </div>
+
+                <!-- Contact Preview -->
+                <div class="bg-gray-50 rounded-lg p-6 mb-6">
+                    <h3 class="font-semibold text-gray-900 mb-4">Contact Details</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <p class="text-sm text-gray-500">Name</p>
+                            <p class="font-medium text-gray-900">{{ contact.name }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Email</p>
+                            <p class="font-medium text-gray-900">{{ contact.email }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Type</p>
+                            <p class="font-medium text-gray-900">{{ contact.get_contact_type_display }}</p>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-500">Date</p>
+                            <p class="font-medium text-gray-900">{{ contact.created_at|date:"M d, Y g:i A" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-500">Subject</p>
+                        <p class="font-medium text-gray-900">{{ contact.subject }}</p>
+                    </div>
+                    
+                    <div>
+                        <p class="text-sm text-gray-500">Message</p>
+                        <p class="text-gray-700 mt-1">{{ contact.message|truncatechars:200 }}</p>
+                    </div>
+                </div>
+
+                <!-- Warning Message -->
+                <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-circle text-red-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <h3 class="text-sm font-medium text-red-800">Warning</h3>
+                            <div class="mt-2 text-sm text-red-700">
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>This contact message will be permanently deleted</li>
+                                    <li>Any replies or conversation history will be lost</li>
+                                    <li>This action cannot be reversed</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <form method="post" class="flex items-center justify-between">
+                    {% csrf_token %}
+                    
+                    <div class="flex space-x-4">
+                        <a href="{% url 'admin_contact_detail' contact.id %}" 
+                           class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-3 rounded-lg transition-colors flex items-center">
+                            <i class="fas fa-times mr-2"></i>
+                            Cancel
+                        </a>
+                        
+                        <a href="{% url 'admin_contacts_list' %}" 
+                           class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center">
+                            <i class="fas fa-list mr-2"></i>
+                            Back to List
+                        </a>
+                    </div>
+                    
+                    <button type="submit" 
+                            class="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg transition-colors flex items-center"
+                            onclick="return confirm('Are you absolutely sure you want to delete this contact? This action cannot be undone.')">
+                        <i class="fas fa-trash mr-2"></i>
+                        Delete Contact
+                    </button>
+                </form>
+            </div>
+
+            <!-- Alternative Actions -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h3 class="font-semibold text-gray-900 mb-4">Alternative Actions</h3>
+                <p class="text-gray-600 mb-4">Instead of deleting, you might want to:</p>
+                
+                <div class="grid md:grid-cols-2 gap-4">
+                    <a href="{% url 'admin_contact_detail' contact.id %}" 
+                       class="border border-gray-300 hover:border-blue-500 rounded-lg p-4 transition-colors group">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-blue-200">
+                                <i class="fas fa-reply text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900">Reply to Contact</h4>
+                                <p class="text-sm text-gray-500">Send a response and mark as resolved</p>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="{% url 'admin_contact_mark_read' contact.id %}" 
+                       class="border border-gray-300 hover:border-green-500 rounded-lg p-4 transition-colors group">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-green-200">
+                                <i class="fas fa-check text-green-600"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-medium text-gray-900">Mark as Read</h4>
+                                <p class="text-sm text-gray-500">Keep the contact but mark as processed</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

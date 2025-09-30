@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Contact Message</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px 8px 0 0;
+            text-align: center;
+        }
+        .content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 8px 8px;
+            border: 1px solid #e9ecef;
+        }
+        .contact-info {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #667eea;
+        }
+        .info-row {
+            display: flex;
+            margin: 10px 0;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .info-label {
+            font-weight: bold;
+            width: 100px;
+            color: #666;
+        }
+        .info-value {
+            flex: 1;
+            color: #333;
+        }
+        .message-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            color: #666;
+            font-size: 14px;
+        }
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 10px 5px;
+        }
+        .priority-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .priority-support { background: #fee; color: #c53030; }
+        .priority-business { background: #faf5ff; color: #805ad5; }
+        .priority-general { background: #eff6ff; color: #3182ce; }
+        .priority-newsletter { background: #f0fff4; color: #38a169; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🔔 New Contact Message</h1>
+        <p>A new message has been received from your website</p>
+    </div>
+    
+    <div class="content">
+        <div class="contact-info">
+            <h3>Contact Information</h3>
+            <div class="info-row">
+                <span class="info-label">Name:</span>
+                <span class="info-value">{{ contact.name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value">{{ contact.email }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Phone:</span>
+                <span class="info-value">{{ contact.phone|default:"Not provided" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Type:</span>
+                <span class="info-value">
+                    <span class="priority-badge priority-{{ contact.contact_type }}">
+                        {{ contact.get_contact_type_display }}
+                    </span>
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Subject:</span>
+                <span class="info-value"><strong>{{ contact.subject }}</strong></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Submitted:</span>
+                <span class="info-value">{{ contact.created_at|date:"F j, Y g:i A" }}</span>
+            </div>
+        </div>
+
+        <div class="message-box">
+            <h3>Message</h3>
+            <p style="white-space: pre-wrap; margin: 0;">{{ contact.message }}</p>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="{{ admin_url }}" class="btn">View in Admin Panel</a>
+            <a href="mailto:{{ contact.email }}?subject=Re: {{ contact.subject }}" class="btn" style="background: #48bb78;">Reply via Email</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>FinanceCore Admin Notification</strong></p>
+        <p>This is an automated notification. Please do not reply to this email.</p>
+        <p>You can manage this contact through your admin panel or reply directly to the customer.</p>
+    </div>
+</body>
+</html>

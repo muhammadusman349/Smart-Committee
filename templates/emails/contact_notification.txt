@@ -1,0 +1,26 @@
+New Contact Message - {{ contact.subject }}
+
+A new contact message has been received from your website:
+
+CONTACT INFORMATION
+==================
+Name: {{ contact.name }}
+Email: {{ contact.email }}
+Phone: {{ contact.phone|default:"Not provided" }}
+Type: {{ contact.get_contact_type_display }}
+Subject: {{ contact.subject }}
+Submitted: {{ contact.created_at|date:"F j, Y g:i A" }}
+
+MESSAGE
+=======
+{{ contact.message }}
+
+ACTIONS
+=======
+- View in Admin Panel: {{ admin_url }}
+- Reply directly to: {{ contact.email }}
+
+---
+FinanceCore Admin Notification
+This is an automated notification from your committee management system.
+You can reply to this message directly or through your admin panel.
