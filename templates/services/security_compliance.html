@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Security & Compliance - Committee Management{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-gradient-to-r from-red-600 to-red-700 text-white py-20">
+    <div class="container mx-auto px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="w-16 h-16 bg-white bg-opacity-20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-shield-alt text-3xl"></i>
+            </div>
+            <h1 class="text-4xl lg:text-5xl font-bold mb-6">Security & Compliance</h1>
+            <p class="text-xl text-red-100 leading-relaxed">
+                Enterprise-grade security and compliance features to protect your committee's sensitive data
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="py-20 bg-white">
+    <div class="container mx-auto px-6">
+        <div class="max-w-6xl mx-auto">
+            
+            <!-- Overview -->
+            <div class="grid lg:grid-cols-2 gap-12 items-center mb-20">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900 mb-6">Bank-Grade Security</h2>
+                    <p class="text-lg text-gray-600 mb-6">
+                        Your committee's financial data deserves the highest level of protection. Our platform employs 
+                        military-grade encryption, multi-factor authentication, and continuous security monitoring to 
+                        keep your information safe.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-red-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">256-bit SSL encryption for all data transmission</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-red-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">SOC 2 Type II certified infrastructure</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-red-500 mt-1 mr-3"></i>
+                            <span class="text-gray-700">Regular third-party security audits and penetration testing</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 rounded-2xl p-8">
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="font-semibold text-gray-900 mb-4">Security Status</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-shield-check text-green-600 mr-2"></i>
+                                    <span class="text-sm text-gray-700">SSL Certificate</span>
+                                </div>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Active</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-lock text-green-600 mr-2"></i>
+                                    <span class="text-sm text-gray-700">Data Encryption</span>
+                                </div>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">256-bit</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fas fa-user-shield text-green-600 mr-2"></i>
+                                    <span class="text-sm text-gray-700">Access Control</span>
+                                </div>
+                                <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">MFA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Features Grid -->
+            <div class="grid md:grid-cols-3 gap-8 mb-20">
+                <div class="text-center p-8 bg-white border border-gray-200 rounded-2xl hover:shadow-lg transition-shadow">
+                    <div class="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-key text-red-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Multi-Factor Authentication</h3>
+                    <p class="text-gray-600">Secure your account with SMS, email, or authenticator app verification.</p>
+                </div>
+                
+                <div class="text-center p-8 bg-white border border-gray-200 rounded-2xl hover:shadow-lg transition-shadow">
+                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-eye text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Activity Monitoring</h3>
+                    <p class="text-gray-600">Real-time monitoring of all user activities with detailed audit logs.</p>
+                </div>
+                
+                <div class="text-center p-8 bg-white border border-gray-200 rounded-2xl hover:shadow-lg transition-shadow">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-database text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">Data Backup</h3>
+                    <p class="text-gray-600">Automated daily backups with 99.9% uptime guarantee and disaster recovery.</p>
+                </div>
+            </div>
+
+            <!-- Compliance Standards -->
+            <div class="bg-gray-50 rounded-2xl p-12 mb-20">
+                <h2 class="text-3xl font-bold text-gray-900 text-center mb-12">Compliance Standards</h2>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-6 rounded-xl text-center border-2 border-blue-100">
+                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-certificate text-blue-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2">SOC 2 Type II</h4>
+                        <p class="text-sm text-gray-600">Security & availability controls</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl text-center border-2 border-green-100">
+                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-shield-alt text-green-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2">GDPR</h4>
+                        <p class="text-sm text-gray-600">Data protection compliance</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl text-center border-2 border-purple-100">
+                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-lock text-purple-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2">ISO 27001</h4>
+                        <p class="text-sm text-gray-600">Information security management</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl text-center border-2 border-orange-100">
+                        <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                            <i class="fas fa-balance-scale text-orange-600"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-900 mb-2">PCI DSS</h4>
+                        <p class="text-sm text-gray-600">Payment card security</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Measures -->
+            <div class="grid lg:grid-cols-2 gap-12 mb-20">
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Advanced Security Measures</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center mr-4 mt-1">
+                                <i class="fas fa-fire-alt text-red-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Firewall Protection</h4>
+                                <p class="text-gray-600">Advanced firewall systems protect against unauthorized access and cyber threats.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-4 mt-1">
+                                <i class="fas fa-search text-blue-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Intrusion Detection</h4>
+                                <p class="text-gray-600">24/7 monitoring systems detect and respond to potential security threats instantly.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center mr-4 mt-1">
+                                <i class="fas fa-history text-green-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Audit Trails</h4>
+                                <p class="text-gray-600">Complete audit trails track all system activities for compliance and security analysis.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6">Data Protection</h3>
+                    <div class="space-y-6">
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-4 mt-1">
+                                <i class="fas fa-server text-purple-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Encrypted Storage</h4>
+                                <p class="text-gray-600">All data is encrypted at rest using AES-256 encryption standards.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center mr-4 mt-1">
+                                <i class="fas fa-cloud text-orange-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Secure Cloud Infrastructure</h4>
+                                <p class="text-gray-600">Hosted on enterprise-grade cloud infrastructure with redundancy and failover protection.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <div class="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center mr-4 mt-1">
+                                <i class="fas fa-user-lock text-indigo-600 text-sm"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-gray-900 mb-2">Access Controls</h4>
+                                <p class="text-gray-600">Role-based access controls ensure users only see data they're authorized to access.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Section -->
+            <div class="bg-gradient-to-r from-red-600 to-red-700 rounded-2xl p-12 text-center text-white">
+                <h2 class="text-3xl font-bold mb-4">Your Security is Our Priority</h2>
+                <p class="text-xl text-red-100 mb-8">Experience peace of mind with enterprise-grade security</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="{% url 'account_signup' %}" class="bg-white text-red-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-50 transition">
+                        Start Secure
+                    </a>
+                    <a href="{% url 'home' %}#features" class="border border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-red-600 transition">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
