@@ -231,7 +231,7 @@ def admin_contact_detail(request, contact_id):
                 print(f"Failed to queue reply email: {e}")
                 messages.warning(request, 'Reply saved but email sending failed. Please try again.')
 
-            return redirect('admin_contact_detail', contact_id=contact.id)
+            return redirect('contact_detail', contact_id=contact.id)
     else:
         form = AdminReplyForm()
 
@@ -250,7 +250,7 @@ def admin_contact_mark_read(request, contact_id):
     contact.is_read = True
     contact.save()
     messages.success(request, f'Contact from {contact.name} marked as read.')
-    return redirect('admin_contacts_list')
+    return redirect('contacts_list')
 
 
 @staff_member_required
@@ -262,6 +262,6 @@ def admin_contact_delete(request, contact_id):
         contact_name = contact.name
         contact.delete()
         messages.success(request, f'Contact from {contact_name} has been deleted.')
-        return redirect('admin_contacts_list')
+        return redirect('contacts_list')
 
     return render(request, 'admin/contact_delete_confirm.html', {'contact': contact})
