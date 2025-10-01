@@ -183,7 +183,7 @@
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-xl font-bold font-display text-gray-900">Contact Management</h3>
-                <a href="{% url 'admin_contacts_list' %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                <a href="{% url 'contacts_list' %}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">
                     View All <i class="fas fa-arrow-right ml-1"></i>
                 </a>
             </div>
@@ -233,7 +233,7 @@
             <!-- Quick Actions -->
             <div class="mt-6 pt-4 border-t border-gray-200">
                 <div class="flex space-x-3">
-                    <a href="{% url 'admin_contacts_list' %}" 
+                    <a href="{% url 'contacts_list' %}" 
                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-center transition-colors">
                         <i class="fas fa-list mr-2"></i>All Contacts
                     </a>

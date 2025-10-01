@@ -17,6 +17,8 @@ from .views import (
     admin_contact_delete
 )
 
+# app_name = 'accounts'
+
 urlpatterns = [
     path('', home, name='home'),
     path('profile/', profile_view, name='profile'),
@@ -39,8 +41,8 @@ urlpatterns = [
     path('newsletter-signup/', newsletter_signup, name='newsletter_signup'),
 
     # Admin Contact Management
-    path('admin/contacts/', admin_contacts_list, name='admin_contacts_list'),
-    path('admin/contacts/<int:contact_id>/', admin_contact_detail, name='admin_contact_detail'),
-    path('admin/contacts/<int:contact_id>/mark-read/', admin_contact_mark_read, name='admin_contact_mark_read'),
-    path('admin/contacts/<int:contact_id>/delete/', admin_contact_delete, name='admin_contact_delete'),
+    path('contacts/', admin_contacts_list, name='contacts_list'),
+    path('contacts/<int:contact_id>/', admin_contact_detail, name='contact_detail'),
+    path('contacts/<int:contact_id>/mark-read/', admin_contact_mark_read, name='contact_mark_read'),
+    path('contacts/<int:contact_id>/delete/', admin_contact_delete, name='contact_delete'),
 ]

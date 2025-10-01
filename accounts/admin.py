@@ -90,7 +90,7 @@ class ContactAdmin(admin.ModelAdmin):
         buttons = []
 
         # View/Reply button
-        view_url = reverse('admin_contact_detail', args=[obj.id])
+        view_url = reverse('contact_detail', args=[obj.id])
         buttons.append(
             format_html(
                 '<a href="{}" style="background-color: #007bff; color: white; padding: 2px 8px; text-decoration: none; border-radius: 3px; font-size: 11px; margin-right: 5px;">VIEW</a>',
@@ -100,7 +100,7 @@ class ContactAdmin(admin.ModelAdmin):
 
         # Mark as read button (if not read)
         if not obj.is_read:
-            read_url = reverse('admin_contact_mark_read', args=[obj.id])
+            read_url = reverse('contact_mark_read', args=[obj.id])
             buttons.append(
                 format_html(
                     '<a href="{}" style="background-color: #28a745; color: white; padding: 2px 8px; text-decoration: none; border-radius: 3px; font-size: 11px; margin-right: 5px;">READ</a>',
