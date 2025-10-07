@@ -3,6 +3,13 @@ from accounts.models import User
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from datetime import date, timedelta
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.db import transaction
+from .tasks import (
+    generate_contribution_excel_file, generate_contribution_pdf_file,
+    generate_payout_excel_file, generate_payout_pdf_file
+    )
 
 
 class Committee(models.Model):
@@ -110,6 +117,8 @@ class Contribution(models.Model):
     payment_date = models.DateField(null=True, blank=True)
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='PENDING')
     verified_by_organizer = models.BooleanField(default=False)
+    excel_file = models.FileField(upload_to="Reports/", null=True, blank=True)
+    pdf_file = models.FileField(upload_to="Reports/", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -140,6 +149,14 @@ class Contribution(models.Model):
         return 'bg-gray-100 text-gray-800'
 
 
+@receiver(post_save, sender=Contribution)
+def save_contribution(sender, instance, created, **kwargs):
+    if created and not instance.excel_file:
+        transaction.on_commit(lambda: generate_contribution_excel_file.delay(instance.id))
+    if created and not instance.pdf_file:
+        transaction.on_commit(lambda: generate_contribution_pdf_file.delay(instance.id))
+
+
 class Payout(models.Model):
     membership = models.ForeignKey(Membership, on_delete=models.CASCADE, related_name='payouts')
     total_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -148,6 +165,8 @@ class Payout(models.Model):
     is_confirmed = models.BooleanField(default=False)
     received_in_cash = models.BooleanField(default=True)
     confirmed_at = models.DateTimeField(null=True, blank=True)
+    excel_file = models.FileField(upload_to="Reports/", null=True, blank=True)
+    pdf_file = models.FileField(upload_to="Reports/", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -164,6 +183,14 @@ class Payout(models.Model):
         if self.is_confirmed:
             return 'bg-green-100 text-green-800'
         return 'bg-yellow-100 text-yellow-800'
+
+
+@receiver(post_save, sender=Payout)
+def save_payout(sender, instance, created, **kwargs):
+    if created and not instance.excel_file:
+        transaction.on_commit(lambda: generate_payout_excel_file.delay(instance.id))
+    if created and not instance.pdf_file:
+        transaction.on_commit(lambda: generate_payout_pdf_file.delay(instance.id))
 
 
 class Invitation(models.Model):

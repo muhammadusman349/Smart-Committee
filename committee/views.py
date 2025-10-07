@@ -20,6 +20,9 @@ from .forms import (
 from secrets import token_urlsafe
 from .tasks import send_invitation_email
 from django.views.decorators.http import require_http_methods, require_POST
+from django.http import HttpResponse, Http404
+from django.core.exceptions import PermissionDenied
+import os
 
 # Committee Views
 
@@ -1242,3 +1245,92 @@ def toggle_committee_status(request, pk):
             messages.error(request, "Cannot reactivate completed committees")
 
     return redirect('committee:committee_detail', pk=committee.pk)
+
+
+# Report Download Views
+@login_required
+def download_contribution_report(request, pk, format_type):
+    """Download individual contribution report (Excel or PDF)"""
+    contribution = get_object_or_404(Contribution, pk=pk)
+    
+    # Permission check: organizer or the member who made the contribution
+    is_organizer = contribution.membership.committee.organizer == request.user
+    is_member = contribution.membership.member == request.user
+    
+    if not (is_organizer or is_member):
+        raise PermissionDenied("You don't have permission to download this report")
+    
+    # Get the appropriate file
+    if format_type == 'excel':
+        file_field = contribution.excel_file
+        content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        extension = 'xlsx'
+    elif format_type == 'pdf':
+        file_field = contribution.pdf_file
+        content_type = 'application/pdf'
+        extension = 'pdf'
+    else:
+        raise Http404("Invalid format type")
+    
+    # Check if file exists
+    if not file_field or not file_field.name:
+        messages.error(request, "Report file not found. It may still be generating.")
+        return redirect('committee:manage_contributions')
+    
+    # Check if file exists on disk
+    if not os.path.exists(file_field.path):
+        messages.error(request, "Report file not found on disk.")
+        return redirect('committee:manage_contributions')
+    
+    # Generate filename
+    filename = f"Contribution_Report_{contribution.id}_{contribution.for_month.strftime('%Y_%m')}.{extension}"
+    
+    # Serve the file
+    with open(file_field.path, 'rb') as f:
+        response = HttpResponse(f.read(), content_type=content_type)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+
+
+@login_required
+def download_payout_report(request, pk, format_type):
+    """Download individual payout report (Excel or PDF)"""
+    payout = get_object_or_404(Payout, pk=pk)
+    
+    # Permission check: organizer or the member who received the payout
+    is_organizer = payout.membership.committee.organizer == request.user
+    is_member = payout.membership.member == request.user
+    
+    if not (is_organizer or is_member):
+        raise PermissionDenied("You don't have permission to download this report")
+    
+    # Get the appropriate file
+    if format_type == 'excel':
+        file_field = payout.excel_file
+        content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        extension = 'xlsx'
+    elif format_type == 'pdf':
+        file_field = payout.pdf_file
+        content_type = 'application/pdf'
+        extension = 'pdf'
+    else:
+        raise Http404("Invalid format type")
+    
+    # Check if file exists
+    if not file_field or not file_field.name:
+        messages.error(request, "Report file not found. It may still be generating.")
+        return redirect('committee:manage_payouts')
+    
+    # Check if file exists on disk
+    if not os.path.exists(file_field.path):
+        messages.error(request, "Report file not found on disk.")
+        return redirect('committee:manage_payouts')
+    
+    # Generate filename
+    filename = f"Payout_Report_{payout.id}_{payout.paid_at.strftime('%Y_%m_%d')}.{extension}"
+    
+    # Serve the file
+    with open(file_field.path, 'rb') as f:
+        response = HttpResponse(f.read(), content_type=content_type)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
