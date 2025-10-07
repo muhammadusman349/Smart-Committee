@@ -1,0 +1,362 @@
+{% extends '../base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    /* Committee Cards */
+    .committee-card {
+        transition: all 0.3s ease;
+        border: 1px solid #e5e7eb;
+    }
+    .committee-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    
+    /* Navigation Items */
+    .nav-btn {
+        transition: all 0.2s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .nav-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .nav-btn.active {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+        color: white !important;
+        border-color: #1d4ed8 !important;
+        box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+    
+    .nav-btn.active:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+    }
+    
+    
+    /* Responsive Design */
+    @media (max-width: 640px) {
+        .nav-btn {
+            font-size: 0.75rem;
+            padding: 0.5rem 0.75rem;
+        }
+        
+        .nav-btn i {
+            font-size: 0.75rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .committee-header {
+            padding: 1rem;
+        }
+        
+        .nav-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .nav-grid {
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        }
+    }
+    
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gray-50">
+
+    <!-- Committee Header -->
+    <div class="bg-white shadow-sm border-b committee-header">
+        <div class="container mx-auto px-4 sm:px-6 py-4">
+            <div class="flex flex-col space-y-4">
+                <!-- Header Title Section -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3 lg:space-x-4 min-w-0 flex-1">
+                        <div class="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-2 flex-shrink-0">
+                            <i class="fas fa-users text-white text-lg lg:text-xl"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h1 class="text-lg sm:text-xl lg:text-2xl font-bold font-display text-gray-900 truncate">
+                                {% block page_title %}Committee Management{% endblock %}
+                            </h1>
+                            <p class="text-gray-600 font-body text-xs lg:text-sm hidden sm:block">
+                                {% block page_subtitle %}Manage your committee finances efficiently{% endblock %}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Mobile Menu Button -->
+                    {% if user.is_organizer %}
+                    <div class="lg:hidden" x-data="{ open: false }">
+                        <button @click="open = !open" class="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 active:scale-95">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 6h16M4 12h16M4 18h16"></path>
+                            </svg>
+                        </button>
+                        
+                        <!-- Mobile Sidebar Menu -->
+                        <div x-show="open" @click.away="open = false" class="fixed inset-0 z-50">
+                            <!-- Backdrop -->
+                            <div @click="open = false" class="fixed inset-0 bg-black bg-opacity-50 transition-opacity"></div>
+                            
+                            <!-- Sidebar -->
+                            <div class="fixed left-0 top-0 h-full w-80 max-w-xs bg-white shadow-2xl transform transition-transform duration-300 ease-in-out"
+                                 x-transition:enter="transition ease-out duration-300"
+                                 x-transition:enter-start="transform -translate-x-full"
+                                 x-transition:enter-end="transform translate-x-0"
+                                 x-transition:leave="transition ease-in duration-300"
+                                 x-transition:leave-start="transform translate-x-0"
+                                 x-transition:leave-end="transform -translate-x-full">
+                                <!-- Header -->
+                                <div class="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-6">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center space-x-3">
+                                            <div class="w-10 h-10 bg-white bg-opacity-20 rounded-lg flex items-center justify-center">
+                                                <i class="fas fa-users text-white text-lg"></i>
+                                            </div>
+                                            <div>
+                                                <h3 class="text-white font-semibold text-lg">Committee</h3>
+                                                <p class="text-blue-100 text-sm">Management</p>
+                                            </div>
+                                        </div>
+                                        <button @click="open = false" class="w-8 h-8 flex items-center justify-center rounded-full bg-white bg-opacity-20 text-white hover:bg-opacity-30 transition-all">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Menu Items -->
+                                <nav class="px-4 py-6 space-y-2">
+                                    <a href="{% url 'committee:organizer_dashboard' %}" @click="open = false" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-blue-50 transition-colors {% if request.resolver_match.url_name == 'organizer_dashboard' %}bg-blue-50 text-blue-600{% endif %}">
+                                        <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-chart-pie text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Dashboard</div>
+                                            <div class="text-sm text-gray-500">Overview & Analytics</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="{% url 'committee:committee_list' %}" @click="open = false" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-blue-50 transition-colors {% if request.resolver_match.url_name == 'committee_list' %}bg-blue-50 text-blue-600{% endif %}">
+                                        <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-list-ul text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Committees</div>
+                                            <div class="text-sm text-gray-500">Manage all committees</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="{% url 'committee:see_all_members' %}" @click="open = false" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-blue-50 transition-colors {% if 'see_all_members' in request.path %}bg-blue-50 text-blue-600{% endif %}">
+                                        <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-users text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Members</div>
+                                            <div class="text-sm text-gray-500">View all members</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="{% url 'committee:manage_contributions' %}" @click="open = false" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-blue-50 transition-colors {% if 'manage_contributions' in request.path %}bg-blue-50 text-blue-600{% endif %}">
+                                        <div class="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-dollar-sign text-yellow-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Contributions</div>
+                                            <div class="text-sm text-gray-500">Manage payments</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="{% url 'committee:manage_payouts' %}" @click="open = false" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-blue-50 transition-colors {% if 'manage_payouts' in request.path %}bg-blue-50 text-blue-600{% endif %}">
+                                        <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-hand-holding-usd text-red-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Payouts</div>
+                                            <div class="text-sm text-gray-500">Distribute funds</div>
+                                        </div>
+                                    </a>
+
+                                    <a href="{% url 'committee:bulk_contribution' %}" @click="open = false" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-blue-50 transition-colors {% if 'bulk_contribution' in request.path %}bg-blue-50 text-blue-600{% endif %}">
+                                        <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-calendar-plus text-indigo-600"></i>
+                                        </div>
+                                        <div>
+                                            <div class="font-medium text-gray-900">Set Contributions</div>
+                                            <div class="text-sm text-gray-500">Schedule payments</div>
+                                        </div>
+                                    </a>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Desktop Navigation -->
+                {% if user.is_organizer %}
+                <div class="hidden md:block">
+                    <div class="flex flex-wrap gap-2 lg:gap-3 items-center justify-start lg:justify-end">
+                        <a href="{% url 'committee:organizer_dashboard' %}" class="nav-btn inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-all {% if request.resolver_match.url_name == 'organizer_dashboard' %}active{% endif %}">
+                            <i class="fas fa-chart-pie mr-2"></i>
+                            <span class="hidden lg:inline">Dashboard</span>
+                            <span class="lg:hidden">Dash</span>
+                        </a>
+                        <a href="{% url 'committee:committee_list' %}" class="nav-btn inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-all {% if request.resolver_match.url_name == 'committee_list' %}active{% endif %}">
+                            <i class="fas fa-list-ul mr-2"></i>
+                            <span class="hidden lg:inline">Committees</span>
+                            <span class="lg:hidden">Comm</span>
+                        </a>
+                        <a href="{% url 'committee:see_all_members' %}" class="nav-btn inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-all {% if 'see_all_members' in request.path %}active{% endif %}">
+                            <i class="fas fa-users mr-2"></i>
+                            <span class="hidden lg:inline">Members</span>
+                            <span class="lg:hidden">Mem</span>
+                        </a>
+                        <a href="{% url 'committee:manage_contributions' %}" class="nav-btn inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-all {% if 'manage_contributions' in request.path %}active{% endif %}">
+                            <i class="fas fa-dollar-sign mr-2"></i>
+                            <span class="hidden lg:inline">Contributions</span>
+                            <span class="lg:hidden">Cont</span>
+                        </a>
+                        <a href="{% url 'committee:manage_payouts' %}" class="nav-btn inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-all {% if 'manage_payouts' in request.path %}active{% endif %}">
+                            <i class="fas fa-hand-holding-usd mr-2"></i>
+                            <span class="hidden lg:inline">Payouts</span>
+                            <span class="lg:hidden">Pay</span>
+                        </a>
+                        <a href="{% url 'committee:bulk_contribution' %}" class="nav-btn inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-blue-600 transition-all {% if 'bulk_contribution' in request.path %}active{% endif %}">
+                            <i class="fas fa-calendar-plus mr-2"></i>
+                            <span class="hidden lg:inline">Set Contributions</span>
+                            <span class="lg:hidden">Set</span>
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 sm:px-6 py-4 lg:py-8">
+                <!-- Breadcrumb -->
+                <nav class="mb-4 lg:mb-6">
+                    <ol class="flex items-center space-x-2 text-xs lg:text-sm text-gray-600 font-body overflow-x-auto pb-2">
+                        <li class="whitespace-nowrap"><a href="{% url 'home' %}" class="hover:text-blue-600 transition-colors">Home</a></li>
+                        <li><i class="fas fa-chevron-right text-xs"></i></li>
+                        <li class="whitespace-nowrap"><a href="{% url 'committee:committee_list' %}" class="hover:text-blue-600 transition-colors">Committees</a></li>
+                        {% block breadcrumb_extra %}{% endblock %}
+                    </ol>
+                </nav>
+                
+        <!-- Messages -->
+        {% if messages %}
+        <div class="mb-6 space-y-3">
+            {% for message in messages %}
+            {% if message.tags == 'error' %}
+                <div class="bg-red-50 border-l-4 border-red-400 text-red-800 px-4 py-3 rounded-lg shadow-sm animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-3 text-red-500"></i>
+                            <span class="font-medium">{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-red-400 hover:text-red-600 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            {% elif message.tags == 'success' %}
+                <div class="bg-green-50 border-l-4 border-green-400 text-green-800 px-4 py-3 rounded-lg shadow-sm animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle mr-3 text-green-500"></i>
+                            <span class="font-medium">{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-green-400 hover:text-green-600 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            {% elif message.tags == 'warning' %}
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 px-4 py-3 rounded-lg shadow-sm animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-3 text-yellow-500"></i>
+                            <span class="font-medium">{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-yellow-400 hover:text-yellow-600 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            {% else %}
+                <div class="bg-blue-50 border-l-4 border-blue-400 text-blue-800 px-4 py-3 rounded-lg shadow-sm animate-fade-in">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <i class="fas fa-info-circle mr-3 text-blue-500"></i>
+                            <span class="font-medium">{{ message }}</span>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-blue-400 hover:text-blue-600 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+                
+        <!-- Page Content -->
+        <div class="bg-white rounded-lg lg:rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+            {% block committee_content %}
+            <div class="p-4 lg:p-8">
+                <p class="text-gray-600">Content goes here...</p>
+            </div>
+            {% endblock %}
+        </div>
+        
+        <!-- Additional Content -->
+        {% block additional_content %}{% endblock %}
+    </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-dismiss messages after 5 seconds
+    const messages = document.querySelectorAll('[class*="animate-fade-in"]');
+    messages.forEach(message => {
+        setTimeout(() => {
+            if (message.parentElement) {
+                message.style.opacity = '0';
+                message.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    message.remove();
+                }, 300);
+            }
+        }, 5000);
+    });
+    
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
