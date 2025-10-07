@@ -20,6 +20,9 @@ from .forms import (
 from secrets import token_urlsafe
 from .tasks import send_invitation_email
 from django.views.decorators.http import require_http_methods, require_POST
+from django.http import HttpResponse, Http404
+from django.core.exceptions import PermissionDenied
+import os
 
 # Committee Views
 
@@ -95,7 +98,7 @@ def committee_list(request):
         'upcoming': Committee.objects.filter(organizer=request.user, status='UPCOMING').count(),
     }
 
-    return render(request, 'committee/list.html', {
+    return render(request, 'committee/organizer/committee_list.html', {
         'committees': page_obj,
         'total_committees': total_committees,
         'active_committees': active_committees,
@@ -105,6 +108,30 @@ def committee_list(request):
         'search_query': search_query,
         'status_filter': status_filter,
         'status_counts': status_counts,
+    })
+
+
+@login_required
+def committee_create(request):
+    """Committee creation - auto-upgrades members to organizers"""
+    # Auto-upgrade to organizer if user is creating their first committee
+    if not request.user.is_organizer:
+        request.user.is_organizer = True
+        request.user.save()
+        messages.info(request, "You've been upgraded to organizer status!")
+
+    if request.method == 'POST':
+        form = CommitteeForm(request.POST, request=request)
+        if form.is_valid():
+            committee = form.save()
+            messages.success(request, 'Committee created successfully!')
+            return redirect('committee:committee_detail', pk=committee.pk)
+    else:
+        form = CommitteeForm(request=request)
+
+    return render(request, 'committee/organizer/committee_form.html', {
+        'form': form,
+        'title': 'Create Committee'
     })
 
 
@@ -139,7 +166,7 @@ def committee_detail(request, pk):
         messages.error(request, "You don't have permission to view this committee")
         return redirect('committee:committee_list')
 
-    return render(request, 'committee/detail.html', {
+    return render(request, 'committee/organizer/committee_detail.html', {
         'committee': committee,
         'is_organizer': is_organizer,
         'memberships': memberships,
@@ -149,6 +176,66 @@ def committee_detail(request, pk):
         'user_membership': user_membership,
         'is_member': is_member,
     })
+
+
+@login_required
+def committee_update(request, pk):
+    """Update committee (organizer only)"""
+    committee = get_object_or_404(Committee, pk=pk)
+    if committee.organizer != request.user:
+        messages.error(request, "You don't have permission to edit this committee")
+        return redirect('committee:committee_detail', pk=committee.pk)
+
+    if request.method == 'POST':
+        form = CommitteeForm(request.POST, instance=committee, request=request)
+        if form.is_valid():
+            # Save the form to get the updated instance
+            updated_committee = form.save(commit=False)
+
+            # Check if start date or duration has changed
+            if ('start_date' in form.changed_data or
+                'duration_months' in form.changed_data):
+                # Recalculate end date based on new start date and duration
+                from dateutil.relativedelta import relativedelta
+                updated_committee.end_date = (
+                    updated_committee.start_date +
+                    relativedelta(months=updated_committee.duration_months)
+                )
+
+                # If the new end date is in the past and committee is active, mark as completed
+                from datetime import date
+                if (updated_committee.status == 'ACTIVE' and
+                    updated_committee.end_date and
+                    updated_committee.end_date < date.today()):
+                    updated_committee.status = 'COMPLETED'
+
+            # Save the committee with updated end date and status
+            updated_committee.save()
+            form.save_m2m()  # Save many-to-many data if any
+
+            messages.success(request, 'Committee updated successfully!')
+            return redirect('committee:committee_detail', pk=committee.pk)
+    else:
+        form = CommitteeForm(instance=committee, request=request)
+
+    return render(request, 'committee/organizer/committee_form.html', {
+        'form': form,
+        'committee': committee,  # Pass committee to template for back link
+        'title': 'Update Committee'
+    })
+
+
+@login_required
+def committee_delete(request, pk):
+    """Delete committee (organizer only)"""
+    committee = get_object_or_404(Committee, pk=pk)
+    if committee.organizer != request.user:
+        messages.error(request, "You don't have permission to delete this committee")
+        return redirect('committee:committee_detail', pk=committee.pk)
+
+    committee.delete()
+    messages.success(request, 'Committee deleted successfully!')
+    return redirect('committee:committee_list')
 
 
 @login_required
@@ -186,7 +273,7 @@ def invitation_send(request, committee_pk):
     else:
         form = InvitationForm(request=request, committee=committee)
 
-    return render(request, 'committee/invitation_form.html', {
+    return render(request, 'committee/invitation/invitation_form.html', {
         'form': form,
         'committee': committee,
         'title': 'Invite Member'
@@ -213,7 +300,7 @@ def invitation_accept(request, token):
 
     if invitation.status != 'PENDING':
         messages.error(request, "This invitation is no longer valid.")
-        return render(request, 'committee/invitation_status.html', {
+        return render(request, 'committee/invitation/invitation_status.html', {
             'invitation': invitation,
             'status': 'invalid'
         })
@@ -223,7 +310,7 @@ def invitation_accept(request, token):
         invitation.status = 'EXPIRED'
         invitation.save()
         messages.error(request, "This invitation has expired.")
-        return render(request, 'committee/invitation_status.html', {
+        return render(request, 'committee/invitation/invitation_status.html', {
             'invitation': invitation,
             'status': 'expired'
         })
@@ -232,7 +319,7 @@ def invitation_accept(request, token):
         # Suggest logging in with the invited email or signing up
         login_url = reverse('account_login') + f"?next={request.path}"
         signup_url = reverse('account_signup') + f"?next={request.path}"
-        return render(request, 'committee/invitation_accept_login_required.html', {
+        return render(request, 'committee/invitation/invitation_accept_login_required.html', {
             'invitation': invitation,
             'login_url': login_url,
             'signup_url': signup_url,
@@ -264,7 +351,7 @@ def invitation_list(request, pk):
     expired_count = invitations.filter(status='EXPIRED').count()
     total_count = invitations.count()
 
-    return render(request, 'committee/invitation_list.html', {
+    return render(request, 'committee/invitation/invitation_list.html', {
         'committee': committee,
         'invitations': invitations,
         'pending_count': pending_count,
@@ -372,90 +459,6 @@ def step_down_organizer(request):
     return redirect('committee:member_dashboard')
 
 
-@login_required
-def committee_create(request):
-    """Committee creation - auto-upgrades members to organizers"""
-    # Auto-upgrade to organizer if user is creating their first committee
-    if not request.user.is_organizer:
-        request.user.is_organizer = True
-        request.user.save()
-        messages.info(request, "You've been upgraded to organizer status!")
-
-    if request.method == 'POST':
-        form = CommitteeForm(request.POST, request=request)
-        if form.is_valid():
-            committee = form.save()
-            messages.success(request, 'Committee created successfully!')
-            return redirect('committee:committee_detail', pk=committee.pk)
-    else:
-        form = CommitteeForm(request=request)
-
-    return render(request, 'committee/form.html', {
-        'form': form,
-        'title': 'Create Committee'
-    })
-
-
-@login_required
-def committee_update(request, pk):
-    """Update committee (organizer only)"""
-    committee = get_object_or_404(Committee, pk=pk)
-    if committee.organizer != request.user:
-        messages.error(request, "You don't have permission to edit this committee")
-        return redirect('committee:committee_detail', pk=committee.pk)
-
-    if request.method == 'POST':
-        form = CommitteeForm(request.POST, instance=committee, request=request)
-        if form.is_valid():
-            # Save the form to get the updated instance
-            updated_committee = form.save(commit=False)
-
-            # Check if start date or duration has changed
-            if ('start_date' in form.changed_data or
-                'duration_months' in form.changed_data):
-                # Recalculate end date based on new start date and duration
-                from dateutil.relativedelta import relativedelta
-                updated_committee.end_date = (
-                    updated_committee.start_date +
-                    relativedelta(months=updated_committee.duration_months)
-                )
-
-                # If the new end date is in the past and committee is active, mark as completed
-                from datetime import date
-                if (updated_committee.status == 'ACTIVE' and
-                    updated_committee.end_date and
-                    updated_committee.end_date < date.today()):
-                    updated_committee.status = 'COMPLETED'
-
-            # Save the committee with updated end date and status
-            updated_committee.save()
-            form.save_m2m()  # Save many-to-many data if any
-
-            messages.success(request, 'Committee updated successfully!')
-            return redirect('committee:committee_detail', pk=committee.pk)
-    else:
-        form = CommitteeForm(instance=committee, request=request)
-
-    return render(request, 'committee/form.html', {
-        'form': form,
-        'committee': committee,  # Pass committee to template for back link
-        'title': 'Update Committee'
-    })
-
-
-@login_required
-def committee_delete(request, pk):
-    """Delete committee (organizer only)"""
-    committee = get_object_or_404(Committee, pk=pk)
-    if committee.organizer != request.user:
-        messages.error(request, "You don't have permission to delete this committee")
-        return redirect('committee:committee_detail', pk=committee.pk)
-
-    committee.delete()
-    messages.success(request, 'Committee deleted successfully!')
-    return redirect('committee:committee_list')
-
-
 # Membership Views
 @login_required
 def membership_list(request, pk):
@@ -469,7 +472,7 @@ def membership_list(request, pk):
         return redirect('committee:committee_detail', pk=pk)
 
     memberships = committee.memberships.all().order_by('-joined_at')
-    return render(request, 'committee/membership_list.html', {
+    return render(request, 'committee/organizer/membership_list.html', {
         'committee': committee,
         'memberships': memberships,
     })
@@ -537,7 +540,7 @@ def membership_update(request, pk):
     else:
         form = MembershipForm(instance=membership, request=request)
 
-    return render(request, 'committee/membership_form_update.html', {
+    return render(request, 'committee/organizer/membership_form_update.html', {
         'form': form,
         'title': 'Update Membership',
         'membership': membership,
@@ -613,7 +616,7 @@ def contribution_create(request, membership_pk):
     else:
         form = ContributionForm(request=request, membership=membership)
 
-    return render(request, 'committee/contribution_form.html', {
+    return render(request, 'committee/organizer/contribution_form.html', {
         'form': form,
         'title': 'Record Contribution',
         'membership': membership
@@ -644,7 +647,7 @@ def contribution_update(request, pk):
     else:
         form = ContributionForm(instance=contribution, request=request, membership=membership)
 
-    return render(request, 'committee/contribution_form.html', {
+    return render(request, 'committee/organizer/contribution_form.html', {
         'form': form,
         'title': 'Update Contribution',
         'membership': membership,
@@ -739,7 +742,7 @@ def payout_create(request, membership_pk):
             }
         )
 
-    return render(request, 'committee/payout_form.html', {
+    return render(request, 'committee/organizer/payout_form.html', {
         'form': form,
         'title': 'Create Payout',
         'membership': membership
@@ -788,7 +791,7 @@ def payout_update(request, pk):
             membership=membership
         )
 
-    return render(request, 'committee/payout_form.html', {
+    return render(request, 'committee/organizer/payout_form.html', {
         'form': form,
         'title': 'Update Payout',
         'membership': membership
@@ -896,7 +899,7 @@ def organizer_dashboard(request):
         }
         recent_contacts = Contact.objects.exclude(contact_type='newsletter').order_by('-created_at')[:5]
 
-    return render(request, 'committee/organizer_dashboard.html', {
+    return render(request, 'committee/organizer/organizer_dashboard.html', {
         'total_committees': total_committees,
         'total_members': total_members,
         'total_contributions': total_contributions,
@@ -934,7 +937,7 @@ def see_all_members(request):
     except EmptyPage:
         members = paginator.page(paginator.num_pages)
 
-    return render(request, 'committee/see_all_members.html', {
+    return render(request, 'committee/organizer/see_all_members.html', {
         'members': members,
         'page_obj': members,
     })
@@ -971,7 +974,7 @@ def manage_contributions(request):
         'page_obj': page_obj,
         'object_name': 'contributions',
     }
-    return render(request, 'committee/manage_contributions.html', context)
+    return render(request, 'committee/organizer/manage_contributions.html', context)
 
 
 @login_required
@@ -999,7 +1002,7 @@ def manage_payouts(request):
         status='ACTIVE'
     )
 
-    return render(request, 'committee/manage_payouts.html', {
+    return render(request, 'committee/organizer/manage_payouts.html', {
         'payouts': payouts,
         'memberships': memberships
     })
@@ -1081,7 +1084,7 @@ def bulk_contribution(request):
         'late_count': late_count,
         'not_recorded_count': not_recorded_count,
     }
-    return render(request, 'committee/bulk_contribution.html', context)
+    return render(request, 'committee/organizer/bulk_contribution.html', context)
 
 
 # Member Dashboard Views
@@ -1137,7 +1140,7 @@ def member_dashboard(request):
         'total_payouts_amount': total_payouts_amount,
         'page_title': 'Member Dashboard',
     }
-    return render(request, 'committee/member_dashboard.html', context)
+    return render(request, 'committee/member/member_dashboard.html', context)
 
 
 @login_required
@@ -1176,7 +1179,7 @@ def member_committee_detail(request, pk):
         'contribution_form': contribution_form,
         'page_title': f"{committee.name} Details",
     }
-    return render(request, 'committee/member_committee_detail.html', context)
+    return render(request, 'committee/member/member_committee_detail.html', context)
 
 
 @login_required
@@ -1203,7 +1206,7 @@ def member_contribution_create(request, membership_pk):
     else:
         form = ContributionForm(membership=membership, request=request)
 
-    return render(request, 'committee/member_contribution_form.html', {
+    return render(request, 'committee/member/member_contribution_form.html', {
         'form': form,
         'membership': membership,
         'committee': committee,
@@ -1242,3 +1245,92 @@ def toggle_committee_status(request, pk):
             messages.error(request, "Cannot reactivate completed committees")
 
     return redirect('committee:committee_detail', pk=committee.pk)
+
+
+# Report Download Views
+@login_required
+def download_contribution_report(request, pk, format_type):
+    """Download individual contribution report (Excel or PDF)"""
+    contribution = get_object_or_404(Contribution, pk=pk)
+
+    # Permission check: organizer or the member who made the contribution
+    is_organizer = contribution.membership.committee.organizer == request.user
+    is_member = contribution.membership.member == request.user
+
+    if not (is_organizer or is_member):
+        raise PermissionDenied("You don't have permission to download this report")
+
+    # Get the appropriate file
+    if format_type == 'excel':
+        file_field = contribution.excel_file
+        content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        extension = 'xlsx'
+    elif format_type == 'pdf':
+        file_field = contribution.pdf_file
+        content_type = 'application/pdf'
+        extension = 'pdf'
+    else:
+        raise Http404("Invalid format type")
+
+    # Check if file exists
+    if not file_field or not file_field.name:
+        messages.error(request, "Report file not found. It may still be generating.")
+        return redirect('committee:manage_contributions')
+
+    # Check if file exists on disk
+    if not os.path.exists(file_field.path):
+        messages.error(request, "Report file not found on disk.")
+        return redirect('committee:manage_contributions')
+
+    # Generate filename
+    filename = f"Contribution_Report_{contribution.id}_{contribution.for_month.strftime('%Y_%m')}.{extension}"
+
+    # Serve the file
+    with open(file_field.path, 'rb') as f:
+        response = HttpResponse(f.read(), content_type=content_type)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+
+
+@login_required
+def download_payout_report(request, pk, format_type):
+    """Download individual payout report (Excel or PDF)"""
+    payout = get_object_or_404(Payout, pk=pk)
+
+    # Permission check: organizer or the member who received the payout
+    is_organizer = payout.membership.committee.organizer == request.user
+    is_member = payout.membership.member == request.user
+
+    if not (is_organizer or is_member):
+        raise PermissionDenied("You don't have permission to download this report")
+
+    # Get the appropriate file
+    if format_type == 'excel':
+        file_field = payout.excel_file
+        content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        extension = 'xlsx'
+    elif format_type == 'pdf':
+        file_field = payout.pdf_file
+        content_type = 'application/pdf'
+        extension = 'pdf'
+    else:
+        raise Http404("Invalid format type")
+
+    # Check if file exists
+    if not file_field or not file_field.name:
+        messages.error(request, "Report file not found. It may still be generating.")
+        return redirect('committee:manage_payouts')
+
+    # Check if file exists on disk
+    if not os.path.exists(file_field.path):
+        messages.error(request, "Report file not found on disk.")
+        return redirect('committee:manage_payouts')
+
+    # Generate filename
+    filename = f"Payout_Report_{payout.id}_{payout.paid_at.strftime('%Y_%m_%d')}.{extension}"
+
+    # Serve the file
+    with open(file_field.path, 'rb') as f:
+        response = HttpResponse(f.read(), content_type=content_type)
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response

@@ -32,6 +32,8 @@ from .views import (
     invitation_revoke,
     switch_to_organizer,
     step_down_organizer,
+    download_contribution_report,
+    download_payout_report,
 )
 app_name = 'committee'
 
@@ -83,5 +85,9 @@ urlpatterns = [
     # Role switching
     path('switch-to-organizer/', switch_to_organizer, name='switch_to_organizer'),
     path('step-down-organizer/', step_down_organizer, name='step_down_organizer'),
+    
+    # Report Download URLs
+    path('contribution/<int:pk>/report/<str:format_type>/', download_contribution_report, name='download_contribution_report'),
+    path('payout/<int:pk>/report/<str:format_type>/', download_payout_report, name='download_payout_report'),
 
 ]
