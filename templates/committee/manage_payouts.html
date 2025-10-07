@@ -1,6 +1,9 @@
 {% extends 'committee/committee_base.html' %}
 {% load static %}
 
+<!-- Add Alpine.js for dropdown functionality -->
+<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
 {% block title %}Manage Payouts - Committee Management{% endblock %}
 
 {% block committee_content %}
@@ -113,7 +116,7 @@
                             {% endif %}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ payout.date|date:"M d, Y" }}
+                            {{ payout.paid_at|date:"M d, Y" }}
                             {% if payout.confirmed_at %}
                             <div class="text-xs text-gray-400">
                                 Confirmed: {{ payout.confirmed_at|date:"M d, Y H:i" }}
@@ -127,6 +130,26 @@
                                    title="Edit payout">
                                     <i class="fas fa-edit"></i>
                                 </a>
+                                <!-- Individual payout reports -->
+                                {% if payout.excel_file %}
+                                    <a href="{% url 'committee:download_payout_report' pk=payout.pk format_type='excel' %}"
+                                       class="text-green-600 hover:text-green-900"
+                                       title="Download Excel Report">
+                                        <i class="fas fa-file-excel"></i>
+                                    </a>
+                                {% endif %}
+                                {% if payout.pdf_file %}
+                                    <a href="{% url 'committee:download_payout_report' pk=payout.pk format_type='pdf' %}"
+                                       class="text-red-600 hover:text-red-900"
+                                       title="Download PDF Report">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </a>
+                                {% endif %}
+                                {% if not payout.excel_file and not payout.pdf_file %}
+                                    <span class="text-gray-400" title="Reports generating...">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                    </span>
+                                {% endif %}
                                 <button type="button" 
                                         data-payout-id="{{ payout.pk }}"
                                         data-member-name="{{ payout.membership.member.full_name|default:payout.membership.member.first_name }}"
