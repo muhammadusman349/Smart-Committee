@@ -280,43 +280,12 @@ def invitation_send(request, committee_pk):
     })
 
 
-def _can_accept(invitation: Invitation, user: User) -> bool:
-    """Helper to check if user can accept the invitation."""
-    # Must be logged in to compare emails
-    if not getattr(user, 'is_authenticated', False):
-        return False
-
-    if invitation.status != 'PENDING':
-        return False
-    if invitation.expires_at and timezone.now() > invitation.expires_at:
-        return False
-    # Email must match
-    return user.email.lower() == invitation.email.lower()
-
-
 def invitation_accept(request, token):
-    """Accept an invitation by token. Requires login with the same email."""
     invitation = get_object_or_404(Invitation, token=token)
+    committee = invitation.committee
 
-    if invitation.status != 'PENDING':
-        messages.error(request, "This invitation is no longer valid.")
-        return render(request, 'committee/invitation/invitation_status.html', {
-            'invitation': invitation,
-            'status': 'invalid'
-        })
-
-    # Auto-expire if past expiry
-    if invitation.expires_at and timezone.now() > invitation.expires_at:
-        invitation.status = 'EXPIRED'
-        invitation.save()
-        messages.error(request, "This invitation has expired.")
-        return render(request, 'committee/invitation/invitation_status.html', {
-            'invitation': invitation,
-            'status': 'expired'
-        })
-
-    if not _can_accept(invitation, request.user):
-        # Suggest logging in with the invited email or signing up
+    # If user is not logged in, show invite info page with login/signup
+    if not request.user.is_authenticated:
         login_url = reverse('account_login') + f"?next={request.path}"
         signup_url = reverse('account_signup') + f"?next={request.path}"
         return render(request, 'committee/invitation/invitation_accept_login_required.html', {
@@ -325,18 +294,52 @@ def invitation_accept(request, token):
             'signup_url': signup_url,
         })
 
-    # Create membership if not exists
-    committee = invitation.committee
-    member = request.user
-    Membership.objects.get_or_create(committee=committee, member=member, defaults={'status': 'ACTIVE'})
+    # Email match check
+    if request.user.email.lower() != invitation.email.lower():
+        messages.error(request, "You must log in with the same email address the invitation was sent to.")
+        return redirect('account_logout')
 
-    # Mark invitation as accepted and expire the token
+    # Check if invitation is accepted *and* user is already a member
+    existing_membership = Membership.objects.filter(
+        committee=committee,
+        member=request.user,
+        status='ACTIVE'
+    ).first()
+
+    if invitation.status == 'ACCEPTED' and existing_membership:
+        messages.info(request, f"You are already a member of the committee '{committee.name}'.")
+        return redirect('committee:member_dashboard')
+
+    # Expiry check (only for non-accepted invitations)
+    if invitation.status != 'ACCEPTED' and invitation.expires_at and timezone.now() > invitation.expires_at:
+        invitation.status = 'EXPIRED'
+        invitation.save()
+        return render(request, 'committee/invitation/invitation_status.html', {
+            'invitation': invitation,
+            'status': 'expired',
+        })
+
+    # Create or reactivate membership
+    membership, created = Membership.objects.get_or_create(
+        committee=committee,
+        member=request.user,
+        defaults={'status': 'ACTIVE'}
+    )
+
+    if not created and membership.status != 'ACTIVE':
+        membership.status = 'ACTIVE'
+        membership.left_at = None
+        membership.save()
+
+    # Update invitation
     invitation.status = 'ACCEPTED'
-    invitation.expires_at = timezone.now()  # Immediately expire the token
+    invitation.expires_at = timezone.now()
     invitation.save()
 
-    messages.success(request, f"You have successfully joined the committee '{committee.name}'.")
-    return redirect('committee:member_committee_detail', pk=committee.pk)
+    # Success redirect
+    messages.success(request, f"Welcome! You have successfully joined the committee '{committee.name}'.")
+    return redirect('committee:member_dashboard')
+
 
 
 @login_required
@@ -387,9 +390,9 @@ def invitation_resend(request, pk):
 
     # Send new invitation email
     send_invitation_email.delay(
-        invitation_id=invitation.id,
-        committee_name=invitation.committee.name,
-        organizer_name=invitation.invited_by.get_full_name(),
+        committee_id=invitation.committee.id,
+        inviter_name=invitation.invited_by.full_name,
+        inviter_email=invitation.invited_by.email,
         recipient_email=invitation.email,
         token=invitation.token,
         site_domain=request.get_host()
