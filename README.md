@@ -338,7 +338,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 ## 📞 Support
 
 For support and questions:
-- **Email**: support@smartcommittee.com
+- **Email**: committeesolutions@gmail.com
 - **Documentation**: [Link to detailed docs]
 - **Issues**: [GitHub Issues](https://github.com/your-username/Smart-Committee/issues)
 
