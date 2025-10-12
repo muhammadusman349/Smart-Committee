@@ -5,305 +5,321 @@
 {% block title %}Member Dashboard{% endblock %}
 
 {% block content %}
-<div class="bg-gray-100 min-h-screen font-sans">
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        <!-- Header with Role Navigation -->
-        <div class="mb-8">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-3xl font-bold font-display text-gray-800">Member Dashboard</h1>
-                    <p class="text-gray-500 font-body mt-1">Your overview of committees, contributions, and payouts.</p>
-                </div>
-                <div class="flex space-x-3">
-                    {% if user.is_organizer %}
-                        <a href="{% url 'committee:organizer_dashboard' %}" 
-                           class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition duration-200">
-                            <i class="fas fa-cog mr-2"></i>
-                            Organizer Dashboard
-                        </a>
-                    {% else %}
-                        <a href="{% url 'committee:switch_to_organizer' %}" 
-                           class="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition duration-200">
-                            <i class="fas fa-arrow-up mr-2"></i>
-                            Become Organizer
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
 
-        <!-- Stats Section -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
-                <div class="bg-blue-500 text-white rounded-full h-12 w-12 flex items-center justify-center mr-4">
-                    <i class="fas fa-layer-group text-xl"></i>
-                </div>
-                <div>
-                    <p class="text-gray-500 text-sm">Active Committees</p>
-                    <p class="text-2xl font-bold text-gray-800">{{ active_committees_count }}</p>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
-                <div class="bg-green-500 text-white rounded-full h-12 w-12 flex items-center justify-center mr-4">
-                    <i class="fas fa-arrow-up text-xl"></i>
-                </div>
-                <div>
-                    <p class="text-gray-500 text-sm">Total Contributions</p>
-                    <p class="text-2xl font-bold text-gray-800">${{ total_contributions_amount|floatformat:2 }}</p>
-                </div>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
-                <div class="bg-purple-500 text-white rounded-full h-12 w-12 flex items-center justify-center mr-4">
-                    <i class="fas fa-arrow-down text-xl"></i>
-                </div>
-                <div>
-                    <p class="text-gray-500 text-sm">Total Payouts</p>
-                    <p class="text-2xl font-bold text-gray-800">${{ total_payouts_amount|floatformat:2 }}</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab Navigation -->
-        <div class="mb-6">
-            <div class="border-b border-gray-200">
-                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                    <button id="tab-committees" onclick="switchTab('committees')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-blue-600 border-blue-500">
-                        My Committees
-                    </button>
-                    <button id="tab-contributions" onclick="switchTab('contributions')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 border-transparent">
-                        My Contributions
-                    </button>
-                    <button id="tab-payouts" onclick="switchTab('payouts')" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 border-transparent">
-                        My Payouts
-                    </button>
-                </nav>
-            </div>
-        </div>
-
-        <!-- Tab Content -->
-        <div id="content-committees" class="tab-content">
-            <!-- My Committees Section -->
-            {% if committees %}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {% for committee in committees %}
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 flex flex-col">
-                            <div class="p-6 flex-grow">
-                                <div class="flex justify-between items-start mb-2">
-                                    <h5 class="text-xl font-bold text-gray-800">{{ committee.name }}</h5>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                        {% if committee.status == 'ACTIVE' %} bg-green-100 text-green-800 {% endif %}
-                                        {% if committee.status == 'PENDING' %} bg-yellow-100 text-yellow-800 {% endif %}
-                                        {% if committee.status == 'COMPLETED' %} bg-blue-100 text-blue-800 {% endif %}
-                                        {% if committee.status == 'CANCELLED' %} bg-red-100 text-red-800 {% endif %}
-                                    ">
-                                        {{ committee.get_status_display }}
-                                    </span>
+        <!-- Professional Header Section -->
+        <div class="mb-12">
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 px-8 py-12">
+                    <div class="flex justify-between items-center">
+                        <div class="text-white">
+                            <h1 class="text-4xl font-bold font-display mb-2">
+                                Welcome back, {{ user.first_name|default:user.email }}! 👋
+                            </h1>
+                            <p class="text-blue-100 text-lg font-body">
+                                Your personal committee management dashboard
+                            </p>
+                            <div class="mt-4 flex items-center space-x-6 text-blue-100">
+                                <div class="flex items-center">
+                                    <i class="fas fa-calendar-alt mr-2"></i>
+                                    <span>{{ "now"|date:"l, F j, Y" }}</span>
                                 </div>
-                                <p class="text-gray-600 text-sm mb-4">{{ committee.description|truncatewords:15 }}</p>
-                                
-                                <div class="text-sm text-gray-500 space-y-2">
-                                    <div class="flex items-center">
-                                        <i class="fas fa-calendar-alt w-4 mr-2"></i>
-                                        <span>Starts: {{ committee.start_date|date:"d M Y" }}</span>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <i class="fas fa-users w-4 mr-2"></i>
-                                        <span>{{ committee.memberships.count }} Members</span>
-                                    </div>
-                                    <div class="flex items-center text-red-600 font-semibold">
-                                        <i class="fas fa-stopwatch w-4 mr-2"></i>
-                                        <span>Next Due: {{ committee.next_contribution_date|date:"d M Y" }}</span>
-                                    </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-clock mr-2"></i>
+                                    <span>{{ "now"|date:"g:i A" }}</span>
                                 </div>
-                            </div>
-                            <div class="p-6 bg-gray-50 mt-auto">
-                                <a href="{% url 'committee:member_committee_detail' pk=committee.pk %}" class="block w-full text-center bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-300">
-                                    View Details
-                                </a>
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="text-center py-16 bg-white rounded-lg shadow-md">
-                    <i class="fas fa-users text-5xl text-gray-400 mb-4"></i>
-                    <h4 class="text-2xl font-bold text-gray-700">No Committees Joined</h4>
-                    <p class="text-gray-500 mt-2">You have not joined any committees yet. Explore available committees to get started.</p>
-                    <a href="{% url 'committee:committee_list' %}" class="mt-6 inline-block bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-300">
-                        Browse Committees
-                    </a>
-                </div>
-            {% endif %}
-        </div>
-
-        <div id="content-contributions" class="tab-content hidden">
-            <!-- My Recent Contributions -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                {% if my_contributions %}
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Committee</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">For Month</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Verification</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reports</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                {% for contribution in my_contributions %}
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            <a href="{% url 'committee:member_committee_detail' pk=contribution.membership.committee.pk %}" class="text-blue-600 hover:underline">
-                                                {{ contribution.membership.committee.name }}
-                                            </a>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ contribution.for_month|date:"F Y" }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ contribution.amount_paid|floatformat:2 }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ contribution.get_status_class }}">
-                                                {{ contribution.get_payment_status_display }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            {% if contribution.verified_by_organizer %}
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                    <i class="fas fa-check-circle mr-1"></i> Verified
-                                                </span>
-                                            {% elif contribution.payment_status == 'PAID' %}
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                                    <i class="fas fa-clock mr-1"></i> Pending Verification
-                                                </span>
-                                            {% else %}
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                                    Not Applicable
-                                                </span>
-                                            {% endif %}
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            <div class="flex items-center space-x-2">
-                                                {% if contribution.excel_file %}
-                                                    <a href="{% url 'committee:download_contribution_report' pk=contribution.pk format_type='excel' %}"
-                                                       class="text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50"
-                                                       title="Download Excel Report">
-                                                        <i class="fas fa-file-excel"></i>
-                                                    </a>
-                                                {% endif %}
-                                                {% if contribution.pdf_file %}
-                                                    <a href="{% url 'committee:download_contribution_report' pk=contribution.pk format_type='pdf' %}"
-                                                       class="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
-                                                       title="Download PDF Report">
-                                                        <i class="fas fa-file-pdf"></i>
-                                                    </a>
-                                                {% endif %}
-                                                {% if not contribution.excel_file and not contribution.pdf_file %}
-                                                    <span class="text-gray-400 p-1" title="Reports generating...">
-                                                        <i class="fas fa-spinner fa-spin"></i>
-                                                    </span>
-                                                {% endif %}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                        <div class="hidden md:flex space-x-3">
+                            {% if user.is_organizer %}
+                                <a href="{% url 'committee:organizer_dashboard' %}"
+                                   class="inline-flex items-center px-6 py-3 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold rounded-xl transition-all duration-200 backdrop-blur-sm border border-white/20">
+                                    <i class="fas fa-crown mr-2"></i>
+                                    Organizer Dashboard
+                                </a>
+                            {% else %}
+                                <a href="{% url 'committee:switch_to_organizer' %}"
+                                   class="inline-flex items-center px-6 py-3 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold rounded-xl transition-all duration-200 backdrop-blur-sm border border-white/20">
+                                    <i class="fas fa-arrow-up mr-2"></i>
+                                    Become Organizer
+                                </a>
+                            {% endif %}
+                        </div>
                     </div>
-                {% else %}
-                    <p class="text-center text-gray-500 py-8">You have not made any contributions yet.</p>
-                {% endif %}
+                </div>
+
+                <!-- Quick Stats in Header -->
+                <div class="px-8 py-6 bg-white">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-gray-800 mb-1">{{ active_committees_count }}</div>
+                            <div class="text-sm text-gray-500 font-medium">Active Committees</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-green-600 mb-1">${{ total_contributions_amount|floatformat:2 }}</div>
+                            <div class="text-sm text-gray-500 font-medium">Total Contributions</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-purple-600 mb-1">${{ total_payouts_amount|floatformat:2 }}</div>
+                            <div class="text-sm text-gray-500 font-medium">Total Payouts</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div id="content-payouts" class="tab-content hidden">
-            <!-- My Recent Payouts -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                {% if my_payouts %}
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Committee</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Paid On</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reports</th>
-                                </tr>
-                            </thead>
-                            <tbody class="bg-white divide-y divide-gray-200">
-                                {% for payout in my_payouts %}
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            <a href="{% url 'committee:member_committee_detail' pk=payout.membership.committee.pk %}" class="text-blue-600 hover:underline">
-                                                {{ payout.membership.committee.name }}
-                                            </a>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ payout.paid_at|date:"d M Y" }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ payout.total_amount|floatformat:2 }}</td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ payout.get_status_class }}">
-                                                {{ payout.get_status_display }}
-                                            </span>
-                                        </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                            <div class="flex items-center space-x-2">
-                                                {% if payout.excel_file %}
-                                                    <a href="{% url 'committee:download_payout_report' pk=payout.pk format_type='excel' %}"
-                                                       class="text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50"
-                                                       title="Download Excel Report">
-                                                        <i class="fas fa-file-excel"></i>
-                                                    </a>
-                                                {% endif %}
-                                                {% if payout.pdf_file %}
-                                                    <a href="{% url 'committee:download_payout_report' pk=payout.pk format_type='pdf' %}"
-                                                       class="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
-                                                       title="Download PDF Report">
-                                                        <i class="fas fa-file-pdf"></i>
-                                                    </a>
-                                                {% endif %}
-                                                {% if not payout.excel_file and not payout.pdf_file %}
-                                                    <span class="text-gray-400 p-1" title="Reports generating...">
-                                                        <i class="fas fa-spinner fa-spin"></i>
-                                                    </span>
-                                                {% endif %}
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+        <!-- Main Actions Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+
+            <!-- My Committees Card -->
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">My Committees</h3>
+                            <p class="text-gray-500 text-sm">Manage your committee memberships</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl h-16 w-16 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-users text-2xl"></i>
+                        </div>
                     </div>
-                {% else %}
-                    <p class="text-center text-gray-500 py-8">You have not received any payouts yet.</p>
-                {% endif %}
+
+                    <!-- Committee Stats -->
+                    <div class="mb-6 p-4 bg-green-50 rounded-xl border border-green-100">
+                        <div class="flex items-center justify-between">
+                            <div class="text-center flex-1">
+                                <div class="text-lg font-bold text-green-600">{{ active_committees_count }}</div>
+                                <div class="text-xs text-green-500 font-medium">Active</div>
+                            </div>
+                            <div class="w-px h-8 bg-green-200"></div>
+                            <div class="text-center flex-1">
+                                <div class="text-lg font-bold text-blue-600">{{ committees|length }}</div>
+                                <div class="text-xs text-blue-500 font-medium">Total</div>
+                            </div>
+                            <div class="w-px h-8 bg-green-200"></div>
+                            <div class="text-center flex-1">
+                                <div class="text-lg font-bold text-purple-600">{{ total_members }}</div>
+                                <div class="text-xs text-purple-500 font-medium">Members</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'committee:member_committee_list' %}"
+                       class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        <i class="fas fa-list mr-3"></i>
+                        View Committees
+                        <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform duration-200"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- My Contributions Card -->
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">My Contributions</h3>
+                            <p class="text-gray-500 text-sm">View and manage your contributions</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl h-16 w-16 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-receipt text-2xl"></i>
+                        </div>
+                    </div>
+
+                    <!-- Contribution Stats -->
+                    <div class="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                        <div class="flex items-center justify-between">
+                            <div class="text-center flex-1">
+                                <div class="text-lg font-bold text-blue-600">{{ my_contributions.count }}</div>
+                                <div class="text-xs text-blue-500 font-medium">Total</div>
+                            </div>
+                            <div class="w-px h-8 bg-blue-200"></div>
+                            <div class="text-center flex-1">
+                                <div class="text-lg font-bold text-green-600">${{ total_contributions_amount|floatformat:2 }}</div>
+                                <div class="text-xs text-green-500 font-medium">Amount</div>
+                            </div>
+                            <div class="w-px h-8 bg-blue-200"></div>
+                            <div class="text-center flex-1">
+                                <div class="text-lg font-bold text-purple-600">{{ verified_contributions_count }}</div>
+                                <div class="text-xs text-purple-500 font-medium">Verified</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'committee:my_contributions' %}"
+                       class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        <i class="fas fa-eye mr-3"></i>
+                        View Contributions
+                        <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform duration-200"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- My Payouts Card -->
+            <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
+                <div class="p-8">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">My Payouts</h3>
+                            <p class="text-gray-500 text-sm">Track your payouts and distributions</p>
+                        </div>
+                        <div class="bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl h-16 w-16 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                            <i class="fas fa-hand-holding-usd text-2xl"></i>
+                        </div>
+                    </div>
+
+                    <!-- Payout Stats -->
+                    <div class="mb-6 p-4 bg-purple-50 rounded-xl border border-purple-100">
+                        <div class="flex items-center justify-between">
+                            <div class="text-center flex-1">
+                                <div class="text-lg font-bold text-purple-600">{{ my_payouts.count }}</div>
+                                <div class="text-xs text-purple-500 font-medium">Total</div>
+                            </div>
+                            <div class="w-px h-8 bg-purple-200"></div>
+                            <div class="text-center flex-1">
+                                <div class="text-lg font-bold text-green-600">${{ total_payouts_amount|floatformat:2 }}</div>
+                                <div class="text-xs text-green-500 font-medium">Received</div>
+                            </div>
+                            <div class="w-px h-8 bg-purple-200"></div>
+                            <div class="text-center flex-1">
+                                <div class="text-lg font-bold text-blue-600">{{ confirmed_payouts_count }}</div>
+                                <div class="text-xs text-blue-500 font-medium">Confirmed</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'committee:my_payouts' %}"
+                       class="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">
+                        <i class="fas fa-eye mr-3"></i>
+                        View Payouts
+                        <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform duration-200"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity Section -->
+        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+            <div class="px-8 py-6 border-b border-gray-100">
+                <h2 class="text-2xl font-bold text-gray-800">Recent Activity</h2>
+                <p class="text-gray-500 text-sm mt-1">Your latest committee activities and updates</p>
+            </div>
+
+            <div class="p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Recent Contributions -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-receipt text-blue-500 mr-3"></i>
+                            Recent Contributions
+                        </h3>
+                        {% if my_contributions %}
+                            <div class="space-y-3">
+                                {% for contribution in my_contributions|slice:":3" %}
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                                        <div>
+                                            <div class="font-medium text-gray-800">{{ contribution.membership.committee.name }}</div>
+                                            <div class="text-sm text-gray-500">{{ contribution.for_month|date:"M Y" }}</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="font-bold text-green-600">${{ contribution.amount_paid|floatformat:2 }}</div>
+                                            <div class="text-xs text-gray-500">{{ contribution.get_payment_status_display }}</div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-inbox text-3xl mb-3"></i>
+                                <p>No contributions yet</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Recent Payouts -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                            <i class="fas fa-hand-holding-usd text-purple-500 mr-3"></i>
+                            Recent Payouts
+                        </h3>
+                        {% if my_payouts %}
+                            <div class="space-y-3">
+                                {% for payout in my_payouts|slice:":3" %}
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                                        <div>
+                                            <div class="font-medium text-gray-800">{{ payout.membership.committee.name }}</div>
+                                            <div class="text-sm text-gray-500">{{ payout.paid_at|date:"M j" }}</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="font-bold text-green-600">${{ payout.total_amount|floatformat:2 }}</div>
+                                            <div class="text-xs text-gray-500">{{ payout.get_status_display }}</div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="text-center py-8 text-gray-500">
+                                <i class="fas fa-inbox text-3xl mb-3"></i>
+                                <p>No payouts yet</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
 
     </div>
 </div>
 
+<style>
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+}
+
+/* Smooth animations */
+* {
+    scroll-behavior: smooth;
+}
+</style>
+
 <script>
-    function switchTab(tabName) {
-        // Hide all tab content
-        document.querySelectorAll('.tab-content').forEach(function(content) {
-            content.classList.add('hidden');
+    // Add some interactive functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all main cards
+        document.querySelectorAll('.group').forEach(card => {
+            observer.observe(card);
         });
-
-        // Deactivate all tab buttons
-        document.querySelectorAll('nav button').forEach(function(button) {
-            button.classList.remove('text-blue-600', 'border-blue-500');
-            button.classList.add('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300', 'border-transparent');
-        });
-
-        // Show the selected tab content
-        document.getElementById('content-' + tabName).classList.remove('hidden');
-
-        // Activate the selected tab button
-        const activeButton = document.getElementById('tab-' + tabName);
-        activeButton.classList.add('text-blue-600', 'border-blue-500');
-        activeButton.classList.remove('text-gray-500', 'hover:text-gray-700', 'hover:border-gray-300', 'border-transparent');
-    }
+    });
 </script>
 {% endblock %}
