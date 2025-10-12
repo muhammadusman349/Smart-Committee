@@ -1,0 +1,183 @@
+{% extends 'committee/committee_base.html' %}
+{% load static %}
+
+{% block title %}My Committees{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 via-green-50 to-emerald-100">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- Professional Header Section -->
+        <div class="mb-12">
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 px-8 py-12">
+                    <div class="flex justify-between items-center">
+                        <div class="text-white">
+                            <nav class="flex items-center space-x-2 text-green-100 mb-4">
+                                <a href="{% url 'committee:member_dashboard' %}" class="hover:text-white transition-colors duration-200">
+                                    <i class="fas fa-arrow-left mr-2"></i>
+                                    Back to Dashboard
+                                </a>
+                            </nav>
+                            <h1 class="text-4xl font-bold font-display mb-2">
+                                My Committees
+                            </h1>
+                            <p class="text-green-100 text-lg font-body">
+                                Manage all your committee memberships in one place
+                            </p>
+                            <div class="mt-4 flex items-center space-x-6 text-green-100">
+                                <div class="flex items-center">
+                                    <i class="fas fa-users mr-2"></i>
+                                    <span>{{ committees|length }} Active Committee{{ committees|length|pluralize }}</span>
+                                </div>
+                                <div class="flex items-center">
+                                    <i class="fas fa-calendar-alt mr-2"></i>
+                                    <span>{{ "now"|date:"l, F j, Y" }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="hidden md:block">
+                            <div class="bg-white/20 backdrop-blur-sm rounded-2xl p-6 border border-white/20">
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-white mb-1">{{ committees|length }}</div>
+                                    <div class="text-green-100 text-sm font-medium">Total Committees</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Committees Section -->
+        {% if committees %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for committee in committees %}
+                    <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 hover:-translate-y-1">
+                        <div class="p-8 flex flex-col h-full">
+                            <div class="flex justify-between items-start mb-4">
+                                <div class="flex-1">
+                                    <h5 class="text-2xl font-bold text-gray-800 mb-2 group-hover:text-green-600 transition-colors duration-300">{{ committee.name }}</h5>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold
+                                        {% if committee.status == 'ACTIVE' %} bg-green-100 text-green-800 {% endif %}
+                                        {% if committee.status == 'PENDING' %} bg-yellow-100 text-yellow-800 {% endif %}
+                                        {% if committee.status == 'COMPLETED' %} bg-blue-100 text-blue-800 {% endif %}
+                                        {% if committee.status == 'CANCELLED' %} bg-red-100 text-red-800 {% endif %}
+                                    ">
+                                        <i class="fas fa-circle mr-2 text-xs"></i>
+                                        {{ committee.get_status_display }}
+                                    </span>
+                                </div>
+                                <div class="bg-gradient-to-br from-green-500 to-green-600 text-white rounded-xl h-12 w-12 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-users text-lg"></i>
+                                </div>
+                            </div>
+
+                            <p class="text-gray-600 text-sm mb-6 flex-grow">{{ committee.description|truncatewords:20 }}</p>
+
+                            <!-- Committee Details -->
+                            <div class="space-y-3 mb-6">
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center text-gray-600">
+                                        <i class="fas fa-calendar-alt w-4 mr-3 text-green-500"></i>
+                                        <span class="text-sm font-medium">Start Date</span>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-800">{{ committee.start_date|date:"d M Y" }}</span>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center text-gray-600">
+                                        <i class="fas fa-user-friends w-4 mr-3 text-blue-500"></i>
+                                        <span class="text-sm font-medium">Members</span>
+                                    </div>
+                                    <span class="text-sm font-semibold text-gray-800">{{ committee.memberships.count }}</span>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-red-50 rounded-lg border border-red-100">
+                                    <div class="flex items-center text-red-600">
+                                        <i class="fas fa-stopwatch w-4 mr-3"></i>
+                                        <span class="text-sm font-medium">Next Due</span>
+                                    </div>
+                                    <span class="text-sm font-bold text-red-600">{{ committee.next_contribution_date|date:"d M Y" }}</span>
+                                </div>
+                            </div>
+
+                            <a href="{% url 'committee:member_committee_detail' pk=committee.pk %}"
+                               class="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 inline-flex items-center justify-center shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 group">
+                                <i class="fas fa-eye mr-3"></i>
+                                View Details
+                                <i class="fas fa-arrow-right ml-3 group-hover:translate-x-1 transition-transform duration-200"></i>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                <div class="px-8 py-16 text-center">
+                    <div class="bg-gradient-to-br from-gray-100 to-gray-200 rounded-full h-24 w-24 flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-users text-4xl text-gray-400"></i>
+                    </div>
+                    <h4 class="text-3xl font-bold text-gray-700 mb-4">No Committees Joined</h4>
+                    <p class="text-gray-500 text-lg mb-8 max-w-md mx-auto">You haven't joined any committees yet. Explore available committees to get started with your financial goals.</p>
+                    {% if not user.is_organizer %}
+                        <a href="{% url 'committee:committee_list' %}"
+                           class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-lg font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                            <i class="fas fa-search mr-3"></i>
+                            Browse Committees
+                            <i class="fas fa-arrow-right ml-3"></i>
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+</div>
+
+<style>
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #059669, #047857);
+}
+</style>
+
+<script>
+    // Add smooth animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all committee cards
+        document.querySelectorAll('.group').forEach(card => {
+            observer.observe(card);
+        });
+    });
+</script>
+{% endblock %}

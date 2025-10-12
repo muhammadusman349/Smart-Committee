@@ -169,9 +169,9 @@ class ContributionForm(forms.ModelForm):
         if for_month and for_month > timezone.now().date():
             raise forms.ValidationError("You cannot add a contribution for a future month.")
 
-        # payment_date = cleaned_data.get('payment_date')
-        # if for_month < payment_date:
-        #     raise forms.ValidationError("for_month must be before payment_date.")
+        committee_start_date = self.membership.committee.start_date
+        if for_month < committee_start_date:
+            raise forms.ValidationError("For month must be after committee start date.")
 
         return cleaned_data
 
