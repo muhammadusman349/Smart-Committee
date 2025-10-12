@@ -1,9 +1,8 @@
 import os
 import django
+from committee.models import Committee
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'conf.settings')
 django.setup()
-
-from committee.models import Committee
 
 committees = Committee.objects.filter(status='ACTIVE').first()
 
