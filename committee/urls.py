@@ -20,6 +20,9 @@ from .views import (
     member_dashboard,
     member_committee_detail,
     member_contribution_create,
+    member_committee_list,
+    my_contributions,
+    my_payouts,
     see_all_members,
     toggle_committee_status,
     manage_contributions,
@@ -80,7 +83,10 @@ urlpatterns = [
     # Member Dashboard URLs
     path('member-dashboard/', member_dashboard, name='member_dashboard'),
     path('member/committee/<int:pk>/', member_committee_detail, name='member_committee_detail'),
+    path('member/committees/', member_committee_list, name='member_committee_list'),
     path('member/contributions/<int:membership_pk>/add/', member_contribution_create, name='member_contribution_create'),
+    path('member/my-contributions/', my_contributions, name='my_contributions'),
+    path('member/my-payouts/', my_payouts, name='my_payouts'),
     
     # Role switching
     path('switch-to-organizer/', switch_to_organizer, name='switch_to_organizer'),

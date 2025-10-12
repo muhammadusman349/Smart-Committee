@@ -1134,6 +1134,15 @@ def member_dashboard(request):
     total_contributions_amount = my_contributions.filter(payment_status='PAID').aggregate(Sum('amount_paid'))['amount_paid__sum'] or 0
     total_payouts_amount = my_payouts.filter(is_confirmed=True).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
 
+    # Calculate additional statistics for the enhanced dashboard
+    verified_contributions_count = my_contributions.filter(verified_by_organizer=True).count()
+    confirmed_payouts_count = my_payouts.filter(is_confirmed=True).count()
+
+    # Calculate total members across all user's committees
+    total_members = 0
+    for membership in memberships:
+        total_members += membership.committee.memberships.filter(status='ACTIVE').count()
+
     context = {
         'committees': committees,
         'my_contributions': my_contributions,
@@ -1141,9 +1150,151 @@ def member_dashboard(request):
         'active_committees_count': active_committees_count,
         'total_contributions_amount': total_contributions_amount,
         'total_payouts_amount': total_payouts_amount,
+        'verified_contributions_count': verified_contributions_count,
+        'confirmed_payouts_count': confirmed_payouts_count,
+        'total_members': total_members,
         'page_title': 'Member Dashboard',
     }
     return render(request, 'committee/member/member_dashboard.html', context)
+
+
+@login_required
+def member_committee_list(request):
+    """List all committees the logged-in user is a member of"""
+    # Get all active memberships for the logged-in user
+    memberships = Membership.objects.filter(
+        member=request.user,
+        status='ACTIVE'
+    ).select_related('committee').order_by('joined_at')
+
+    committees = [membership.committee for membership in memberships]
+
+    # Calculate statistics for each committee
+    for committee in committees:
+        # Get user's membership for this committee
+        user_membership = next(membership for membership in memberships if membership.committee == committee)
+
+        # Calculate next contribution date
+        last_contribution = Contribution.objects.filter(membership=user_membership).order_by('-for_month').first()
+
+        if last_contribution:
+            next_month_date = last_contribution.for_month + timedelta(days=31)
+            next_month_date = next_month_date.replace(day=1)
+        else:
+            next_month_date = committee.start_date
+
+        day = committee.start_date.day
+        last_day_of_month = calendar.monthrange(next_month_date.year, next_month_date.month)[1]
+        if day > last_day_of_month:
+            day = last_day_of_month
+
+        next_contribution_date = date(next_month_date.year, next_month_date.month, day)
+
+        if next_contribution_date < date.today():
+            next_month_date = next_month_date + timedelta(days=31)
+            next_month_date = next_month_date.replace(day=1)
+            last_day_of_month = calendar.monthrange(next_month_date.year, next_month_date.month)[1]
+            if day > last_day_of_month:
+                day = last_day_of_month
+            next_contribution_date = date(next_month_date.year, next_month_date.month, day)
+
+        committee.next_contribution_date = next_contribution_date
+        committee.user_membership = user_membership
+
+    context = {
+        'committees': committees,
+        'memberships': memberships,
+        'page_title': 'My Committees',
+    }
+    return render(request, 'committee/member/member_committee_list.html', context)
+
+
+@login_required
+def my_contributions(request):
+    """Dedicated page for member's contributions with enhanced statistics"""
+    # Get all contributions for the logged-in member
+    my_contributions = Contribution.objects.filter(
+        membership__member=request.user
+    ).select_related('membership__committee').order_by('-for_month')
+
+    # Calculate statistics
+    total_contributions = my_contributions.count()
+    total_contributions_amount = my_contributions.filter(
+        payment_status='PAID'
+    ).aggregate(Sum('amount_paid'))['amount_paid__sum'] or 0
+
+    verified_contributions_count = my_contributions.filter(
+        verified_by_organizer=True
+    ).count()
+
+    pending_contributions_count = my_contributions.filter(
+        payment_status='PENDING'
+    ).count()
+
+    paid_contributions_count = my_contributions.filter(
+        payment_status='PAID'
+    ).count()
+
+    late_contributions_count = my_contributions.filter(
+        payment_status='LATE'
+    ).count()
+
+    context = {
+        'my_contributions': my_contributions,
+        'total_contributions': total_contributions,
+        'total_contributions_amount': total_contributions_amount,
+        'verified_contributions_count': verified_contributions_count,
+        'pending_contributions_count': pending_contributions_count,
+        'paid_contributions_count': paid_contributions_count,
+        'late_contributions_count': late_contributions_count,
+        'page_title': 'My Contributions',
+    }
+    return render(request, 'committee/member/my_contributions.html', context)
+
+
+@login_required
+def my_payouts(request):
+    """Dedicated page for member's payouts with enhanced statistics"""
+    # Get all payouts for the logged-in member
+    my_payouts = Payout.objects.filter(
+        membership__member=request.user
+    ).select_related('membership__committee').order_by('-paid_at')
+
+    # Calculate statistics
+    total_payouts = my_payouts.count()
+    total_payouts_amount = my_payouts.filter(
+        is_confirmed=True
+    ).aggregate(Sum('total_amount'))['total_amount__sum'] or 0
+
+    confirmed_payouts_count = my_payouts.filter(
+        is_confirmed=True
+    ).count()
+
+    pending_payouts_count = my_payouts.filter(
+        is_confirmed=False
+    ).count()
+
+    cash_payouts_count = my_payouts.filter(
+        received_in_cash=True,
+        is_confirmed=True
+    ).count()
+
+    transfer_payouts_count = my_payouts.filter(
+        received_in_cash=False,
+        is_confirmed=True
+    ).count()
+
+    context = {
+        'my_payouts': my_payouts,
+        'total_payouts': total_payouts,
+        'total_payouts_amount': total_payouts_amount,
+        'confirmed_payouts_count': confirmed_payouts_count,
+        'pending_payouts_count': pending_payouts_count,
+        'cash_payouts_count': cash_payouts_count,
+        'transfer_payouts_count': transfer_payouts_count,
+        'page_title': 'My Payouts',
+    }
+    return render(request, 'committee/member/my_payouts.html', context)
 
 
 @login_required
